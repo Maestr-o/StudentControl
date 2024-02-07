@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/timetable"
+        android:icon="@drawable/baseline_event_24"
+        android:title="@string/timetable"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/subjects"
+        android:icon="@drawable/baseline_subject_24"
+        android:title="@string/subjects"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/groups"
+        android:icon="@drawable/baseline_people_24"
+        android:title="@string/groups"
+        app:showAsAction="ifRoom" />
+
+</menu>

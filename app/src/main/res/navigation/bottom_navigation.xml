@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/lessonsFragment">
+
+    <fragment
+        android:id="@+id/lessonsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.TimetableFragment"
+        android:label="LessonsFragment"
+        tools:layout="@layout/fragment_timetable" />
+    <fragment
+        android:id="@+id/subjectsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.SubjectsFragment"
+        android:label="SubjectsFragment"
+        tools:layout="@layout/fragment_subjects" />
+    <fragment
+        android:id="@+id/groupsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.GroupsFragment"
+        android:label="GroupsFragment"
+        tools:layout="@layout/fragment_groups" />
+
+</navigation>

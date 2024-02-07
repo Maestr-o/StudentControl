@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Контроль посещаемости</string>
+    <string name="settings">Настройки</string>
+    <string name="timetable">Расписание</string>
+    <string name="subjects">Предметы</string>
+    <string name="groups">Группы</string>
+    <string name="add">Добавить</string>
+</resources>

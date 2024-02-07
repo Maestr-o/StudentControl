@@ -14,8 +14,12 @@ data class Lesson(
     val date: Instant = Instant.now(),
     @SerialName("type")
     val type: LessonType = LessonType.LECTURE,
+    @SerialName("theme")
+    val theme: String? = null,
     @SerialName("subjectId")
     val subjectId: Long = 0L,
     @SerialName("groupId")
     val groupId: Long = 0L,
+    @SerialName("auditory")
+    val auditory: String? = null,
 )
