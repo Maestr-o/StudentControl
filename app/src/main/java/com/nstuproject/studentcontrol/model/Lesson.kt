@@ -9,17 +9,17 @@ import java.time.Instant
 data class Lesson(
     @SerialName("id")
     val id: Long = 0L,
+    @SerialName("title")
+    val title: String? = null,
     @Serializable(InstantSerializer::class)
-    @SerialName("date")
-    val date: Instant = Instant.now(),
-    @SerialName("type")
-    val type: LessonType = LessonType.LECTURE,
-    @SerialName("theme")
-    val theme: String? = null,
+    @SerialName("time")
+    val time: Instant = Instant.now(),
     @SerialName("subjectId")
     val subjectId: Long = 0L,
-    @SerialName("groupId")
-    val groupId: Long = 0L,
     @SerialName("auditory")
     val auditory: String? = null,
+    @SerialName("description")
+    val description: String? = null,
+    @SerialName("type")
+    val type: LessonType = LessonType.LECTURE,
 )
