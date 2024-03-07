@@ -14,25 +14,36 @@
 
         <TextView
             android:id="@+id/subject"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginTop="@dimen/small_spacing"
             android:layout_marginStart="@dimen/common_spacing"
+            android:layout_marginTop="@dimen/small_spacing"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Android-разработка" />
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
             android:layout_marginStart="@dimen/common_spacing"
-            android:layout_marginEnd="@dimen/small_spacing"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subject"
+            tools:text="Лекция" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_spacing"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/edit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/type"
             tools:text="Инъекция зависимостей. Библиотека Dagger Hilt" />
 
         <com.google.android.material.button.MaterialButton
@@ -48,9 +59,9 @@
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_spacing"
             android:singleLine="true"
             android:textSize="16sp"
-            android:layout_marginStart="@dimen/common_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="11.03.2024 - 12:00" />
@@ -59,12 +70,12 @@
             android:id="@+id/auditory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/common_spacing"
             android:singleLine="true"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
-            android:layout_marginEnd="@dimen/small_spacing"
-            tools:text="7-301" />
+            tools:text="7-1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,4 +5,21 @@
     <string name="subjects">Subjects</string>
     <string name="groups">Groups</string>
     <string name="add">Add</string>
+    <string name="title">Title</string>
+    <string name="auditory">Auditory</string>
+    <string name="description">Description</string>
+    <string name="save">Save</string>
+    <string name="title_hint">Enter the topic of the lesson</string>
+    <string name="details">Details</string>
+    <string name="auditory_hint">Auditory</string>
+    <string name="description_hint">Description</string>
+    <string name="lecture">Lection</string>
+    <string name="laboratory_work">Laboratory work</string>
+    <string name="practice">Practice</string>
+    <string name="type_hit">Type:</string>
+    <string name="subject_hint">Subject:</string>
+    <string name="groups_hint">Groups:</string>
+    <string name="edit">Edit</string>
+    <string name="choose_date">Choose date</string>
+    <string name="choose_time">Choose time</string>
 </resources>

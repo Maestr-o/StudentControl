@@ -6,4 +6,21 @@
     <string name="subjects">Предметы</string>
     <string name="groups">Группы</string>
     <string name="add">Добавить</string>
+    <string name="title">Главное</string>
+    <string name="auditory">Аудитория</string>
+    <string name="description">Описание</string>
+    <string name="save">Сохранить</string>
+    <string name="title_hint">Введите тему занятия</string>
+    <string name="details">Дополнительно</string>
+    <string name="auditory_hint">Аудитория</string>
+    <string name="description_hint">Описание</string>
+    <string name="lecture">Лекция</string>
+    <string name="laboratory_work">Лабораторная работа</string>
+    <string name="practice">Практика</string>
+    <string name="type_hit">Тип:</string>
+    <string name="subject_hint">Предмет:</string>
+    <string name="groups_hint">Группы:</string>
+    <string name="edit">Редактировать</string>
+    <string name="choose_date">Выберите дату</string>
+    <string name="choose_time">Выберите время</string>
 </resources>

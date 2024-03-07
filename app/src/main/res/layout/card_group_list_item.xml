@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/tiny_spacing"
+    android:layout_marginTop="@dimen/tiny_spacing">
+
+    <TextView
+        android:id="@+id/category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/small_spacing"
+        android:layout_marginVertical="@dimen/small_spacing"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        tools:text="АВТ-042" />
+
+</com.google.android.material.card.MaterialCardView>
