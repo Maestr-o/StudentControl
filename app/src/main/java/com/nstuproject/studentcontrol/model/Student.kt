@@ -13,4 +13,6 @@ data class Student(
     val midName: String? = null,
     @SerialName("lastName")
     val lastName: String = "",
+    @SerialName("deviceId")
+    val deviceId: String = "",
 )

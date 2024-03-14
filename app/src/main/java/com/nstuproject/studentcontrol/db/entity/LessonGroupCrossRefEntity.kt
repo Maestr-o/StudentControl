@@ -1,12 +1,10 @@
-package com.nstuproject.studentcontrol.model
+package com.nstuproject.studentcontrol.db.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LessonGroupCrossRef(
-    @SerialName("id")
-    val id: Long = 0L,
+data class LessonGroupCrossRefEntity(
     @SerialName("lessonId")
     val lessonId: Long = 0L,
     @SerialName("groupId")

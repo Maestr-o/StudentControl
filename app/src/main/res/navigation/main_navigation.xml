@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_editLessonFragment"
             app:destination="@id/editLessonFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editLessonFragment"
@@ -34,4 +37,9 @@
         android:id="@+id/timePickerFragment"
         android:name="com.nstuproject.studentcontrol.fragment.TimePickerFragment"
         android:label="@string/choose_time" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

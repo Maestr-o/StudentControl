@@ -6,7 +6,9 @@ import android.icu.util.Calendar
 import android.icu.util.GregorianCalendar
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DatePickerFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

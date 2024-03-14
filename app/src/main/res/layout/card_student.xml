@@ -10,20 +10,31 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/small_spacing">
+        android:paddingEnd="@dimen/small_spacing"
+        tools:ignore="RtlSymmetry">
+
+        <View
+            android:id="@+id/indicator"
+            android:layout_width="10dp"
+            android:layout_height="0dp"
+            android:background="@color/registered"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/subject"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_spacing"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:layout_marginStart="@dimen/common_spacing"
             android:layout_marginEnd="@dimen/small_spacing"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/delete"
             app:layout_constraintEnd_toStartOf="@+id/edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/delete"
-            tools:text="АВТ-042" />
+            tools:text="Кузнецов Иван Алексеевич" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/edit"
