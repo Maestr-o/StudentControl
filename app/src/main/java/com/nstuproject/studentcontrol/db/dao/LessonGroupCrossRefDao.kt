@@ -4,12 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.nstuproject.studentcontrol.db.entity.LessonGroupCrossRefEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LessonGroupCrossRefDao {
 
     @Query("SELECT * FROM LessonGroupCrossRef")
-    suspend fun getAll(): List<LessonGroupCrossRefEntity>
+    fun getAll(): Flow<List<LessonGroupCrossRefEntity>>
 
     @Upsert
     suspend fun save(data: LessonGroupCrossRefEntity)

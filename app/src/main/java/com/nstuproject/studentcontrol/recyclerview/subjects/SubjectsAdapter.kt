@@ -20,6 +20,14 @@ class SubjectsAdapter(
         val binding = CardSubjectBinding.inflate(inflater, parent, false)
         val viewHolder = SubjectsViewHolder(binding)
 
+        binding.edit.setOnClickListener {
+            listener.onEditClickListener(getItem(viewHolder.adapterPosition))
+        }
+
+        binding.delete.setOnClickListener {
+            listener.onDeleteClickListener(getItem(viewHolder.adapterPosition))
+        }
+
         return viewHolder
     }
 

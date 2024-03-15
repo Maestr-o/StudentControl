@@ -13,7 +13,7 @@
         android:padding="@dimen/small_spacing">
 
         <TextView
-            android:id="@+id/subject"
+            android:id="@+id/group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/small_spacing"

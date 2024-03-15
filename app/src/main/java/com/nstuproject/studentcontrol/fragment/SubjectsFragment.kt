@@ -33,6 +33,7 @@ class SubjectsFragment : Fragment() {
             object : SubjectsAdapter.SubjectsListener {
                 override fun onEditClickListener(subject: Subject) {
                     val editText = EditText(context)
+                    editText.setText(subject.name)
                     AlertDialog.Builder(context)
                         .setTitle(getString(R.string.change_subject_name))
                         .setView(editText)
@@ -49,7 +50,7 @@ class SubjectsFragment : Fragment() {
 
                 override fun onDeleteClickListener(subject: Subject) {
                     AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.delete_subject))
+                        .setTitle(getString(R.string.delete_subject, subject.name))
                         .setPositiveButton("OK") { dialog, _ ->
                             viewModel.deleteById(subject.id)
                             dialog.dismiss()

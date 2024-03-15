@@ -2,14 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_navigation"
+    android:id="@+id/bottom_navigation"
     app:startDestination="@id/lessonsFragment">
 
     <fragment
         android:id="@+id/lessonsFragment"
-        android:name="com.nstuproject.studentcontrol.fragment.TimetableFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.LessonsFragment"
         android:label="LessonsFragment"
-        tools:layout="@layout/fragment_timetable" />
+        tools:layout="@layout/fragment_lessons" />
     <fragment
         android:id="@+id/subjectsFragment"
         android:name="com.nstuproject.studentcontrol.fragment.SubjectsFragment"

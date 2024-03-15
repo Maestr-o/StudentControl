@@ -1,9 +1,10 @@
 package com.nstuproject.studentcontrol.repository.student
 
-import com.nstuproject.studentcontrol.model.Student
+import com.nstuproject.studentcontrol.db.entity.StudentEntity
+import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
-    suspend fun getAll(): List<Student>
-    suspend fun save(data: Student)
+    fun getAll(): Flow<List<StudentEntity>>
+    suspend fun save(data: StudentEntity)
     suspend fun deleteById(id: Long)
 }

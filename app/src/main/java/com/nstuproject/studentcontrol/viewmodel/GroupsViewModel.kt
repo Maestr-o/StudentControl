@@ -3,9 +3,9 @@ package com.nstuproject.studentcontrol.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nstuproject.studentcontrol.db.entity.SubjectEntity
-import com.nstuproject.studentcontrol.model.Subject
-import com.nstuproject.studentcontrol.repository.subject.SubjectRepository
+import com.nstuproject.studentcontrol.db.entity.GroupEntity
+import com.nstuproject.studentcontrol.model.Group
+import com.nstuproject.studentcontrol.repository.group.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,15 +16,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SubjectsViewModel @Inject constructor(
-    private val subjectRepository: SubjectRepository,
+class GroupsViewModel @Inject constructor(
+    private val groupRepository: GroupRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<Subject>())
+    private val _state = MutableStateFlow(emptyList<Group>())
     val state = _state.asStateFlow()
 
     init {
-        subjectRepository.getAll().onEach { list ->
+        groupRepository.getAll().onEach { list ->
             _state.update {
                 list.map {
                     it.toData()
@@ -34,10 +34,10 @@ class SubjectsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun save(subject: Subject) {
+    fun save(group: Group) {
         viewModelScope.launch {
             try {
-                subjectRepository.save(SubjectEntity.toEntity(subject))
+                groupRepository.save(GroupEntity.toEntity(group))
             } catch (e: Exception) {
                 Log.e("TEST", e.toString())
             }
@@ -47,7 +47,7 @@ class SubjectsViewModel @Inject constructor(
     fun deleteById(id: Long) {
         viewModelScope.launch {
             try {
-                subjectRepository.deleteById(id)
+                groupRepository.deleteById(id)
             } catch (e: Exception) {
                 Log.e("TEST", e.toString())
             }

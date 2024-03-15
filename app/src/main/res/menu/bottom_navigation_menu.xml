@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/timetable"
+        android:id="@+id/lessonsFragment"
         android:icon="@drawable/baseline_event_24"
         android:title="@string/timetable"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/subjects"
+        android:id="@+id/subjectsFragment"
         android:icon="@drawable/baseline_subject_24"
         android:title="@string/subjects"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/groups"
+        android:id="@+id/groupsFragment"
         android:icon="@drawable/baseline_people_24"
         android:title="@string/groups"
         app:showAsAction="ifRoom" />

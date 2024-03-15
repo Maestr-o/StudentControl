@@ -4,12 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.nstuproject.studentcontrol.db.entity.GroupEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GroupDao {
 
     @Query("SELECT * FROM `Group`")
-    suspend fun getAll(): List<GroupEntity>
+    fun getAll(): Flow<List<GroupEntity>>
 
     @Upsert
     suspend fun save(data: GroupEntity)

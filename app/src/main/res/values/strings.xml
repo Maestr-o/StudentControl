@@ -25,6 +25,10 @@
     <string name="students">Students</string>
     <string name="change_subject_name">Change subject\'s name</string>
     <string name="cancel">Cancel</string>
-    <string name="delete_subject">Delete subject?</string>
+    <string name="delete_subject">Delete subject \"%s\"?</string>
     <string name="ok">OK</string>
+    <string name="add_new_subject">Add new subject</string>
+    <string name="change_group_s_name">Change group\'s name</string>
+    <string name="delete_group">Delete group \"%s\"?</string>
+    <string name="add_new_group">Add new group</string>
 </resources>

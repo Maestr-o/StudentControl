@@ -2,20 +2,18 @@ package com.nstuproject.studentcontrol.repository.subject
 
 import com.nstuproject.studentcontrol.db.AppDb
 import com.nstuproject.studentcontrol.db.entity.SubjectEntity
-import com.nstuproject.studentcontrol.model.Subject
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalSubjectRepository @Inject constructor(
     private val db: AppDb,
 ) : SubjectRepository {
 
-    override suspend fun getAll(): List<Subject> =
-        db.subjectDao.getAll().map {
-            it.toData()
-        }
+    override fun getAll(): Flow<List<SubjectEntity>> =
+        db.subjectDao.getAll()
 
-    override suspend fun save(data: Subject) =
-        db.subjectDao.save(SubjectEntity.toEntity(data))
+    override suspend fun save(data: SubjectEntity) =
+        db.subjectDao.save(data)
 
     override suspend fun deleteById(id: Long) =
         db.subjectDao.deleteById(id)

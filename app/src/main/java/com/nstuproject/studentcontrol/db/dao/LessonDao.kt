@@ -4,12 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.nstuproject.studentcontrol.db.entity.LessonEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LessonDao {
 
     @Query("SELECT * FROM Lesson")
-    suspend fun getAll(): List<LessonEntity>
+    fun getAll(): Flow<List<LessonEntity>>
 
     @Upsert
     suspend fun save(data: LessonEntity)
