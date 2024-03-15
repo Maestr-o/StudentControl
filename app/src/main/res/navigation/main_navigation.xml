@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_bottomNavigationFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_studentsFragment"
+            app:destination="@id/studentsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editLessonFragment"
@@ -42,4 +45,9 @@
         android:name="com.nstuproject.studentcontrol.fragment.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/studentsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.StudentsFragment"
+        android:label="@string/students"
+        tools:layout="@layout/fragment_students" />
 </navigation>

@@ -23,4 +23,9 @@
     <string name="edit">Редактировать</string>
     <string name="choose_date">Выберите дату</string>
     <string name="choose_time">Выберите время</string>
+    <string name="students">Студенты</string>
+    <string name="change_subject_name">Изменить название предмета</string>
+    <string name="cancel">Отмена</string>
+    <string name="delete_subject">Удалить предмет?</string>
+    <string name="ok">ОК</string>
 </resources>

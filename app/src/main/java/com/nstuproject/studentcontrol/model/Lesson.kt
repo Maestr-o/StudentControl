@@ -1,9 +1,7 @@
 package com.nstuproject.studentcontrol.model
 
-import com.nstuproject.studentcontrol.utils.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 
 @Serializable
 data class Lesson(
@@ -11,9 +9,8 @@ data class Lesson(
     val id: Long = 0L,
     @SerialName("title")
     val title: String? = null,
-    @Serializable(InstantSerializer::class)
     @SerialName("time")
-    val time: Instant = Instant.now(),
+    val time: String = "",
     @SerialName("subjectId")
     val subjectId: Long = 0L,
     @SerialName("auditory")

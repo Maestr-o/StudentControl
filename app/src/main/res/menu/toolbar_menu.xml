@@ -12,12 +12,14 @@
         android:id="@+id/delete"
         android:icon="@drawable/baseline_delete_forever_24"
         android:title="@string/save"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/save"
         android:icon="@drawable/baseline_check_24"
         android:title="@string/save"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
 </menu>

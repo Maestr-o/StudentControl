@@ -1,0 +1,30 @@
+package com.nstuproject.studentcontrol.recyclerview.subjects
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
+import com.nstuproject.studentcontrol.databinding.CardSubjectBinding
+import com.nstuproject.studentcontrol.model.Subject
+
+class SubjectsAdapter(
+    private val listener: SubjectsListener,
+) : ListAdapter<Subject, SubjectsViewHolder>(StudentsDiffCallback()) {
+
+    interface SubjectsListener {
+        fun onEditClickListener(subject: Subject)
+        fun onDeleteClickListener(subject: Subject)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectsViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = CardSubjectBinding.inflate(inflater, parent, false)
+        val viewHolder = SubjectsViewHolder(binding)
+
+        return viewHolder
+    }
+
+    override fun onBindViewHolder(holder: SubjectsViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(item)
+    }
+}
