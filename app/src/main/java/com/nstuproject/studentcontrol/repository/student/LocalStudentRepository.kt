@@ -3,14 +3,19 @@ package com.nstuproject.studentcontrol.repository.student
 import com.nstuproject.studentcontrol.db.AppDb
 import com.nstuproject.studentcontrol.db.entity.StudentEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class LocalStudentRepository @Inject constructor(
     private val db: AppDb,
 ) : StudentRepository {
 
-    override fun getAll(): Flow<List<StudentEntity>> =
-        db.studentDao.getAll()
+    override fun getStudentsByGroup(groupId: Long): Flow<List<StudentEntity>> =
+        db.studentDao.getStudentsByGroup(groupId).map { list ->
+            list.sortedBy {
+                it.lastName
+            }
+        }
 
     override suspend fun save(data: StudentEntity) =
         db.studentDao.save(data)

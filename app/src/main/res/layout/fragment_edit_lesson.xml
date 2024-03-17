@@ -144,7 +144,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_spacing"
-            android:backgroundTint="@color/whiteBack"
+            android:backgroundTint="@color/BW"
             android:hint="@string/auditory_hint"
             android:inputType="text">
 
@@ -162,7 +162,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/common_spacing"
-            android:backgroundTint="@color/whiteBack"
+            android:backgroundTint="@color/BW"
             android:hint="@string/description_hint"
             android:inputType="textMultiLine">
 

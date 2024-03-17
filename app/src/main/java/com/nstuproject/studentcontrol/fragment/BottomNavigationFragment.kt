@@ -5,21 +5,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.nstuproject.studentcontrol.R
+import com.nstuproject.studentcontrol.databinding.DialogEditLineBinding
 import com.nstuproject.studentcontrol.databinding.FragmentBottomNavigationBinding
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Subject
+import com.nstuproject.studentcontrol.utils.toastBlankData
 import com.nstuproject.studentcontrol.viewmodel.GroupsViewModel
 import com.nstuproject.studentcontrol.viewmodel.SubjectsViewModel
+import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
+
+    private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+
+    override fun onStart() {
+        super.onStart()
+        toolbarViewModel.showSettings(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        toolbarViewModel.showSettings(false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,13 +51,19 @@ class BottomNavigationFragment : Fragment() {
         binding.bottomNavigation.setupWithNavController(navController)
 
         val newSubjectListener = View.OnClickListener {
-            val editText = EditText(context)
+            val dialogBinding = DialogEditLineBinding.inflate(inflater)
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_subject))
-                .setView(editText)
+                .setView(dialogBinding.root)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newSubjectName = editText.text.toString()
-                    subjectsViewModel.save(Subject(0, newSubjectName))
+                    val newSubjectName = dialogBinding.line.text.toString().trim()
+                    if (newSubjectName.isNotBlank()) {
+                        subjectsViewModel.save(
+                            Subject(name = newSubjectName)
+                        )
+                    } else {
+                        toastBlankData()
+                    }
                     dialog.dismiss()
                 }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -52,13 +73,19 @@ class BottomNavigationFragment : Fragment() {
         }
 
         val newGroupListener = View.OnClickListener {
-            val editText = EditText(context)
+            val dialogBinding = DialogEditLineBinding.inflate(inflater)
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_group))
-                .setView(editText)
+                .setView(dialogBinding.root)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newGroupName = editText.text.toString()
-                    groupsViewModel.save(Group(0, newGroupName))
+                    val newGroupName = dialogBinding.line.text.toString().trim()
+                    if (newGroupName.isNotBlank()) {
+                        groupsViewModel.save(
+                            Group(name = newGroupName)
+                        )
+                    } else {
+                        toastBlankData()
+                    }
                     dialog.dismiss()
                 }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->

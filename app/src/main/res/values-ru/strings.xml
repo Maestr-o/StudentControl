@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Контроль посещаемости</string>
+    <string name="app_name">Контроль</string>
     <string name="settings">Настройки</string>
     <string name="timetable">Расписание</string>
     <string name="subjects">Предметы</string>
@@ -32,4 +32,15 @@
     <string name="change_group_s_name">Изменить название группы</string>
     <string name="delete_group">Удалить группу \"%s\"?</string>
     <string name="add_new_group">Добавить группу</string>
+    <string name="delete_student">Удалить студента: %s?</string>
+    <string name="change_student_data">Изменить данные студента</string>
+    <string name="add_new_student">Добавить студента</string>
+    <string name="first_name">Имя</string>
+    <string name="middle_name">Отчество</string>
+    <string name="last_name">Фамилия</string>
+    <string name="enter_data">Введите данные</string>
+    <string name="edit_student_data">Изменить данные студента</string>
+    <string name="blank_content">Содержимое не должно быть пустым!</string>
+    <string name="blank_name">Имя и фамилия не должны быть пустыми!</string>
+    <string name="delete">Удалить</string>
 </resources>

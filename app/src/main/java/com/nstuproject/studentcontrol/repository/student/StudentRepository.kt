@@ -4,7 +4,7 @@ import com.nstuproject.studentcontrol.db.entity.StudentEntity
 import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
-    fun getAll(): Flow<List<StudentEntity>>
+    fun getStudentsByGroup(groupId: Long): Flow<List<StudentEntity>>
     suspend fun save(data: StudentEntity)
     suspend fun deleteById(id: Long)
 }

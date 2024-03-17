@@ -11,6 +11,7 @@ class GroupsAdapter(
 ) : ListAdapter<Group, GroupsViewHolder>(GroupsDiffCallback()) {
 
     interface GroupsListener {
+        fun onClickListener(group: Group)
         fun onEditClickListener(group: Group)
         fun onDeleteClickListener(group: Group)
     }
@@ -19,6 +20,10 @@ class GroupsAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding = CardGroupBinding.inflate(inflater, parent, false)
         val viewHolder = GroupsViewHolder(binding)
+
+        binding.root.setOnClickListener {
+            listener.onClickListener(getItem(viewHolder.adapterPosition))
+        }
 
         binding.edit.setOnClickListener {
             listener.onEditClickListener(getItem(viewHolder.adapterPosition))

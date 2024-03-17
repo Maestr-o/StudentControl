@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StudentDao {
 
-    @Query("SELECT * FROM Student")
-    fun getAll(): Flow<List<StudentEntity>>
+    @Query("SELECT * FROM Student WHERE Student.groupId == :groupId")
+    fun getStudentsByGroup(groupId: Long): Flow<List<StudentEntity>>
 
     @Upsert
     suspend fun save(data: StudentEntity)
