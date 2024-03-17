@@ -42,4 +42,6 @@
     <string name="blank_content">Content mustn\'t be blank!</string>
     <string name="blank_name">First name and last name cannot be blank!</string>
     <string name="delete">Delete</string>
+    <string name="lesson">Lesson</string>
+    <string name="add_lesson">Add lesson</string>
 </resources>

@@ -39,11 +39,7 @@ data class LessonEntity(
     companion object {
         fun toEntity(data: Lesson): LessonEntity =
             with(data) {
-                LessonEntity(
-                    id, title, time, subjectId, auditory, description, type
-                )
+                LessonEntity(id, title, time, subject.id, auditory, description, type)
             }
     }
-
-    fun toData(): Lesson = Lesson(id, title, time, subjectId, auditory, description)
 }

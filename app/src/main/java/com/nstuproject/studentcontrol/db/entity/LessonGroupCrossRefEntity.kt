@@ -40,5 +40,5 @@ data class LessonGroupCrossRefEntity(
             }
     }
 
-    fun toData(): LessonGroupCrossRefEntity = LessonGroupCrossRefEntity(id, lessonId, groupId)
+    fun toData(): LessonGroupCrossRef = LessonGroupCrossRef(id, lessonId, groupId)
 }

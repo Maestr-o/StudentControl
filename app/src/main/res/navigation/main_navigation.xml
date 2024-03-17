@@ -11,13 +11,19 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_bottom_navigation">
         <action
-            android:id="@+id/action_bottomNavigationFragment_to_editLessonFragment"
-            app:destination="@id/editLessonFragment" />
-        <action
             android:id="@+id/action_bottomNavigationFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_studentsFragment"
+            app:destination="@id/studentsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_lessonDetailsFragment"
+            app:destination="@id/lessonDetailsFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_newLessonFragment"
+            app:destination="@id/newLessonFragment" />
+        <action
+            android:id="@+id/action_bottomNavigationFragment_to_studentsFragment2"
             app:destination="@id/studentsFragment" />
     </fragment>
     <fragment
@@ -49,4 +55,18 @@
         android:id="@+id/studentsFragment"
         android:name="com.nstuproject.studentcontrol.fragment.StudentsFragment"
         tools:layout="@layout/fragment_students" />
+    <fragment
+        android:id="@+id/lessonDetailsFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.LessonDetailsFragment"
+        android:label="@string/lesson"
+        tools:layout="@layout/fragment_lesson_details">
+        <action
+            android:id="@+id/action_lessonDetailsFragment_to_editLessonFragment"
+            app:destination="@id/editLessonFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newLessonFragment"
+        android:name="com.nstuproject.studentcontrol.fragment.NewLessonFragment"
+        android:label="@string/add_lesson"
+        tools:layout="@layout/fragment_edit_lesson" />
 </navigation>

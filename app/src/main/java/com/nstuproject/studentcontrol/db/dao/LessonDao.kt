@@ -9,7 +9,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LessonDao {
 
-    @Query("SELECT * FROM Lesson")
+    @Query(
+        """
+        SELECT Lesson.id, Lesson.auditory, Lesson.description, Lesson.time, Lesson.title, Lesson.type,
+            Subject.id, Subject.name
+        FROM Lesson, Subject, `Group`
+        WHERE Subject.id = Lesson.subjectId
+        """
+    )
     fun getAll(): Flow<List<LessonEntity>>
 
     @Upsert

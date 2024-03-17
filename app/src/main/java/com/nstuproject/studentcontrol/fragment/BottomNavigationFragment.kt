@@ -50,6 +50,10 @@ class BottomNavigationFragment : Fragment() {
             requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
         binding.bottomNavigation.setupWithNavController(navController)
 
+        val newLessonListener = View.OnClickListener {
+            navController.navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment)
+        }
+
         val newSubjectListener = View.OnClickListener {
             val dialogBinding = DialogEditLineBinding.inflate(inflater)
             AlertDialog.Builder(context)
@@ -97,7 +101,7 @@ class BottomNavigationFragment : Fragment() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.lessonsFragment -> {
-
+                    binding.add.setOnClickListener(newLessonListener)
                 }
 
                 R.id.subjectsFragment -> {

@@ -43,4 +43,6 @@
     <string name="blank_content">Содержимое не должно быть пустым!</string>
     <string name="blank_name">Имя и фамилия не должны быть пустыми!</string>
     <string name="delete">Удалить</string>
+    <string name="lesson">Занятие</string>
+    <string name="add_lesson">Добавить занятие</string>
 </resources>
