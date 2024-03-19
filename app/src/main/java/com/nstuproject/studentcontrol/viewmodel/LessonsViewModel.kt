@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +22,9 @@ class LessonsViewModel @Inject constructor(
 
     init {
         lessonRepository.getAll().onEach { list ->
-
+            _state.update {
+                list
+            }
         }
             .launchIn(viewModelScope)
     }

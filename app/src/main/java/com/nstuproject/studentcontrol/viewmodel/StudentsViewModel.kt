@@ -10,6 +10,7 @@ import com.nstuproject.studentcontrol.viewmodel.di.StudentsViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -38,7 +39,7 @@ class StudentsViewModel @AssistedInject constructor(
     }
 
     fun save(student: Student) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 studentRepository.save(StudentEntity.toEntity(student))
             } catch (e: Exception) {
@@ -48,7 +49,7 @@ class StudentsViewModel @AssistedInject constructor(
     }
 
     fun deleteById(id: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 studentRepository.deleteById(id)
             } catch (e: Exception) {

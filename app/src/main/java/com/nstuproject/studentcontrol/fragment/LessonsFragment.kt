@@ -34,7 +34,8 @@ class LessonsFragment : Fragment() {
             object : LessonAdapter.LessonsListener {
                 override fun onClickListener(lesson: Lesson) {
                     // send lesson
-                    findNavController().navigate(R.id.action_bottomNavigationFragment_to_lessonDetailsFragment)
+                    requireParentFragment().requireParentFragment().findNavController()
+                        .navigate(R.id.action_bottomNavigationFragment_to_lessonDetailsFragment)
                 }
             }
         )

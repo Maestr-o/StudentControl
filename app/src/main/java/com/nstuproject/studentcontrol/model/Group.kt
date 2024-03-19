@@ -9,4 +9,6 @@ data class Group(
     val id: Long = 0L,
     @SerialName("name")
     val name: String = "",
-)
+) {
+    override fun toString(): String = name
+}

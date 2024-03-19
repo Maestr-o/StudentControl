@@ -15,7 +15,7 @@
     <string name="auditory_hint">Аудитория</string>
     <string name="description_hint">Описание</string>
     <string name="lecture">Лекция</string>
-    <string name="laboratory_work">Лабораторная работа</string>
+    <string name="laboratory_work">Лабораторная</string>
     <string name="practice">Практика</string>
     <string name="type_hit">Тип:</string>
     <string name="subject_hint">Предмет:</string>

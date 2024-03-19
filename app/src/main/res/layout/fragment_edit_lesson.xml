@@ -18,11 +18,11 @@
             android:text="@string/title" />
 
         <EditText
-            android:id="@+id/crime_title"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="Crime"
             android:layout_marginBottom="@dimen/tiny_spacing"
+            android:autofillHints="Crime"
             android:hint="@string/title_hint"
             android:inputType="text" />
 
@@ -46,6 +46,7 @@
                 android:layout_height="wrap_content">
 
                 <Spinner
+                    android:id="@+id/subjects"
                     style="@style/Widget.AppCompat.Spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -63,7 +64,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/crime_date"
+                android:id="@+id/date"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -71,7 +72,7 @@
                 tools:text="пятница, 12 янв, 2024" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/crime_time"
+                android:id="@+id/time"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,11 +97,13 @@
             android:textSize="18sp" />
 
         <RadioGroup
+            android:id="@+id/typeGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <RadioButton
+                android:id="@+id/typeLecture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -108,12 +111,14 @@
                 android:text="@string/lecture" />
 
             <RadioButton
+                android:id="@+id/typeLab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/laboratory_work" />
 
             <RadioButton
+                android:id="@+id/typePractice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -149,7 +154,7 @@
             android:inputType="text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/auditoryText"
+                android:id="@+id/auditory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="7-301" />
@@ -167,7 +172,7 @@
             android:inputType="textMultiLine">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/descriptionText"
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="@tools:sample/lorem[30]" />

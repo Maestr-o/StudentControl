@@ -21,4 +21,14 @@ data class LessonResponse(
     val description: String? = null,
     @SerialName("type")
     val type: LessonType = LessonType.LECTURE,
-)
+) {
+    fun toData(): Lesson = Lesson(
+        id = id,
+        title = title,
+        time = time,
+        subject = Subject(subjectId, subjectName),
+        auditory = auditory,
+        description = description,
+        type = type,
+    )
+}

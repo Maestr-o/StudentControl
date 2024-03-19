@@ -9,8 +9,14 @@ class ToolbarViewModel : ViewModel() {
     private val _showSettings = MutableStateFlow(false)
     val showSettings = _showSettings.asStateFlow()
 
+    private val _showSave = MutableStateFlow(false)
+    val showSave = _showSave.asStateFlow()
+
     private val _settingsClicked = MutableStateFlow(false)
     val settingsClicked = _settingsClicked.asStateFlow()
+
+    private val _saveClicked = MutableStateFlow(false)
+    val saveClicked = _saveClicked.asStateFlow()
 
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()
@@ -19,8 +25,16 @@ class ToolbarViewModel : ViewModel() {
         _showSettings.value = show
     }
 
+    fun showSave(show: Boolean) {
+        _showSave.value = show
+    }
+
     fun settingsClicked(pending: Boolean) {
         _settingsClicked.value = pending
+    }
+
+    fun saveClicked(pending: Boolean) {
+        _saveClicked.value = pending
     }
 
     fun setTitle(title: String) {

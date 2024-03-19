@@ -51,7 +51,7 @@ class BottomNavigationFragment : Fragment() {
         binding.bottomNavigation.setupWithNavController(navController)
 
         val newLessonListener = View.OnClickListener {
-            navController.navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment)
+            findNavController().navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment)
         }
 
         val newSubjectListener = View.OnClickListener {

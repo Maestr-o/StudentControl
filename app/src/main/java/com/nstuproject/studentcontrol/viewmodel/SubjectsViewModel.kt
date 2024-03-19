@@ -7,6 +7,7 @@ import com.nstuproject.studentcontrol.db.entity.SubjectEntity
 import com.nstuproject.studentcontrol.model.Subject
 import com.nstuproject.studentcontrol.repository.subject.SubjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -35,7 +36,7 @@ class SubjectsViewModel @Inject constructor(
     }
 
     fun save(subject: Subject) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 subjectRepository.save(SubjectEntity.toEntity(subject))
             } catch (e: Exception) {
@@ -45,7 +46,7 @@ class SubjectsViewModel @Inject constructor(
     }
 
     fun deleteById(id: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 subjectRepository.deleteById(id)
             } catch (e: Exception) {

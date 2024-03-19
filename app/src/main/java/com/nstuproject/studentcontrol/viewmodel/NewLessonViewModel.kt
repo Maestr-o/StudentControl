@@ -1,14 +1,16 @@
 package com.nstuproject.studentcontrol.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nstuproject.studentcontrol.db.entity.LessonEntity
+import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
+import com.nstuproject.studentcontrol.model.Subject
 import com.nstuproject.studentcontrol.repository.group.GroupRepository
 import com.nstuproject.studentcontrol.repository.lesson.LessonRepository
 import com.nstuproject.studentcontrol.repository.subject.SubjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -24,40 +26,43 @@ class NewLessonViewModel @Inject constructor(
     private val subjectRepository: SubjectRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(NewLessonUiState())
-    val state = _state.asStateFlow()
+    private val _lessonState = MutableStateFlow(Lesson())
+    val lessonState = _lessonState.asStateFlow()
+
+    private val _subjectsState = MutableStateFlow<List<Subject>>(emptyList())
+    val subjectsState = _subjectsState.asStateFlow()
+
+    private val _groupsState = MutableStateFlow<List<Group>>(emptyList())
+    val groupsState = _groupsState.asStateFlow()
 
     init {
         subjectRepository.getAll().onEach { list ->
-            _state.update { state ->
-                state.copy(
-                    subjects = list.map {
-                        it.toData()
-                    }
-                )
+            _subjectsState.update { _ ->
+                list.map {
+                    it.toData()
+                }
             }
         }
             .launchIn(viewModelScope)
 
         groupRepository.getAll().onEach { list ->
-            _state.update { state ->
-                state.copy(
-                    groups = list.map {
-                        it.toData()
-                    }
-                )
+            _groupsState.update { _ ->
+                list.map {
+                    it.toData()
+                }
             }
         }
             .launchIn(viewModelScope)
     }
 
-    fun save(lesson: Lesson) {
-        viewModelScope.launch {
-            try {
-                lessonRepository.save(LessonEntity.toEntity(lesson))
-            } catch (e: Exception) {
-                Log.e("TEST", e.toString())
-            }
+    fun save() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val en = LessonEntity.toEntity(lessonState.value)
+            lessonRepository.save(en)
         }
+    }
+
+    fun updateLessonState(lesson: Lesson) {
+        _lessonState.update { lesson }
     }
 }

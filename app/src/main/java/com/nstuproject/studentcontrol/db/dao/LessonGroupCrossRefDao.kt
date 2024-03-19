@@ -3,14 +3,21 @@ package com.nstuproject.studentcontrol.db.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.nstuproject.studentcontrol.db.entity.GroupEntity
 import com.nstuproject.studentcontrol.db.entity.LessonGroupCrossRefEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LessonGroupCrossRefDao {
 
-    @Query("SELECT * FROM LessonGroupCrossRef")
-    fun getAll(): Flow<List<LessonGroupCrossRefEntity>>
+    @Query(
+        """
+        SELECT `Group`.id, `Group`.name
+        FROM LessonGroupCrossRef, Lesson, `Group`
+        WHERE Lesson.id == :lessonId AND LessonGroupCrossRef.lessonId == :lessonId
+        """
+    )
+    fun getGroupsByLesson(lessonId: Long): Flow<List<GroupEntity>>
 
     @Upsert
     suspend fun save(data: LessonGroupCrossRefEntity)

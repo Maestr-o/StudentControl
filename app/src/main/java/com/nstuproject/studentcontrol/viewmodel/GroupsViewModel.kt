@@ -7,6 +7,7 @@ import com.nstuproject.studentcontrol.db.entity.GroupEntity
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.repository.group.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -35,7 +36,7 @@ class GroupsViewModel @Inject constructor(
     }
 
     fun save(group: Group) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 groupRepository.save(GroupEntity.toEntity(group))
             } catch (e: Exception) {
@@ -45,7 +46,7 @@ class GroupsViewModel @Inject constructor(
     }
 
     fun deleteById(id: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 groupRepository.deleteById(id)
             } catch (e: Exception) {
