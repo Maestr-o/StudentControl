@@ -47,10 +47,12 @@
     <string name="add_lesson">Добавить занятие</string>
     <string name="enter_auditory">Пожалуйста, введите аудиторию</string>
     <string name="enter_group">Пожалуйста, выберите хотя бы одну группу</string>
-    <string name="date_hint">Выберите дату</string>
-    <string name="time_hint">Выберите время</string>
-    <string name="default_time">12:00</string>
+    <string name="date_hint">Дата</string>
+    <string name="time_start_hint">Начало</string>
+    <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Добавьте хотя бы одну группу!</string>
     <string name="zero_subjects_error">Добавьте хотя бы один предмет!</string>
     <string name="enter_title">Пожалуйста, введите заголовок</string>
+    <string name="time_end_hint">Конец</string>
+    <string name="default_end_time">13:30</string>
 </resources>

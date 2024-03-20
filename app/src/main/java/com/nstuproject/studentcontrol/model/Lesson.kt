@@ -13,8 +13,10 @@ data class Lesson(
     val title: String = "",
     @SerialName("date")
     val date: String = "",
-    @SerialName("time")
-    val time: String = "",
+    @SerialName("timeStart")
+    val timeStart: String = "",
+    @SerialName("timeEnd")
+    val timeEnd: String = "",
     @SerialName("subject")
     val subject: Subject = Subject(),
     @SerialName("auditory")
@@ -31,8 +33,9 @@ data class Lesson(
             Lesson(
                 id = id,
                 title = title,
-                date = TimeFormatter.unixTimeToDateString(response.datetime),
-                time = TimeFormatter.unixTimeToTimeString(response.datetime),
+                date = TimeFormatter.unixTimeToDateString(response.timeStart),
+                timeStart = TimeFormatter.unixTimeToTimeString(response.timeStart),
+                timeEnd = TimeFormatter.unixTimeToTimeString(response.timeEnd),
                 subject = Subject(subjectId, subjectName),
                 auditory = auditory,
                 description = description,
@@ -44,7 +47,8 @@ data class Lesson(
     fun toEntity() = LessonEntity(
         id = id,
         title = title,
-        time = TimeFormatter.stringToUnixTime(date, time),
+        timeStart = TimeFormatter.stringToUnixTime(date, timeStart),
+        timeEnd = TimeFormatter.stringToUnixTime(date, timeEnd),
         subjectId = subject.id,
         auditory = auditory,
         description = description,

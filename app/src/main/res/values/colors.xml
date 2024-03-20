@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="BW">#1D1B20</color>
-    <color name="registered">#00FF00</color>
+    <color name="registered">#00BB00</color>
     <color name="unregistered">#666666</color>
+    <color name="lesson_type">#1CAC78</color>
 </resources>

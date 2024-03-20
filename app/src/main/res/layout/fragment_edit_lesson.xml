@@ -69,7 +69,7 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/small_spacing"
+                android:layout_marginEnd="@dimen/tiny_spacing"
                 android:layout_marginBottom="@dimen/small_spacing"
                 android:layout_weight="1"
                 android:backgroundTint="@color/BW"
@@ -87,23 +87,45 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/timeLayout"
+                android:id="@+id/timeStartLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/small_spacing"
-                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/tiny_spacing"
+                android:layout_weight="0.6"
                 android:backgroundTint="@color/BW"
-                android:hint="@string/time_hint"
+                android:hint="@string/time_start_hint"
                 android:inputType="text">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/time"
+                    android:id="@+id/timeStart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:editable="false"
                     android:inputType="none"
-                    android:text="@string/default_time" />
+                    android:text="@string/default_start_time" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/timeEndLayout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/small_spacing"
+                android:layout_weight="0.6"
+                android:backgroundTint="@color/BW"
+                android:hint="@string/time_end_hint"
+                android:inputType="text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/timeEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:inputType="none"
+                    android:text="@string/default_end_time" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

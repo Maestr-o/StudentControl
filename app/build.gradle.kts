@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    val navigationVersion = "2.7.6"
+    val navigationVersion = "2.7.7"
     val daggerVersion = "2.50"
     val roomVersion = "2.6.1"
     implementation("androidx.core:core-ktx:1.12.0")

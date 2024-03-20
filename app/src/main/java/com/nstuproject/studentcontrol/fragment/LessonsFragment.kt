@@ -1,5 +1,7 @@
 package com.nstuproject.studentcontrol.fragment
 
+import android.app.DatePickerDialog
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,8 @@ import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentLessonsBinding
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.recyclerview.lessons.LessonAdapter
+import com.nstuproject.studentcontrol.utils.Constants
+import com.nstuproject.studentcontrol.utils.TimeFormatter
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.LessonsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,10 +46,37 @@ class LessonsFragment : Fragment() {
         )
         binding.lessons.adapter = adapter
 
-        viewModel.state.onEach { state ->
-            adapter.submitList(state)
+        binding.datePrev.setOnClickListener {
+            viewModel.decDate()
         }
+
+        binding.dateNext.setOnClickListener {
+            viewModel.incDate()
+        }
+
+        binding.dateSelect.setOnClickListener {
+            showDatePicker()
+        }
+
+        viewModel.date
+            .onEach { date ->
+                binding.dateSelect.text = TimeFormatter.unixTimeToDateStringWithDayOfWeek(date)
+            }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.state
+            .onEach { state ->
+                adapter.submitList(state)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            Constants.LESSON_UPDATED,
+            viewLifecycleOwner
+        ) { _, _ ->
+            val startTime = viewModel.date.value
+            viewModel.updateLessonsForPeriod(startTime, TimeFormatter.getEndTime(startTime))
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -64,8 +95,28 @@ class LessonsFragment : Fragment() {
         } else if (viewModel.subjectsCount.value == 0L) {
             toast(R.string.zero_subjects_error)
         } else {
+
             requireParentFragment().requireParentFragment().findNavController()
                 .navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment)
         }
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), { _, y, m, dOfM ->
+            val selectedCalendar = Calendar.getInstance().apply {
+                set(Calendar.YEAR, y)
+                set(Calendar.MONTH, m)
+                set(Calendar.DAY_OF_MONTH, dOfM)
+            }
+            val selectedDateInMillis = selectedCalendar.timeInMillis
+            viewModel.setDate(selectedDateInMillis)
+        }, year, month, dayOfMonth)
+
+        datePickerDialog.show()
     }
 }

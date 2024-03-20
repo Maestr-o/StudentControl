@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="BW">#E6E0E9</color>
-    <color name="registered">#00FF00</color>
-    <color name="unregistered">#666666</color>
 </resources>

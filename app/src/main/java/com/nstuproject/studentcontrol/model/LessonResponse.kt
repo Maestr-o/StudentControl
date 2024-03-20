@@ -9,8 +9,10 @@ data class LessonResponse(
     val id: Long = 0L,
     @SerialName("title")
     val title: String = "",
-    @SerialName("datetime")
-    val datetime: Long = 0L,
+    @SerialName("timeStart")
+    val timeStart: Long = 0L,
+    @SerialName("timeEnd")
+    val timeEnd: Long = 0L,
     @SerialName("subjectId")
     val subjectId: Long = 0L,
     @SerialName("subjectName")

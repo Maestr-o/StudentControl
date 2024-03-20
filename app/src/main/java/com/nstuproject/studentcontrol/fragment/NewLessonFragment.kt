@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.model.Subject
 import com.nstuproject.studentcontrol.spinner.subjects.SubjectsSpinnerAdapter
+import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.NewLessonViewModel
@@ -52,12 +54,25 @@ class NewLessonFragment : Fragment() {
     ): View {
         _binding = FragmentEditLessonBinding.inflate(inflater, container, false)
 
-        binding.date.setOnClickListener {
-            showDatePicker()
+        binding.date.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                showDatePicker()
+                v.clearFocus()
+            }
         }
 
-        binding.time.setOnClickListener {
-            showTimePicker()
+        binding.timeStart.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                showTimeStartPicker()
+                v.clearFocus()
+            }
+        }
+
+        binding.timeEnd.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                showTimeEndPicker()
+                v.clearFocus()
+            }
         }
 
         viewModel.subjectsState
@@ -74,7 +89,8 @@ class NewLessonFragment : Fragment() {
                 date.setText(TimeFormatter.unixTimeToDateString(System.currentTimeMillis()))
             } else {
                 date.setText(lessonState.date)
-                time.setText(lessonState.time)
+                timeStart.setText(lessonState.timeStart)
+                timeEnd.setText(lessonState.timeEnd)
             }
             date.setText(TimeFormatter.unixTimeToDateString(System.currentTimeMillis()))
             title.setText(lessonState.title)
@@ -108,6 +124,10 @@ class NewLessonFragment : Fragment() {
                 } else {
                     viewModel.updateLessonState(lesson)
                     viewModel.save()
+                    requireActivity().supportFragmentManager.setFragmentResult(
+                        Constants.LESSON_UPDATED,
+                        bundleOf()
+                    )
                     findNavController().navigateUp()
                 }
             }
@@ -129,7 +149,8 @@ class NewLessonFragment : Fragment() {
         return Lesson(
             title = binding.title.text.toString().trim(),
             date = binding.date.text.toString(),
-            time = binding.time.text.toString(),
+            timeStart = binding.timeStart.text.toString(),
+            timeEnd = binding.timeEnd.text.toString(),
             subject = subject,
             type = if (binding.typeLab.isChecked) {
                 LessonType.LAB
@@ -163,7 +184,7 @@ class NewLessonFragment : Fragment() {
         datePickerDialog.show()
     }
 
-    private fun showTimePicker() {
+    private fun showTimeStartPicker() {
         val calendar = Calendar.getInstance()
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
@@ -172,7 +193,35 @@ class NewLessonFragment : Fragment() {
             requireContext(),
             { _, h, m ->
                 val selectedTime = "$h:$m"
-                binding.time.setText(selectedTime)
+                calendar.apply {
+                    set(Calendar.HOUR_OF_DAY, h)
+                    set(Calendar.MINUTE, m)
+                }
+                binding.timeStart.setText(selectedTime)
+                binding.timeEnd.setText(
+                    TimeFormatter.unixTimeToTimeString(
+                        TimeFormatter.addDefaultLessonDuration(calendar.timeInMillis)
+                    )
+                )
+            },
+            hourOfDay,
+            minute,
+            true
+        )
+
+        timePickerDialog.show()
+    }
+
+    private fun showTimeEndPicker() {
+        val calendar = Calendar.getInstance()
+        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
+            { _, h, m ->
+                val selectedTime = "$h:$m"
+                binding.timeEnd.setText(selectedTime)
             },
             hourOfDay,
             minute,

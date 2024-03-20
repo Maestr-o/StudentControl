@@ -46,10 +46,12 @@
     <string name="add_lesson">Add lesson</string>
     <string name="enter_auditory">Please enter auditory</string>
     <string name="enter_group">Please select at least one group</string>
-    <string name="date_hint">Select date</string>
-    <string name="time_hint">Select time</string>
-    <string name="default_time">12:00</string>
+    <string name="date_hint">Date</string>
+    <string name="time_start_hint">Start time</string>
+    <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Add at least one group!</string>
     <string name="zero_subjects_error">Add at least one subject!</string>
     <string name="enter_title">Please enter a title</string>
+    <string name="time_end_hint">End time</string>
+    <string name="default_end_time">13:30</string>
 </resources>

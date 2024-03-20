@@ -23,8 +23,10 @@ data class LessonEntity(
     val id: Long = 0L,
     @ColumnInfo(name = "title")
     val title: String = "",
-    @ColumnInfo(name = "datetime")
-    val time: Long = 0L,
+    @ColumnInfo(name = "timeStart")
+    val timeStart: Long = 0L,
+    @ColumnInfo(name = "timeEnd")
+    val timeEnd: Long = 0L,
     @ColumnInfo(name = "subjectId")
     val subjectId: Long = 0L,
     @ColumnInfo(name = "auditory")
