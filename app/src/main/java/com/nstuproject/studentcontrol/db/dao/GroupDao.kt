@@ -17,4 +17,7 @@ interface GroupDao {
 
     @Query("DELETE FROM `Group` WHERE id=:id")
     suspend fun deleteById(id: Long)
+
+    @Query("SELECT COUNT(*) FROM `Group`")
+    fun getCount(): Flow<Long>
 }

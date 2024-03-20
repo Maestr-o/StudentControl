@@ -22,4 +22,7 @@ class LocalGroupRepository @Inject constructor(
 
     override suspend fun deleteById(id: Long) =
         db.groupDao.deleteById(id)
+
+    override fun getCount(): Flow<Long> =
+        db.groupDao.getCount()
 }

@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.nstuproject.studentcontrol.model.Attendance
 
 @Entity(
     tableName = "Attendance",
@@ -33,14 +32,4 @@ data class AttendanceEntity(
     val studentId: Long = 0L,
     @ColumnInfo(name = "attended")
     val attended: Boolean = false,
-) {
-
-    companion object {
-        fun toEntity(data: Attendance) =
-            with(data) {
-                AttendanceEntity(id, lessonId, studentId, attended)
-            }
-    }
-
-    fun toData(): Attendance = Attendance(id, lessonId, studentId, attended)
-}
+)

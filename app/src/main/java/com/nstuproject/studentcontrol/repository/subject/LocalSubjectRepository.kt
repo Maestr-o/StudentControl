@@ -22,4 +22,7 @@ class LocalSubjectRepository @Inject constructor(
 
     override suspend fun deleteById(id: Long) =
         db.subjectDao.deleteById(id)
+
+    override fun getCount(): Flow<Long> =
+        db.subjectDao.getCount()
 }

@@ -8,27 +8,17 @@ data class LessonResponse(
     @SerialName("id")
     val id: Long = 0L,
     @SerialName("title")
-    val title: String? = null,
-    @SerialName("time")
-    val time: String = "",
+    val title: String = "",
+    @SerialName("datetime")
+    val datetime: Long = 0L,
     @SerialName("subjectId")
     val subjectId: Long = 0L,
     @SerialName("subjectName")
     val subjectName: String = "",
     @SerialName("auditory")
-    val auditory: String? = null,
+    val auditory: String = "",
     @SerialName("description")
-    val description: String? = null,
+    val description: String = "",
     @SerialName("type")
     val type: LessonType = LessonType.LECTURE,
-) {
-    fun toData(): Lesson = Lesson(
-        id = id,
-        title = title,
-        time = time,
-        subject = Subject(subjectId, subjectName),
-        auditory = auditory,
-        description = description,
-        type = type,
-    )
-}
+)

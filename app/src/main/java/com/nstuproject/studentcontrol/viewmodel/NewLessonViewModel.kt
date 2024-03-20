@@ -2,7 +2,6 @@ package com.nstuproject.studentcontrol.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nstuproject.studentcontrol.db.entity.LessonEntity
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.Subject
@@ -39,7 +38,7 @@ class NewLessonViewModel @Inject constructor(
         subjectRepository.getAll().onEach { list ->
             _subjectsState.update { _ ->
                 list.map {
-                    it.toData()
+                    Subject.toData(it)
                 }
             }
         }
@@ -48,7 +47,7 @@ class NewLessonViewModel @Inject constructor(
         groupRepository.getAll().onEach { list ->
             _groupsState.update { _ ->
                 list.map {
-                    it.toData()
+                    Group.toData(it)
                 }
             }
         }
@@ -57,8 +56,7 @@ class NewLessonViewModel @Inject constructor(
 
     fun save() {
         viewModelScope.launch(Dispatchers.IO) {
-            val en = LessonEntity.toEntity(lessonState.value)
-            lessonRepository.save(en)
+            lessonRepository.save(lessonState.value.toEntity())
         }
     }
 

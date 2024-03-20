@@ -3,7 +3,6 @@ package com.nstuproject.studentcontrol.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nstuproject.studentcontrol.db.entity.GroupEntity
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.repository.group.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +27,7 @@ class GroupsViewModel @Inject constructor(
         groupRepository.getAll().onEach { list ->
             _state.update {
                 list.map {
-                    it.toData()
+                    Group.toData(it)
                 }
             }
         }
@@ -38,7 +37,7 @@ class GroupsViewModel @Inject constructor(
     fun save(group: Group) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                groupRepository.save(GroupEntity.toEntity(group))
+                groupRepository.save(group.toEntity())
             } catch (e: Exception) {
                 Log.e("TEST", e.toString())
             }

@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.nstuproject.studentcontrol.model.LessonGroupCrossRef
 
 @Entity(
     tableName = "LessonGroupCrossRef",
@@ -31,14 +30,4 @@ data class LessonGroupCrossRefEntity(
     val lessonId: Long = 0L,
     @ColumnInfo(name = "groupId")
     val groupId: Long = 0L,
-) {
-
-    companion object {
-        fun toEntity(data: LessonGroupCrossRef) =
-            with(data) {
-                LessonGroupCrossRefEntity(id, lessonId, groupId)
-            }
-    }
-
-    fun toData(): LessonGroupCrossRef = LessonGroupCrossRef(id, lessonId, groupId)
-}
+)

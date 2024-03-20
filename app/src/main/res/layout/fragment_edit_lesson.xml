@@ -30,7 +30,7 @@
             android:id="@+id/subjectContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/tiny_spacing"
+            android:layout_marginBottom="@dimen/small_spacing"
             android:orientation="horizontal">
 
             <TextView
@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    tools:listitem="@layout/spinner_item" />
+                    tools:listitem="@layout/spinner_subject" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -61,22 +61,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/date"
-                style="@style/Widget.AppCompat.Button"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dateLayout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_spacing"
+                android:layout_marginBottom="@dimen/small_spacing"
                 android:layout_weight="1"
-                tools:text="пятница, 12 янв, 2024" />
+                android:backgroundTint="@color/BW"
+                android:hint="@string/date_hint"
+                android:inputType="text">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/time"
-                style="@style/Widget.AppCompat.Button"
-                android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:inputType="none"
+                    tools:text="19.03.2024" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/timeLayout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                tools:text="12:00" />
+                android:layout_marginBottom="@dimen/small_spacing"
+                android:layout_weight="1"
+                android:backgroundTint="@color/BW"
+                android:hint="@string/time_hint"
+                android:inputType="text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:inputType="none"
+                    android:text="@string/default_time" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
@@ -145,7 +174,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/auditoryLayout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_spacing"
@@ -163,7 +192,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionLayout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/common_spacing"

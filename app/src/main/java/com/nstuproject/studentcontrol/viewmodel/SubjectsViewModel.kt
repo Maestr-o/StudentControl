@@ -3,7 +3,6 @@ package com.nstuproject.studentcontrol.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nstuproject.studentcontrol.db.entity.SubjectEntity
 import com.nstuproject.studentcontrol.model.Subject
 import com.nstuproject.studentcontrol.repository.subject.SubjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +27,7 @@ class SubjectsViewModel @Inject constructor(
         subjectRepository.getAll().onEach { list ->
             _state.update {
                 list.map {
-                    it.toData()
+                    Subject.toData(it)
                 }
             }
         }
@@ -38,7 +37,7 @@ class SubjectsViewModel @Inject constructor(
     fun save(subject: Subject) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                subjectRepository.save(SubjectEntity.toEntity(subject))
+                subjectRepository.save(subject.toEntity())
             } catch (e: Exception) {
                 Log.e("TEST", e.toString())
             }

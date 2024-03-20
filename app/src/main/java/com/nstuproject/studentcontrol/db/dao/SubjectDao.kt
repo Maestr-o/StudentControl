@@ -17,4 +17,7 @@ interface SubjectDao {
 
     @Query("DELETE FROM Subject WHERE id=:id")
     suspend fun deleteById(id: Long)
+
+    @Query("SELECT COUNT(*) FROM Subject")
+    fun getCount(): Flow<Long>
 }

@@ -12,7 +12,7 @@ interface LessonDao {
 
     @Query(
         """
-        SELECT Lesson.id, Lesson.auditory, Lesson.description, Lesson.time, Lesson.title, Lesson.type,
+        SELECT Lesson.id, Lesson.auditory, Lesson.description, Lesson.datetime, Lesson.title, Lesson.type,
             Subject.id as subjectId, Subject.name as subjectName
         FROM Lesson, Subject
         WHERE Subject.id = Lesson.subjectId

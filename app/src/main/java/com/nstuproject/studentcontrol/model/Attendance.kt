@@ -1,5 +1,6 @@
 package com.nstuproject.studentcontrol.model
 
+import com.nstuproject.studentcontrol.db.entity.AttendanceEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,12 @@ data class Attendance(
     val studentId: Long = 0L,
     @SerialName("attended")
     val attended: Boolean = false,
-)
+) {
+    companion object {
+        fun toData(entity: AttendanceEntity) = with(entity) {
+            Attendance(id, lessonId, studentId, attended)
+        }
+    }
+
+    fun toEntity() = AttendanceEntity(id, lessonId, studentId, attended)
+}

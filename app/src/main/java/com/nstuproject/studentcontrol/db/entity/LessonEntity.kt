@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
 
 @Entity(
@@ -23,23 +22,15 @@ data class LessonEntity(
     @ColumnInfo(name = "id")
     val id: Long = 0L,
     @ColumnInfo(name = "title")
-    val title: String? = null,
-    @ColumnInfo(name = "time")
-    val time: String = "",
+    val title: String = "",
+    @ColumnInfo(name = "datetime")
+    val time: Long = 0L,
     @ColumnInfo(name = "subjectId")
     val subjectId: Long = 0L,
     @ColumnInfo(name = "auditory")
-    val auditory: String? = null,
+    val auditory: String = "",
     @ColumnInfo(name = "description")
-    val description: String? = null,
+    val description: String = "",
     @ColumnInfo(name = "type")
     val type: LessonType = LessonType.LECTURE,
-) {
-
-    companion object {
-        fun toEntity(data: Lesson): LessonEntity =
-            with(data) {
-                LessonEntity(id, title, time, subject.id, auditory, description, type)
-            }
-    }
-}
+)

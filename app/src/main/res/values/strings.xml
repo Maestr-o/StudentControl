@@ -44,4 +44,12 @@
     <string name="delete">Delete</string>
     <string name="lesson">Lesson</string>
     <string name="add_lesson">Add lesson</string>
+    <string name="enter_auditory">Please enter auditory</string>
+    <string name="enter_group">Please select at least one group</string>
+    <string name="date_hint">Select date</string>
+    <string name="time_hint">Select time</string>
+    <string name="default_time">12:00</string>
+    <string name="zero_groups_error">Add at least one group!</string>
+    <string name="zero_subjects_error">Add at least one subject!</string>
+    <string name="enter_title">Please enter a title</string>
 </resources>

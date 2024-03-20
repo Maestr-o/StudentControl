@@ -3,7 +3,6 @@ package com.nstuproject.studentcontrol.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nstuproject.studentcontrol.db.entity.StudentEntity
 import com.nstuproject.studentcontrol.model.Student
 import com.nstuproject.studentcontrol.repository.student.StudentRepository
 import com.nstuproject.studentcontrol.viewmodel.di.StudentsViewModelFactory
@@ -31,7 +30,7 @@ class StudentsViewModel @AssistedInject constructor(
         studentRepository.getStudentsByGroup(groupId).onEach { list ->
             _state.update {
                 list.map {
-                    it.toData()
+                    Student.toData(it)
                 }
             }
         }
@@ -41,7 +40,7 @@ class StudentsViewModel @AssistedInject constructor(
     fun save(student: Student) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                studentRepository.save(StudentEntity.toEntity(student))
+                studentRepository.save(student.toEntity())
             } catch (e: Exception) {
                 Log.e("TEST", e.toString())
             }
