@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Среда, 20.03.2024" />
+            tools:text="среда, 20.03.2024" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dateNext"

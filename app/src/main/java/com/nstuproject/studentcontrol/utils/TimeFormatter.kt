@@ -16,11 +16,18 @@ object TimeFormatter {
         return formatter.format(date)
     }
 
-    fun unixTimeToDateString(milliseconds: Long): String {
+    fun unixTimeToDateString(milliseconds: Long?): String {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        val date =
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault())
-        return formatter.format(date)
+        return if (milliseconds != null) {
+            val date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault())
+            formatter.format(date)
+        } else {
+            val time = System.currentTimeMillis()
+            val date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
+            formatter.format(date)
+        }
     }
 
     fun unixTimeToTimeString(milliseconds: Long): String {
@@ -80,6 +87,16 @@ object TimeFormatter {
             timeInMillis = time
             add(Calendar.HOUR_OF_DAY, 1)
             add(Calendar.MINUTE, 30)
+        }
+            .timeInMillis
+
+    fun getDateZeroTime(time: Long): Long =
+        Calendar.getInstance().apply {
+            timeInMillis = time
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
             .timeInMillis
 }

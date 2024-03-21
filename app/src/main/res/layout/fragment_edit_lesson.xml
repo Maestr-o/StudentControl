@@ -131,6 +131,39 @@
 
         </LinearLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/auditoryLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_spacing"
+            android:backgroundTint="@color/BW"
+            android:hint="@string/auditory_hint"
+            android:inputType="text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/auditory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="7-301" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="6dp"
+            android:text="@string/groups_hint"
+            android:textSize="18sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/card_group_choose" />
+
         <TextView
             style="?android:listSeparatorTextViewStyle"
             android:layout_width="match_parent"
@@ -177,53 +210,18 @@
 
         </RadioGroup>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="6dp"
-            android:text="@string/groups_hint"
-            android:textSize="18sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/groups"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_spacing"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            tools:listitem="@layout/card_group_list_item" />
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/auditoryLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_spacing"
-            android:backgroundTint="@color/BW"
-            android:hint="@string/auditory_hint"
-            android:inputType="text">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/auditory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="7-301" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/descriptionLayout"
+            android:id="@+id/notesLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/common_spacing"
             android:backgroundTint="@color/BW"
-            android:hint="@string/description_hint"
+            android:hint="@string/notes_hint"
             android:inputType="textMultiLine">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
+                android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="@tools:sample/lorem[30]" />

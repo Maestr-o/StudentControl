@@ -34,6 +34,9 @@ class NewLessonViewModel @Inject constructor(
     private val _groupsState = MutableStateFlow<List<Group>>(emptyList())
     val groupsState = _groupsState.asStateFlow()
 
+    private val _selectedGroupsState = MutableStateFlow(GroupsChooseUiState())
+    val selectedGroupsState = _selectedGroupsState.asStateFlow()
+
     init {
         subjectRepository.getAll().onEach { list ->
             _subjectsState.update { _ ->
@@ -62,5 +65,21 @@ class NewLessonViewModel @Inject constructor(
 
     fun updateLessonState(lesson: Lesson) {
         _lessonState.update { lesson }
+    }
+
+    fun removeGroup(item: Group, id: Int) {
+        _selectedGroupsState.update { state ->
+            val selGroups = state.selectedGroups - item
+            val selPos = state.selectedPositions - id
+            GroupsChooseUiState(selPos, selGroups)
+        }
+    }
+
+    fun addGroup(item: Group, id: Int) {
+        _selectedGroupsState.update { state ->
+            val selGroups = state.selectedGroups + item
+            val selPos = state.selectedPositions + id
+            GroupsChooseUiState(selPos, selGroups)
+        }
     }
 }

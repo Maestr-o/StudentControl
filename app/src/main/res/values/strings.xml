@@ -7,7 +7,6 @@
     <string name="add">Add</string>
     <string name="title">Title</string>
     <string name="auditory">Auditory</string>
-    <string name="description">Description</string>
     <string name="save">Save</string>
     <string name="title_hint">Enter the topic of the lesson</string>
     <string name="details">Details</string>
@@ -54,4 +53,5 @@
     <string name="enter_title">Please enter a title</string>
     <string name="time_end_hint">End time</string>
     <string name="default_end_time">13:30</string>
+    <string name="notes_hint">Notes</string>
 </resources>

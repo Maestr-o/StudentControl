@@ -15,9 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentEditLessonBinding
+import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.model.Subject
+import com.nstuproject.studentcontrol.recyclerview.grooupsChoose.GroupChooseAdapter
 import com.nstuproject.studentcontrol.spinner.subjects.SubjectsSpinnerAdapter
 import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
@@ -37,6 +39,8 @@ class NewLessonFragment : Fragment() {
     private val viewModel by viewModels<NewLessonViewModel>()
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
+    private lateinit var groupsAdapter: GroupChooseAdapter
+
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showSave(true)
@@ -53,6 +57,22 @@ class NewLessonFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditLessonBinding.inflate(inflater, container, false)
+
+        groupsAdapter = GroupChooseAdapter(
+            object : GroupChooseAdapter.GroupChooseListener {
+                override fun groupChooseClick(item: Group, position: Int) {
+                    val positions = viewModel.selectedGroupsState.value.selectedPositions
+                    if (positions.contains(position)) {
+                        groupsAdapter.removeItem(position)
+                        viewModel.removeGroup(item, position)
+                    } else {
+                        groupsAdapter.addItem(position)
+                        viewModel.addGroup(item, position)
+                    }
+                }
+            }
+        )
+        binding.groups.adapter = groupsAdapter
 
         binding.date.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -75,6 +95,18 @@ class NewLessonFragment : Fragment() {
             }
         }
 
+        viewModel.groupsState
+            .onEach { state ->
+                groupsAdapter.submitList(state)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.selectedGroupsState
+            .onEach { state ->
+                groupsAdapter.setItems(state.selectedPositions)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.subjectsState
             .onEach { subjects ->
                 SubjectsSpinnerAdapter(requireContext(), subjects).apply {
@@ -86,13 +118,16 @@ class NewLessonFragment : Fragment() {
         val lessonState = viewModel.lessonState.value
         binding.apply {
             if (lessonState.date.isBlank()) {
-                date.setText(TimeFormatter.unixTimeToDateString(System.currentTimeMillis()))
+                date.setText(
+                    TimeFormatter.unixTimeToDateString(
+                        arguments?.getLong(Constants.NEW_LESSON_DATE)
+                    )
+                )
             } else {
                 date.setText(lessonState.date)
                 timeStart.setText(lessonState.timeStart)
                 timeEnd.setText(lessonState.timeEnd)
             }
-            date.setText(TimeFormatter.unixTimeToDateString(System.currentTimeMillis()))
             title.setText(lessonState.title)
             when (lessonState.type) {
                 LessonType.LECTURE -> {
@@ -107,9 +142,8 @@ class NewLessonFragment : Fragment() {
                     typePractice.isChecked = true
                 }
             }
-            // groups
             auditory.setText(lessonState.auditory)
-            description.setText(lessonState.description)
+            notes.setText(lessonState.description)
         }
 
         toolbarViewModel.saveClicked.onEach { state ->
@@ -119,8 +153,8 @@ class NewLessonFragment : Fragment() {
                     toast(R.string.enter_title)
                 } else if (lesson.auditory.isBlank()) {
                     toast(R.string.enter_auditory)
-//                } else if (lesson.groups.isEmpty()) {
-//                    toast(R.string.enter_group)
+                } else if (lesson.groups.isEmpty()) {
+                    toast(R.string.enter_group)
                 } else {
                     viewModel.updateLessonState(lesson)
                     viewModel.save()
@@ -160,8 +194,8 @@ class NewLessonFragment : Fragment() {
                 LessonType.LECTURE
             },
             auditory = binding.auditory.text.toString().trim(),
-            description = binding.description.text.toString().trim(),
-            // groups = выбранные элементы в RCView
+            description = binding.notes.text.toString().trim(),
+            groups = viewModel.selectedGroupsState.value.selectedGroups
         )
     }
 

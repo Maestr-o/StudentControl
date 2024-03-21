@@ -4,4 +4,5 @@
     <color name="registered">#00BB00</color>
     <color name="unregistered">#666666</color>
     <color name="lesson_type">#1CAC78</color>
+    <color name="group_choose">#A780A4</color>
 </resources>

@@ -8,7 +8,6 @@
     <string name="add">Добавить</string>
     <string name="title">Главное</string>
     <string name="auditory">Аудитория</string>
-    <string name="description">Описание</string>
     <string name="save">Сохранить</string>
     <string name="title_hint">Введите тему занятия</string>
     <string name="details">Дополнительно</string>
@@ -55,4 +54,5 @@
     <string name="enter_title">Пожалуйста, введите заголовок</string>
     <string name="time_end_hint">Конец</string>
     <string name="default_end_time">13:30</string>
+    <string name="notes_hint">Заметки</string>
 </resources>

@@ -95,9 +95,11 @@ class LessonsFragment : Fragment() {
         } else if (viewModel.subjectsCount.value == 0L) {
             toast(R.string.zero_subjects_error)
         } else {
-
+            val bundle = Bundle().apply {
+                putLong(Constants.NEW_LESSON_DATE, viewModel.date.value)
+            }
             requireParentFragment().requireParentFragment().findNavController()
-                .navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment)
+                .navigate(R.id.action_bottomNavigationFragment_to_newLessonFragment, bundle)
         }
     }
 
@@ -113,7 +115,7 @@ class LessonsFragment : Fragment() {
                 set(Calendar.MONTH, m)
                 set(Calendar.DAY_OF_MONTH, dOfM)
             }
-            val selectedDateInMillis = selectedCalendar.timeInMillis
+            val selectedDateInMillis = TimeFormatter.getDateZeroTime(selectedCalendar.timeInMillis)
             viewModel.setDate(selectedDateInMillis)
         }, year, month, dayOfMonth)
 
