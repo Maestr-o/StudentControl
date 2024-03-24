@@ -15,6 +15,7 @@ interface LessonGroupCrossRefDao {
         SELECT `Group`.id, `Group`.name
         FROM LessonGroupCrossRef, Lesson, `Group`
         WHERE Lesson.id == :lessonId AND LessonGroupCrossRef.lessonId == :lessonId
+            AND LessonGroupCrossRef.groupId == `Group`.id
         """
     )
     fun getGroupsByLesson(lessonId: Long): Flow<List<GroupEntity>>

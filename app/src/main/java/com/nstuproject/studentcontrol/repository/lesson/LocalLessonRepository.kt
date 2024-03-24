@@ -13,7 +13,7 @@ class LocalLessonRepository @Inject constructor(
         db.lessonDao.getLessonsForPeriod(startTime, endTime)
             .sortedBy { it.timeStart }
 
-    override suspend fun save(data: LessonEntity) =
+    override suspend fun save(data: LessonEntity): Long =
         db.lessonDao.save(data)
 
     override suspend fun deleteById(id: Long) =

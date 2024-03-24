@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
+import com.nstuproject.studentcontrol.model.LessonGroupCrossRef
 import com.nstuproject.studentcontrol.model.Subject
 import com.nstuproject.studentcontrol.repository.group.GroupRepository
 import com.nstuproject.studentcontrol.repository.lesson.LessonRepository
+import com.nstuproject.studentcontrol.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
 import com.nstuproject.studentcontrol.repository.subject.SubjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +25,7 @@ class NewLessonViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
     private val groupRepository: GroupRepository,
     private val subjectRepository: SubjectRepository,
+    private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
 ) : ViewModel() {
 
     private val _lessonState = MutableStateFlow(Lesson())
@@ -59,7 +62,15 @@ class NewLessonViewModel @Inject constructor(
 
     fun save() {
         viewModelScope.launch(Dispatchers.IO) {
-            lessonRepository.save(lessonState.value.toEntity())
+            val lessonId = lessonRepository.save(lessonState.value.toEntity())
+            val lessonGroupCrossRefs: MutableList<LessonGroupCrossRef> = mutableListOf()
+            lessonGroupCrossRefs += selectedGroupsState.value.selectedGroups.map {
+                LessonGroupCrossRef(
+                    lessonId = lessonId,
+                    groupId = it.id,
+                )
+            }
+            lessonGroupCrossRefRepository.save(lessonGroupCrossRefs)
         }
     }
 

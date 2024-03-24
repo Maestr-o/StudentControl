@@ -162,7 +162,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/card_group_choose" />
+            tools:listitem="@layout/card_group_select" />
 
         <TextView
             style="?android:listSeparatorTextViewStyle"

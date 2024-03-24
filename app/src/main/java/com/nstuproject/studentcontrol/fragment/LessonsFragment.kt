@@ -22,6 +22,8 @@ import com.nstuproject.studentcontrol.viewmodel.LessonsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class LessonsFragment : Fragment() {
@@ -38,9 +40,15 @@ class LessonsFragment : Fragment() {
         val adapter = LessonAdapter(
             object : LessonAdapter.LessonsListener {
                 override fun onClickListener(lesson: Lesson) {
-                    // send lesson
+                    val data = Json.encodeToString(lesson)
+                    val bundle = Bundle().apply {
+                        putString(Constants.LESSON_DATA, data)
+                    }
                     requireParentFragment().requireParentFragment().findNavController()
-                        .navigate(R.id.action_bottomNavigationFragment_to_lessonDetailsFragment)
+                        .navigate(
+                            R.id.action_bottomNavigationFragment_to_lessonDetailsFragment,
+                            bundle
+                        )
                 }
             }
         )

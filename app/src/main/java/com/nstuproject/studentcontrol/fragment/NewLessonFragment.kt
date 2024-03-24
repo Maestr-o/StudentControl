@@ -19,7 +19,7 @@ import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.model.Subject
-import com.nstuproject.studentcontrol.recyclerview.grooupsChoose.GroupChooseAdapter
+import com.nstuproject.studentcontrol.recyclerview.groupsSelect.GroupSelectAdapter
 import com.nstuproject.studentcontrol.spinner.subjects.SubjectsSpinnerAdapter
 import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
@@ -39,7 +39,7 @@ class NewLessonFragment : Fragment() {
     private val viewModel by viewModels<NewLessonViewModel>()
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
-    private lateinit var groupsAdapter: GroupChooseAdapter
+    private lateinit var groupsAdapter: GroupSelectAdapter
 
     override fun onStart() {
         super.onStart()
@@ -58,8 +58,8 @@ class NewLessonFragment : Fragment() {
     ): View {
         _binding = FragmentEditLessonBinding.inflate(inflater, container, false)
 
-        groupsAdapter = GroupChooseAdapter(
-            object : GroupChooseAdapter.GroupChooseListener {
+        groupsAdapter = GroupSelectAdapter(
+            object : GroupSelectAdapter.GroupChooseListener {
                 override fun groupChooseClick(item: Group, position: Int) {
                     val positions = viewModel.selectedGroupsState.value.selectedPositions
                     if (positions.contains(position)) {

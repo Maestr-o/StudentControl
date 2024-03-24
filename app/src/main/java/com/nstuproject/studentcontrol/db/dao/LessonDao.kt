@@ -20,7 +20,7 @@ interface LessonDao {
     suspend fun getLessonsForPeriod(startTime: Long, endTime: Long): List<LessonResponse>
 
     @Upsert
-    suspend fun save(data: LessonEntity)
+    suspend fun save(data: LessonEntity): Long
 
     @Query("DELETE FROM Lesson WHERE id=:id")
     suspend fun deleteById(id: Long)

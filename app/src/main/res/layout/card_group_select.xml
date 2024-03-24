@@ -8,7 +8,7 @@
     android:layout_marginTop="@dimen/tiny_spacing">
 
     <TextView
-        android:id="@+id/category"
+        android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/small_spacing"

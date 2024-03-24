@@ -1,5 +1,6 @@
 package com.nstuproject.studentcontrol.model
 
+import com.nstuproject.studentcontrol.db.entity.LessonGroupCrossRefEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,4 +12,6 @@ data class LessonGroupCrossRef(
     val lessonId: Long = 0L,
     @SerialName("groupId")
     val groupId: Long = 0L,
-)
+) {
+    fun toEntity() = LessonGroupCrossRefEntity(id, lessonId, groupId)
+}
