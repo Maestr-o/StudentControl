@@ -1,8 +1,5 @@
 package com.nstuproject.studentcontrol.fragment
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +20,9 @@ import com.nstuproject.studentcontrol.recyclerview.groupsSelect.GroupSelectAdapt
 import com.nstuproject.studentcontrol.spinner.subjects.SubjectsSpinnerAdapter
 import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
+import com.nstuproject.studentcontrol.utils.showDatePicker
+import com.nstuproject.studentcontrol.utils.showTimeEndPicker
+import com.nstuproject.studentcontrol.utils.showTimeStartPicker
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.NewLessonViewModel
 import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
@@ -76,21 +76,21 @@ class NewLessonFragment : Fragment() {
 
         binding.date.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                showDatePicker()
+                showDatePicker(binding.date)
                 v.clearFocus()
             }
         }
 
         binding.timeStart.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                showTimeStartPicker()
+                showTimeStartPicker(binding.timeStart, binding.timeEnd)
                 v.clearFocus()
             }
         }
 
         binding.timeEnd.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                showTimeEndPicker()
+                showTimeEndPicker(binding.timeEnd, binding.timeStart.text.toString())
                 v.clearFocus()
             }
         }
@@ -197,71 +197,5 @@ class NewLessonFragment : Fragment() {
             description = binding.notes.text.toString().trim(),
             groups = viewModel.selectedGroupsState.value.selectedGroups
         )
-    }
-
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, y, m, dOfM ->
-            val selectedCalendar = Calendar.getInstance().apply {
-                set(Calendar.YEAR, y)
-                set(Calendar.MONTH, m)
-                set(Calendar.DAY_OF_MONTH, dOfM)
-            }
-            val selectedDateInMillis = selectedCalendar.timeInMillis
-            binding.date.setText(TimeFormatter.unixTimeToDateString(selectedDateInMillis))
-        }, year, month, dayOfMonth)
-
-        datePickerDialog.show()
-    }
-
-    private fun showTimeStartPicker() {
-        val calendar = Calendar.getInstance()
-        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-
-        val timePickerDialog = TimePickerDialog(
-            requireContext(),
-            { _, h, m ->
-                val selectedTime = "$h:$m"
-                calendar.apply {
-                    set(Calendar.HOUR_OF_DAY, h)
-                    set(Calendar.MINUTE, m)
-                }
-                binding.timeStart.setText(selectedTime)
-                binding.timeEnd.setText(
-                    TimeFormatter.unixTimeToTimeString(
-                        TimeFormatter.addDefaultLessonDuration(calendar.timeInMillis)
-                    )
-                )
-            },
-            hourOfDay,
-            minute,
-            true
-        )
-
-        timePickerDialog.show()
-    }
-
-    private fun showTimeEndPicker() {
-        val calendar = Calendar.getInstance()
-        val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
-
-        val timePickerDialog = TimePickerDialog(
-            requireContext(),
-            { _, h, m ->
-                val selectedTime = "$h:$m"
-                binding.timeEnd.setText(selectedTime)
-            },
-            hourOfDay,
-            minute,
-            true
-        )
-
-        timePickerDialog.show()
     }
 }

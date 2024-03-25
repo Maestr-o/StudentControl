@@ -32,20 +32,13 @@
         android:label="@string/edit"
         tools:layout="@layout/fragment_edit_lesson">
         <action
-            android:id="@+id/action_editLessonFragment_to_datePickerFragment"
-            app:destination="@id/datePickerFragment" />
+            android:id="@+id/action_editLessonFragment_to_bottomNavigationFragment"
+            app:destination="@id/bottomNavigationFragment" />
         <action
-            android:id="@+id/action_editLessonFragment_to_timePickerFragment"
-            app:destination="@id/timePickerFragment" />
+            android:id="@+id/action_editLessonFragment_to_lessonDetailsFragment"
+            app:destination="@id/lessonDetailsFragment"
+            app:popUpTo="@id/bottomNavigationFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/datePickerFragment"
-        android:name="com.nstuproject.studentcontrol.fragment.DatePickerFragment"
-        android:label="@string/choose_date" />
-    <dialog
-        android:id="@+id/timePickerFragment"
-        android:name="com.nstuproject.studentcontrol.fragment.TimePickerFragment"
-        android:label="@string/choose_time" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.nstuproject.studentcontrol.fragment.SettingsFragment"

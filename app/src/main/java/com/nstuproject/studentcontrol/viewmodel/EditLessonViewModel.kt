@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NewLessonViewModel @Inject constructor(
+class EditLessonViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
@@ -62,7 +62,7 @@ class NewLessonViewModel @Inject constructor(
 
     fun save() {
         viewModelScope.launch(Dispatchers.IO) {
-            val lessonId = lessonRepository.save(lessonState.value.toEntity())
+            val lessonId = lessonState.value.id
             val lessonGroupCrossRefs: MutableList<LessonGroupCrossRef> = mutableListOf()
             lessonGroupCrossRefs += selectedGroupsState.value.selectedGroups.map {
                 LessonGroupCrossRef(
@@ -70,6 +70,8 @@ class NewLessonViewModel @Inject constructor(
                     groupId = it.id,
                 )
             }
+            lessonRepository.save(lessonState.value.toEntity())
+            lessonGroupCrossRefRepository.clear(lessonId)
             lessonGroupCrossRefRepository.save(lessonGroupCrossRefs)
         }
     }
@@ -91,6 +93,27 @@ class NewLessonViewModel @Inject constructor(
             val selGroups = state.selectedGroups + item
             val selPos = state.selectedPositions + id
             GroupsChooseUiState(selPos, selGroups)
+        }
+    }
+
+    fun updateGroups(selGroups: List<Group>) {
+        val groups = groupsState.value.sortedBy { it.name }
+
+        val positions = mutableListOf<Int>()
+        groups.forEachIndexed { index, group ->
+            if (selGroups.contains(group)) {
+                positions += index
+            }
+        }
+
+        _selectedGroupsState.update { _ ->
+            GroupsChooseUiState(positions, selGroups)
+        }
+    }
+
+    fun deleteLesson() {
+        viewModelScope.launch {
+            lessonRepository.deleteById(lessonState.value.id)
         }
     }
 }

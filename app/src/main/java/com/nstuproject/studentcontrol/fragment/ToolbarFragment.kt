@@ -43,6 +43,7 @@ class ToolbarFragment : Fragment() {
         val settings = binding.toolbar.menu.findItem(R.id.settings)
         val delete = binding.toolbar.menu.findItem(R.id.delete)
         val save = binding.toolbar.menu.findItem(R.id.save)
+        val edit = binding.toolbar.menu.findItem(R.id.edit)
 
         settings.setOnMenuItemClickListener {
             viewModel.settingsClicked(true)
@@ -51,6 +52,16 @@ class ToolbarFragment : Fragment() {
 
         save.setOnMenuItemClickListener {
             viewModel.saveClicked(true)
+            true
+        }
+
+        delete.setOnMenuItemClickListener {
+            viewModel.deleteClicked(true)
+            true
+        }
+
+        edit.setOnMenuItemClickListener {
+            viewModel.editClicked(true)
             true
         }
 
@@ -63,6 +74,18 @@ class ToolbarFragment : Fragment() {
         viewModel.showSave
             .onEach {
                 save.isVisible = it
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showDelete
+            .onEach {
+                delete.isVisible = it
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showEdit
+            .onEach {
+                edit.isVisible = it
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

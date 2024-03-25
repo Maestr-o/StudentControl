@@ -18,4 +18,6 @@ class LocalLessonGroupCrossRefRepository @Inject constructor(
             db.lessonGroupCrossRefDao.save(it.toEntity())
         }
     }
+
+    override suspend fun clear(lessonId: Long) = db.lessonGroupCrossRefDao.clear(lessonId)
 }

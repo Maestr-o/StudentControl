@@ -23,6 +23,6 @@ interface LessonGroupCrossRefDao {
     @Upsert
     suspend fun save(data: LessonGroupCrossRefEntity)
 
-    @Query("DELETE FROM LessonGroupCrossRef WHERE id=:id")
-    suspend fun deleteById(id: Long)
+    @Query("DELETE FROM LessonGroupCrossRef WHERE lessonId=:lessonId")
+    suspend fun clear(lessonId: Long)
 }

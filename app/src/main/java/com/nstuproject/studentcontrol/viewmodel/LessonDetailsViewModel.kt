@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
+import com.nstuproject.studentcontrol.repository.lesson.LessonRepository
 import com.nstuproject.studentcontrol.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,10 +12,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LessonDetailsViewModel @Inject constructor(
+    private val lessonRepository: LessonRepository,
     private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
 ) : ViewModel() {
 
@@ -29,9 +32,18 @@ class LessonDetailsViewModel @Inject constructor(
                         groups = groups.map {
                             Group.toData(it)
                         }
+                            .sortedBy {
+                                it.name
+                            }
                     )
                 _lessonState.update { lessonWithGroups }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun deleteLesson() {
+        viewModelScope.launch {
+            lessonRepository.deleteById(lessonState.value.id)
+        }
     }
 }

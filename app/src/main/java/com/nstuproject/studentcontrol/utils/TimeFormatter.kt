@@ -9,6 +9,18 @@ import java.util.Calendar
 import java.util.Locale
 
 object TimeFormatter {
+
+    fun compareTimes(time1: String, time2: String): Int {
+        val (hours1, minutes1) = time1.split(":").map { it.toInt() }
+        val (hours2, minutes2) = time2.split(":").map { it.toInt() }
+
+        if (hours1 == hours2) {
+            return minutes1.compareTo(minutes2)
+        }
+
+        return hours1.compareTo(hours2)
+    }
+
     fun unixTimeToDateStringWithDayOfWeek(milliseconds: Long): String {
         val formatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy")
         val date =
