@@ -6,6 +6,7 @@ import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.CardLessonBinding
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
+import com.nstuproject.studentcontrol.utils.TimeFormatter
 
 class LessonsViewHolder(
     private val binding: CardLessonBinding
@@ -32,7 +33,9 @@ class LessonsViewHolder(
             }
         }
         title.text = item.title
-        time.text = "${item.timeStart} - ${item.timeEnd}"
+        time.text = "${TimeFormatter.unixTimeToTimeString(item.timeStart)} - ${
+            TimeFormatter.unixTimeToTimeString(item.timeEnd)
+        }"
         auditory.text = item.auditory
     }
 }

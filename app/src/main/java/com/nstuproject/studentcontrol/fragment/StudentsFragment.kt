@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.DialogEditStudentBinding
 import com.nstuproject.studentcontrol.databinding.FragmentStudentsBinding
+import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Student
 import com.nstuproject.studentcontrol.recyclerview.students.StudentsAdapter
 import com.nstuproject.studentcontrol.utils.Constants
@@ -108,7 +109,7 @@ class StudentsFragment : Fragment() {
                                 firstName = newFirstName,
                                 midName = newMidName,
                                 lastName = newLastName,
-                                groupId = groupId,
+                                group = Group(groupId),
                             )
                         )
                     } else {

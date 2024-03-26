@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 data class Student(
     @SerialName("id")
     val id: Long = 0L,
-    @SerialName("groupId")
-    val groupId: Long = 0L,
+    @SerialName("group")
+    val group: Group = Group(),
     @SerialName("firstName")
     val firstName: String = "",
     @SerialName("midName")
@@ -20,13 +20,13 @@ data class Student(
     val deviceId: String = "",
 ) {
     companion object {
-        fun toData(entity: StudentEntity) = with(entity) {
-            Student(id, groupId, firstName, midName, lastName, deviceId)
+        fun fromResponseToData(entity: StudentResponse) = with(entity) {
+            Student(id, Group(groupId, groupName), firstName, midName, lastName, deviceId)
         }
     }
 
     val fullName
         get() = "$lastName $firstName $midName"
 
-    fun toEntity() = StudentEntity(id, groupId, firstName, midName, lastName, deviceId)
+    fun toEntity() = StudentEntity(id, group.id, firstName, midName, lastName, deviceId)
 }

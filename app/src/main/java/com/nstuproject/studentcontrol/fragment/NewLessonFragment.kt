@@ -41,6 +41,9 @@ class NewLessonFragment : Fragment() {
 
     private lateinit var groupsAdapter: GroupSelectAdapter
 
+    private val selDate =
+        arguments?.getLong(Constants.NEW_LESSON_DATE) ?: TimeFormatter.getCurrentDateZeroTime()
+
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showSave(true)
@@ -117,16 +120,14 @@ class NewLessonFragment : Fragment() {
 
         val lessonState = viewModel.lessonState.value
         binding.apply {
-            if (lessonState.date.isBlank()) {
+            if (lessonState.timeStart == 0L) {
                 date.setText(
-                    TimeFormatter.unixTimeToDateString(
-                        arguments?.getLong(Constants.NEW_LESSON_DATE)
-                    )
+                    TimeFormatter.unixTimeToDateString(selDate)
                 )
             } else {
-                date.setText(lessonState.date)
-                timeStart.setText(lessonState.timeStart)
-                timeEnd.setText(lessonState.timeEnd)
+                date.setText(TimeFormatter.unixTimeToDateString(lessonState.timeStart))
+                timeStart.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeStart))
+                timeEnd.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeEnd))
             }
             title.setText(lessonState.title)
             when (lessonState.type) {
@@ -182,9 +183,14 @@ class NewLessonFragment : Fragment() {
         val subject = (binding.subjects.selectedItem as Subject)
         return Lesson(
             title = binding.title.text.toString().trim(),
-            date = binding.date.text.toString(),
-            timeStart = binding.timeStart.text.toString(),
-            timeEnd = binding.timeEnd.text.toString(),
+            timeStart = TimeFormatter.stringToUnixTime(
+                binding.date.text.toString(),
+                binding.timeStart.text.toString()
+            ),
+            timeEnd = TimeFormatter.stringToUnixTime(
+                binding.date.text.toString(),
+                binding.timeEnd.text.toString()
+            ),
             subject = subject,
             type = if (binding.typeLab.isChecked) {
                 LessonType.LAB

@@ -30,7 +30,7 @@ class StudentsViewModel @AssistedInject constructor(
         studentRepository.getStudentsByGroup(groupId).onEach { list ->
             _state.update {
                 list.map {
-                    Student.toData(it)
+                    Student.fromResponseToData(it)
                 }
             }
         }

@@ -15,15 +15,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentLessonDetailsBinding
+import com.nstuproject.studentcontrol.model.ControlStatus
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.recyclerview.groupsSelected.GroupSelectedAdapter
 import com.nstuproject.studentcontrol.utils.Constants
+import com.nstuproject.studentcontrol.utils.TimeFormatter
 import com.nstuproject.studentcontrol.viewmodel.LessonDetailsViewModel
 import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
+import com.nstuproject.studentcontrol.viewmodel.di.LessonDetailsViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -51,14 +57,19 @@ class LessonDetailsFragment : Fragment() {
     ): View {
         val binding = FragmentLessonDetailsBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<LessonDetailsViewModel>()
-
-        arguments?.let {
-            val lesson = Json.decodeFromString<Lesson>(
+        val lessonArg = arguments?.let {
+            Json.decodeFromString<Lesson>(
                 it.getString(Constants.LESSON_DATA) ?: Lesson().toString()
             )
-            viewModel.setLesson(lesson)
-        }
+        } ?: Lesson()
+
+        val viewModel by viewModels<LessonDetailsViewModel>(
+            extrasProducer = {
+                defaultViewModelCreationExtras.withCreationCallback<LessonDetailsViewModelFactory> { factory ->
+                    factory.create(lessonArg)
+                }
+            }
+        )
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
@@ -111,9 +122,9 @@ class LessonDetailsFragment : Fragment() {
                     subject.text = state.subject.name
                     datetime.text = getString(
                         R.string.lesson_details_datetime,
-                        state.date,
-                        state.timeStart,
-                        state.timeEnd
+                        TimeFormatter.unixTimeToDateString(state.timeStart),
+                        TimeFormatter.unixTimeToTimeString(state.timeStart),
+                        TimeFormatter.unixTimeToTimeString(state.timeEnd)
                     )
                     auditory.text = state.auditory
                     type.text = when (state.type.name) {
@@ -143,6 +154,88 @@ class LessonDetailsFragment : Fragment() {
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        lifecycleScope.launch {
+            repeat(Int.MAX_VALUE) {
+                val lessonVM = viewModel.lessonState.value
+                val lesson = if (lessonVM.timeStart == 0L) {
+                    lessonArg
+                } else {
+                    lessonVM
+                }
+                val startTime = TimeFormatter.decRecess(lesson.timeStart)
+                val endTime = lesson.timeEnd
+                val time = System.currentTimeMillis()
+
+                if (viewModel.controlStatus.value is ControlStatus.Running) {
+                    viewModel.setControlStatus(ControlStatus.Running)
+                } else if (time in startTime..endTime) {
+                    viewModel.setControlStatus(ControlStatus.ReadyToStart)
+                } else if (time < startTime) {
+                    viewModel.setControlStatus(ControlStatus.NotReadyToStart)
+                } else if (time > endTime) {
+                    viewModel.setControlStatus(ControlStatus.Finished)
+                }
+
+                delay(Constants.TIME_CHECK_DELAY)
+            }
+        }
+
+        viewModel.controlStatus
+            .onEach { state ->
+                when (state) {
+                    is ControlStatus.NotReadyToStart -> {
+                        binding.apply {
+                            startControl.isEnabled = false
+                            startControl.text = getString(R.string.early_control)
+                            registeredCount.isGone = true
+                            students.isGone = true
+                        }
+                    }
+
+                    ControlStatus.ReadyToStart -> {
+                        binding.apply {
+                            startControl.isEnabled = true
+                            startControl.text = getString(R.string.start_control)
+                            registeredCount.isGone = true
+                            students.isGone = true
+                        }
+                    }
+
+                    ControlStatus.Running -> {
+                        binding.apply {
+                            startControl.isEnabled = true
+                            startControl.text = getString(R.string.stop_control)
+                            registeredCount.isVisible = true
+                            students.isVisible = true
+                        }
+                    }
+
+                    ControlStatus.Finished -> {
+                        binding.apply {
+                            startControl.isEnabled = false
+                            startControl.text = getString(R.string.end_control)
+                            registeredCount.isVisible = true
+                            students.isVisible = true
+                        }
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        binding.startControl.setOnClickListener {
+            when (viewModel.controlStatus.value) {
+                is ControlStatus.ReadyToStart -> {
+                    viewModel.setControlStatus(ControlStatus.Running)
+                }
+
+                ControlStatus.Running -> {
+                    viewModel.setControlStatus(ControlStatus.ReadyToStart)
+                }
+
+                else -> {}
+            }
+        }
 
         return binding.root
     }

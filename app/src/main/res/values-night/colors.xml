@@ -2,4 +2,5 @@
 <resources>
     <color name="BW">#E6E0E9</color>
     <color name="group_choose">#6750A4</color>
+    <color name="warning">#FF0000</color>
 </resources>

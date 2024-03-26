@@ -56,12 +56,6 @@ object TimeFormatter {
         return dateTime?.time ?: 0L
     }
 
-    fun stringToUnixTime(timeString: String): Long {
-        val dateTimeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val dateTime = dateTimeFormat.parse(timeString)
-        return dateTime?.time ?: 0L
-    }
-
     fun getCurrentDateZeroTime(): Long =
         Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -99,6 +93,13 @@ object TimeFormatter {
             timeInMillis = time
             add(Calendar.HOUR_OF_DAY, 1)
             add(Calendar.MINUTE, 30)
+        }
+            .timeInMillis
+
+    fun decRecess(time: Long): Long =
+        Calendar.getInstance().apply {
+            timeInMillis = time
+            add(Calendar.MINUTE, Constants.TIME_RECESS * -1)
         }
             .timeInMillis
 

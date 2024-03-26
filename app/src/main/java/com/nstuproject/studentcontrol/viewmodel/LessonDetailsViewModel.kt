@@ -2,10 +2,14 @@ package com.nstuproject.studentcontrol.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nstuproject.studentcontrol.model.ControlStatus
 import com.nstuproject.studentcontrol.model.Group
 import com.nstuproject.studentcontrol.model.Lesson
 import com.nstuproject.studentcontrol.repository.lesson.LessonRepository
 import com.nstuproject.studentcontrol.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
+import com.nstuproject.studentcontrol.viewmodel.di.LessonDetailsViewModelFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,16 +17,23 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LessonDetailsViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = LessonDetailsViewModelFactory::class)
+class LessonDetailsViewModel @AssistedInject constructor(
     private val lessonRepository: LessonRepository,
     private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
+    @Assisted lesson: Lesson,
 ) : ViewModel() {
 
     private val _lessonState = MutableStateFlow(Lesson())
     val lessonState = _lessonState.asStateFlow()
+
+    private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
+    val controlStatus = _controlStatus.asStateFlow()
+
+    init {
+        setLesson(lesson)
+    }
 
     fun setLesson(lesson: Lesson) {
         lessonGroupCrossRefRepository.getGroupsByLesson(lesson.id)
@@ -45,5 +56,9 @@ class LessonDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             lessonRepository.deleteById(lessonState.value.id)
         }
+    }
+
+    fun setControlStatus(status: ControlStatus) {
+        _controlStatus.update { status }
     }
 }

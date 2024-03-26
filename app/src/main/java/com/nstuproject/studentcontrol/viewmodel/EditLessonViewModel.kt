@@ -56,6 +56,7 @@ class EditLessonViewModel @Inject constructor(
                     Group.toData(it)
                 }
             }
+            updateGroups(lessonState.value.groups)
         }
             .launchIn(viewModelScope)
     }
