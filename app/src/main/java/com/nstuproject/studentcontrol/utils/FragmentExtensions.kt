@@ -2,11 +2,15 @@ package com.nstuproject.studentcontrol.utils
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.pm.PackageManager
 import android.icu.util.Calendar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.nstuproject.studentcontrol.R
+import com.nstuproject.studentcontrol.databinding.CustomToastLayoutBinding
 
 fun Fragment.toastBlankData() {
     Toast.makeText(
@@ -17,12 +21,24 @@ fun Fragment.toastBlankData() {
 }
 
 fun Fragment.toast(resId: Int) {
-    Toast.makeText(
-        requireContext(),
-        getString(resId),
-        Toast.LENGTH_SHORT
-    ).show()
+    val binding = CustomToastLayoutBinding.inflate(layoutInflater)
+
+    binding.toastText.text = getString(resId)
+
+    with(Toast(requireContext())) {
+        duration = Toast.LENGTH_LONG
+        view = binding.root
+        show()
+    }
 }
+
+//fun Fragment.toast(resId: Int) {
+//    Toast.makeText(
+//        requireContext(),
+//        getString(resId),
+//        Toast.LENGTH_LONG
+//    ).show()
+//}
 
 fun Fragment.showDatePicker(view: TextInputEditText) {
     val calendar = Calendar.getInstance()
@@ -93,3 +109,9 @@ fun Fragment.showTimeEndPicker(view: TextInputEditText, startTime: String) {
 
     timePickerDialog.show()
 }
+
+fun Fragment.isPermissionGranted(p: String): Boolean =
+    ContextCompat.checkSelfPermission(
+        activity as AppCompatActivity,
+        p
+    ) == PackageManager.PERMISSION_GRANTED

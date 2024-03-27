@@ -20,8 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
-    private val groupRepository: GroupRepository,
-    private val subjectRepository: SubjectRepository,
+    groupRepository: GroupRepository,
+    subjectRepository: SubjectRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(emptyList<Lesson>())
@@ -72,13 +72,13 @@ class LessonsViewModel @Inject constructor(
 
     fun incDate() {
         _date.update {
-            TimeFormatter.incDate(it)
+            TimeFormatter.incDay(it)
         }
     }
 
     fun decDate() {
         _date.update {
-            TimeFormatter.decDate(it)
+            TimeFormatter.decDay(it)
         }
     }
 }

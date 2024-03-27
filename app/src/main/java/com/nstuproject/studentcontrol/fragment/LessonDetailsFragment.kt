@@ -1,10 +1,22 @@
 package com.nstuproject.studentcontrol.fragment
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
+import android.net.wifi.WifiManager
+import android.net.wifi.WifiManager.LocalOnlyHotspotCallback
+import android.net.wifi.WifiManager.LocalOnlyHotspotReservation
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -13,6 +25,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentLessonDetailsBinding
 import com.nstuproject.studentcontrol.model.ControlStatus
@@ -21,6 +35,8 @@ import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.recyclerview.groupsSelected.GroupSelectedAdapter
 import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
+import com.nstuproject.studentcontrol.utils.isPermissionGranted
+import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.LessonDetailsViewModel
 import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
 import com.nstuproject.studentcontrol.viewmodel.di.LessonDetailsViewModelFactory
@@ -33,10 +49,17 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+
 @AndroidEntryPoint
 class LessonDetailsFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+    private lateinit var _viewModel: Lazy<LessonDetailsViewModel>
+
+    private lateinit var lessonArg: Lesson
+
+    private lateinit var pLauncher: ActivityResultLauncher<String>
+    private lateinit var fLocationClient: FusedLocationProviderClient
 
     override fun onStart() {
         super.onStart()
@@ -57,19 +80,22 @@ class LessonDetailsFragment : Fragment() {
     ): View {
         val binding = FragmentLessonDetailsBinding.inflate(inflater, container, false)
 
-        val lessonArg = arguments?.let {
+        fLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+        lessonArg = arguments?.let {
             Json.decodeFromString<Lesson>(
                 it.getString(Constants.LESSON_DATA) ?: Lesson().toString()
             )
         } ?: Lesson()
 
-        val viewModel by viewModels<LessonDetailsViewModel>(
+        _viewModel = viewModels<LessonDetailsViewModel>(
             extrasProducer = {
                 defaultViewModelCreationExtras.withCreationCallback<LessonDetailsViewModelFactory> { factory ->
                     factory.create(lessonArg)
                 }
             }
         )
+        val viewModel = _viewModel.value
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
@@ -157,26 +183,7 @@ class LessonDetailsFragment : Fragment() {
 
         lifecycleScope.launch {
             repeat(Int.MAX_VALUE) {
-                val lessonVM = viewModel.lessonState.value
-                val lesson = if (lessonVM.timeStart == 0L) {
-                    lessonArg
-                } else {
-                    lessonVM
-                }
-                val startTime = TimeFormatter.decRecess(lesson.timeStart)
-                val endTime = lesson.timeEnd
-                val time = System.currentTimeMillis()
-
-                if (viewModel.controlStatus.value is ControlStatus.Running) {
-                    viewModel.setControlStatus(ControlStatus.Running)
-                } else if (time in startTime..endTime) {
-                    viewModel.setControlStatus(ControlStatus.ReadyToStart)
-                } else if (time < startTime) {
-                    viewModel.setControlStatus(ControlStatus.NotReadyToStart)
-                } else if (time > endTime) {
-                    viewModel.setControlStatus(ControlStatus.Finished)
-                }
-
+                checkTime()
                 delay(Constants.TIME_CHECK_DELAY)
             }
         }
@@ -190,16 +197,30 @@ class LessonDetailsFragment : Fragment() {
                             startControl.text = getString(R.string.early_control)
                             registeredCount.isGone = true
                             students.isGone = true
+                            ssid.isGone = true
                         }
                     }
 
                     ControlStatus.ReadyToStart -> {
+                        checkPermission()
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.start_control)
                             registeredCount.isGone = true
                             students.isGone = true
+                            ssid.isGone = true
                         }
+                    }
+
+                    ControlStatus.Starting -> {
+                        binding.apply {
+                            startControl.isEnabled = false
+                            startControl.text = getString(R.string.starting_control)
+                            registeredCount.isGone = true
+                            students.isGone = true
+                            ssid.isGone = true
+                        }
+                        turnOnHotspot()
                     }
 
                     ControlStatus.Running -> {
@@ -208,7 +229,23 @@ class LessonDetailsFragment : Fragment() {
                             startControl.text = getString(R.string.stop_control)
                             registeredCount.isVisible = true
                             students.isVisible = true
+                            ssid.isVisible = true
+                            ssid.text = getString(
+                                R.string.ap_ssid,
+                                viewModel.wifiReservation.value?.wifiConfiguration?.SSID
+                            )
                         }
+                    }
+
+                    ControlStatus.Stopping -> {
+                        binding.apply {
+                            startControl.isEnabled = false
+                            startControl.text = getString(R.string.stopping_control)
+                            registeredCount.isVisible = true
+                            students.isVisible = true
+                            ssid.isVisible = true
+                        }
+                        turnOffHotspot()
                     }
 
                     ControlStatus.Finished -> {
@@ -217,6 +254,7 @@ class LessonDetailsFragment : Fragment() {
                             startControl.text = getString(R.string.end_control)
                             registeredCount.isVisible = true
                             students.isVisible = true
+                            ssid.isGone = true
                         }
                     }
                 }
@@ -226,11 +264,11 @@ class LessonDetailsFragment : Fragment() {
         binding.startControl.setOnClickListener {
             when (viewModel.controlStatus.value) {
                 is ControlStatus.ReadyToStart -> {
-                    viewModel.setControlStatus(ControlStatus.Running)
+                    viewModel.setControlStatus(ControlStatus.Starting)
                 }
 
                 ControlStatus.Running -> {
-                    viewModel.setControlStatus(ControlStatus.ReadyToStart)
+                    viewModel.setControlStatus(ControlStatus.Stopping)
                 }
 
                 else -> {}
@@ -238,5 +276,110 @@ class LessonDetailsFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (_viewModel.value.controlStatus.value == ControlStatus.Running) {
+            turnOffHotspot()
+        }
+    }
+
+    private fun checkTime() {
+        val viewModel = _viewModel.value
+        val status = viewModel.controlStatus.value
+        if (status is ControlStatus.ReadyToStart || status is ControlStatus.NotReadyToStart
+            || status is ControlStatus.Stopping
+        ) {
+            val lessonVM = viewModel.lessonState.value
+            val lesson = if (lessonVM.timeStart == 0L) {
+                lessonArg
+            } else {
+                lessonVM
+            }
+            val startTime = TimeFormatter.decRecess(lesson.timeStart)
+            val endTime = lesson.timeEnd
+            val time = System.currentTimeMillis()
+
+            if (time in startTime..endTime) {
+                viewModel.setControlStatus(ControlStatus.ReadyToStart)
+            } else if (time < startTime) {
+                viewModel.setControlStatus(ControlStatus.NotReadyToStart)
+            } else if (time > endTime) {
+                viewModel.setControlStatus(ControlStatus.Finished)
+            }
+        }
+    }
+
+    private fun turnOnHotspot() {
+        val viewModel = _viewModel.value
+        checkPermission()
+
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkNearbyDevicesPermission())
+            || (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && checkFineLocationPermission())
+        ) {
+            createAP()
+        } else {
+            viewModel.setControlStatus(ControlStatus.ReadyToStart)
+            toast(R.string.cant_create_ap)
+        }
+    }
+
+    private fun turnOffHotspot() {
+        _viewModel.value.wifiReservation.value?.close()
+        toast(R.string.ap_stopped)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun createAP() {
+        val viewModel = _viewModel.value
+        (requireActivity().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+            .startLocalOnlyHotspot(object : LocalOnlyHotspotCallback() {
+
+                override fun onStarted(reservation: LocalOnlyHotspotReservation) {
+                    super.onStarted(reservation)
+                    toast(R.string.ap_started)
+                    viewModel.setReservation(reservation)
+                    viewModel.setControlStatus(ControlStatus.Running)
+                }
+
+                override fun onStopped() {
+                    super.onStopped()
+                    toast(R.string.ap_stopped)
+                    checkTime()
+                }
+
+                override fun onFailed(reason: Int) {
+                    super.onFailed(reason)
+                    toast(R.string.ap_error)
+                }
+            }, Handler())
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNearbyDevicesPermission(): Boolean =
+        isPermissionGranted(Manifest.permission.NEARBY_WIFI_DEVICES)
+
+    private fun checkFineLocationPermission(): Boolean =
+        isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    private fun checkPermission() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (!checkNearbyDevicesPermission()) {
+                    pLauncher =
+                        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+                    pLauncher.launch(Manifest.permission.NEARBY_WIFI_DEVICES)
+                }
+            } else {
+                if (!checkFineLocationPermission()) {
+                    pLauncher =
+                        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+                    pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }
+        } catch (e: Exception) {
+            Log.d("TEST", e.toString())
+        }
     }
 }

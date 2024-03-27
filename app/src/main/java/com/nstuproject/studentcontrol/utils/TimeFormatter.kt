@@ -74,14 +74,14 @@ object TimeFormatter {
         }
             .timeInMillis
 
-    fun incDate(time: Long): Long =
+    fun incDay(time: Long): Long =
         Calendar.getInstance().apply {
             timeInMillis = time
             add(Calendar.DAY_OF_MONTH, 1)
         }
             .timeInMillis
 
-    fun decDate(time: Long): Long =
+    fun decDay(time: Long): Long =
         Calendar.getInstance().apply {
             timeInMillis = time
             add(Calendar.DAY_OF_MONTH, -1)

@@ -138,6 +138,19 @@
             app:layout_constraintTop_toBottomOf="@id/notesLayout" />
 
         <TextView
+            android:id="@+id/ssid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/small_spacing"
+            android:textColor="@color/registered"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/startControl"
+            tools:text="Название ТД: AndroidShare_4100" />
+
+        <TextView
             android:id="@+id/registeredCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -146,7 +159,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/startControl"
+            app:layout_constraintTop_toBottomOf="@id/ssid"
             tools:text="@string/registered_students" />
 
         <androidx.recyclerview.widget.RecyclerView

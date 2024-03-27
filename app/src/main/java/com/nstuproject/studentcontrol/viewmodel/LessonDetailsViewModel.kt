@@ -1,5 +1,6 @@
 package com.nstuproject.studentcontrol.viewmodel
 
+import android.net.wifi.WifiManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nstuproject.studentcontrol.model.ControlStatus
@@ -31,11 +32,14 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
     val controlStatus = _controlStatus.asStateFlow()
 
+    private val _wifiReservation = MutableStateFlow<WifiManager.LocalOnlyHotspotReservation?>(null)
+    val wifiReservation = _wifiReservation.asStateFlow()
+
     init {
         setLesson(lesson)
     }
 
-    fun setLesson(lesson: Lesson) {
+    private fun setLesson(lesson: Lesson) {
         lessonGroupCrossRefRepository.getGroupsByLesson(lesson.id)
             .onEach { groups ->
                 val lessonWithGroups =
@@ -60,5 +64,9 @@ class LessonDetailsViewModel @AssistedInject constructor(
 
     fun setControlStatus(status: ControlStatus) {
         _controlStatus.update { status }
+    }
+
+    fun setReservation(reservation: WifiManager.LocalOnlyHotspotReservation) {
+        _wifiReservation.update { reservation }
     }
 }

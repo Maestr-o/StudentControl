@@ -64,4 +64,12 @@
     <string name="stop_control">Stop control</string>
     <string name="end_control">Control completed</string>
     <string name="early_control">Early to start</string>
+    <string name="ap_error">Error creating access point</string>
+    <string name="ap_stopped">The access point turns off</string>
+    <string name="ap_started">The access point was turned on</string>
+    <string name="cant_create_ap">Can\'t create access point because the app doesn\'t have permissions. Go to app settings</string>
+    <string name="starting_control">Starting...</string>
+    <string name="stopping_control">Stopping...</string>
+    <string name="ask_turn_off_ap_while_running">Do you want to turn off the access point?</string>
+    <string name="ap_ssid">AP\'s name: %s</string>
 </resources>

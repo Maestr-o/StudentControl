@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     implementation("com.google.dagger:hilt-android:$daggerVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     ksp("androidx.room:room-compiler:$roomVersion")
     ksp("com.google.dagger:dagger-compiler:$daggerVersion")
     ksp("com.google.dagger:hilt-compiler:$daggerVersion")
