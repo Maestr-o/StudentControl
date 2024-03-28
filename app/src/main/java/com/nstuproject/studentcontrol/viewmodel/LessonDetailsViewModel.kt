@@ -69,4 +69,14 @@ class LessonDetailsViewModel @AssistedInject constructor(
     fun setReservation(reservation: WifiManager.LocalOnlyHotspotReservation) {
         _wifiReservation.update { reservation }
     }
+
+    fun turnOffHotspot() {
+        wifiReservation.value?.close()
+        _wifiReservation.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        turnOffHotspot()
+    }
 }

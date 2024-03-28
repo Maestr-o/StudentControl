@@ -3,6 +3,7 @@ package com.nstuproject.studentcontrol.viewmodel
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class ToolbarViewModel : ViewModel() {
 
@@ -32,6 +33,9 @@ class ToolbarViewModel : ViewModel() {
 
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()
+
+    private val _isStartedControl = MutableStateFlow(false)
+    val isStartedControl = _isStartedControl.asStateFlow()
 
     fun showSettings(show: Boolean) {
         _showSettings.value = show
@@ -67,5 +71,9 @@ class ToolbarViewModel : ViewModel() {
 
     fun setTitle(title: String) {
         _title.value = title
+    }
+
+    fun startControl(flag: Boolean) {
+        _isStartedControl.update { flag }
     }
 }

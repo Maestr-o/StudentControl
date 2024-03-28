@@ -7,25 +7,39 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/common_spacing"
-        android:paddingVertical="@dimen/tiny_spacing">
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/ssid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ssid_back"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/small_spacing"
+            android:textColor="#1D1B20"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="AndroidShare_4100" />
 
         <TextView
             android:id="@+id/subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ssid"
             tools:text="Android-разработка" />
 
         <TextView
             android:id="@+id/datetime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_spacing"
             android:layout_weight="1"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +63,7 @@
             android:id="@+id/auditory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/tiny_spacing"
+            android:layout_marginHorizontal="12dp"
             android:singleLine="true"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +74,7 @@
             android:id="@+id/type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:textColor="@color/lesson_type"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +86,7 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -81,6 +97,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:layout_marginTop="@dimen/tiny_spacing"
             android:text="@string/groups_hint"
             android:textSize="16sp"
@@ -91,6 +108,7 @@
             android:id="@+id/groups"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +120,7 @@
             android:id="@+id/notesLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:layout_marginTop="@dimen/tiny_spacing"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -138,34 +157,23 @@
             app:layout_constraintTop_toBottomOf="@id/notesLayout" />
 
         <TextView
-            android:id="@+id/ssid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/small_spacing"
-            android:textColor="@color/registered"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/startControl"
-            tools:text="Название ТД: AndroidShare_4100" />
-
-        <TextView
             android:id="@+id/registeredCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             android:layout_marginTop="@dimen/small_spacing"
             android:paddingHorizontal="@dimen/small_spacing"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ssid"
+            app:layout_constraintTop_toBottomOf="@id/startControl"
             tools:text="@string/registered_students" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/students"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registeredCount"
             tools:listitem="@layout/card_registered_group" />

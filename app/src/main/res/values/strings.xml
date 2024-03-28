@@ -68,8 +68,9 @@
     <string name="ap_stopped">The access point turns off</string>
     <string name="ap_started">The access point was turned on</string>
     <string name="cant_create_ap">Can\'t create access point because the app doesn\'t have permissions. Go to app settings</string>
-    <string name="starting_control">Starting...</string>
-    <string name="stopping_control">Stopping...</string>
+    <string name="starting_control">Starting…</string>
+    <string name="stopping_control">Stopping…</string>
     <string name="ask_turn_off_ap_while_running">Do you want to turn off the access point?</string>
-    <string name="ap_ssid">AP\'s name: %s</string>
+    <string name="ap_ssid">AP is active: %s</string>
+    <string name="back_while_control">Do you want to stop control?</string>
 </resources>

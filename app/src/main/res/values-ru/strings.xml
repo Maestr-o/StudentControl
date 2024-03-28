@@ -69,8 +69,9 @@
     <string name="ap_stopped">Точка доступа выключается</string>
     <string name="ap_started">Точка доступа была включена</string>
     <string name="cant_create_ap">Невозможно создать точку доступа, поскольку у приложения нет необходимых разрешений. Для исправления перейдите в настройки приложения</string>
-    <string name="starting_control">Запуск...</string>
-    <string name="stopping_control">Остановка...</string>
+    <string name="starting_control">Запуск…</string>
+    <string name="stopping_control">Остановка…</string>
     <string name="ask_turn_off_ap_while_running">Вы действительно хотите отключить точку доступа?</string>
-    <string name="ap_ssid">Название ТД: %s</string>
+    <string name="ap_ssid">ТД активна: %s</string>
+    <string name="back_while_control">Хотите остановить контроль и выйти?</string>
 </resources>

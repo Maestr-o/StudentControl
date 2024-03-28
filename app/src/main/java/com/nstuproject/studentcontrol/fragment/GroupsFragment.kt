@@ -73,7 +73,7 @@ class GroupsFragment : Fragment() {
                 override fun onDeleteClickListener(group: Group) {
                     AlertDialog.Builder(context)
                         .setTitle(getString(R.string.delete_group, group.name))
-                        .setPositiveButton("OK") { dialog, _ ->
+                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteById(group.id)
                             dialog.dismiss()
                         }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -94,6 +95,22 @@ class ToolbarFragment : Fragment() {
                 if (state.isNotBlank()) {
                     binding.toolbar.title = state
                     viewModel.setTitle("")
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.isStartedControl
+            .onEach { state ->
+                if (state) {
+                    edit.isEnabled = false
+                    delete.isEnabled = false
+                    edit.icon?.setTint(getColor(requireContext(), R.color.disabled_button))
+                    delete.icon?.setTint(getColor(requireContext(), R.color.disabled_button))
+                } else {
+                    edit.isEnabled = true
+                    delete.isEnabled = true
+                    edit.icon?.setTint(getColor(requireContext(), R.color.BW))
+                    delete.icon?.setTint(getColor(requireContext(), R.color.BW))
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

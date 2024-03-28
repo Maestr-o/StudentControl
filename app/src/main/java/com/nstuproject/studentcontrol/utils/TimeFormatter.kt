@@ -88,13 +88,19 @@ object TimeFormatter {
         }
             .timeInMillis
 
-    fun addDefaultLessonDuration(time: Long): Long =
-        Calendar.getInstance().apply {
+    fun addDefaultLessonDuration(time: Long): Long {
+        val newTime = Calendar.getInstance().apply {
             timeInMillis = time
             add(Calendar.HOUR_OF_DAY, 1)
             add(Calendar.MINUTE, 30)
         }
             .timeInMillis
+        return if (unixTimeToDateString(newTime) != unixTimeToDateString(time)) {
+            getEndTime(time)
+        } else {
+            newTime
+        }
+    }
 
     fun decRecess(time: Long): Long =
         Calendar.getInstance().apply {

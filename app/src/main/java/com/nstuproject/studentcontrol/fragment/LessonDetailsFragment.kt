@@ -182,7 +182,7 @@ class LessonDetailsFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         lifecycleScope.launch {
-            repeat(Int.MAX_VALUE) {
+            while (true) {
                 checkTime()
                 delay(Constants.TIME_CHECK_DELAY)
             }
@@ -192,6 +192,7 @@ class LessonDetailsFragment : Fragment() {
             .onEach { state ->
                 when (state) {
                     is ControlStatus.NotReadyToStart -> {
+                        toolbarViewModel.startControl(false)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.early_control)
@@ -202,6 +203,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.ReadyToStart -> {
+                        toolbarViewModel.startControl(false)
                         checkPermission()
                         binding.apply {
                             startControl.isEnabled = true
@@ -213,6 +215,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Starting -> {
+                        toolbarViewModel.startControl(true)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.starting_control)
@@ -224,6 +227,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Running -> {
+                        toolbarViewModel.startControl(true)
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
@@ -238,6 +242,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Stopping -> {
+                        toolbarViewModel.startControl(true)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.stopping_control)
@@ -249,6 +254,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Finished -> {
+                        toolbarViewModel.startControl(false)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.end_control)
@@ -276,13 +282,6 @@ class LessonDetailsFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (_viewModel.value.controlStatus.value == ControlStatus.Running) {
-            turnOffHotspot()
-        }
     }
 
     private fun checkTime() {
@@ -326,7 +325,7 @@ class LessonDetailsFragment : Fragment() {
     }
 
     private fun turnOffHotspot() {
-        _viewModel.value.wifiReservation.value?.close()
+        _viewModel.value.turnOffHotspot()
         toast(R.string.ap_stopped)
     }
 
