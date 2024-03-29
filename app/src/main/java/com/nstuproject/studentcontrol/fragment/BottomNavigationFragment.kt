@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.nstuproject.studentcontrol.R
@@ -20,6 +21,8 @@ import com.nstuproject.studentcontrol.viewmodel.GroupsViewModel
 import com.nstuproject.studentcontrol.viewmodel.SubjectsViewModel
 import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
@@ -117,6 +120,15 @@ class BottomNavigationFragment : Fragment() {
                 }
             }
         }
+
+        toolbarViewModel.settingsClicked
+            .onEach { state ->
+                if (state) {
+                    findNavController().navigate(R.id.action_bottomNavigationFragment_to_settingsFragment)
+                    toolbarViewModel.settingsClicked(false)
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         return binding.root
     }

@@ -72,6 +72,16 @@
     <string name="starting_control">Запуск…</string>
     <string name="stopping_control">Остановка…</string>
     <string name="ask_turn_off_ap_while_running">Вы действительно хотите отключить точку доступа?</string>
-    <string name="ap_ssid">ТД активна: %s</string>
+    <string name="ap_ssid">Название: %s\nПароль: %s</string>
     <string name="back_while_control">Хотите остановить контроль и выйти?</string>
+    <string name="ap_settings_title">Точка доступа</string>
+    <string name="global_settings_title">Общие настройки</string>
+    <string name="ssid_hint">Название</string>
+    <string name="open_permission_settings">Открыть разрешения</string>
+    <string name="light_theme">Светлая тема</string>
+    <string name="dark_theme">Темная тема</string>
+    <string name="empty_ssid">Имя точки доступа не может быть пустым</string>
+    <string name="saved_data">Данные сохранены</string>
+    <string name="default_ssid">Teacher hotspot</string>
+    <string name="unknown"><![CDATA[<unknown>]]></string>
 </resources>

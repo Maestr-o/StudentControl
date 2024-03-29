@@ -97,6 +97,11 @@ class LessonDetailsFragment : Fragment() {
         )
         val viewModel = _viewModel.value
 
+        val prefs = requireActivity().applicationContext.getSharedPreferences(
+            Constants.AP_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
 
@@ -228,6 +233,7 @@ class LessonDetailsFragment : Fragment() {
 
                     ControlStatus.Running -> {
                         toolbarViewModel.startControl(true)
+                        val wifi = viewModel.wifiReservation.value?.wifiConfiguration
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
@@ -236,7 +242,8 @@ class LessonDetailsFragment : Fragment() {
                             ssid.isVisible = true
                             ssid.text = getString(
                                 R.string.ap_ssid,
-                                viewModel.wifiReservation.value?.wifiConfiguration?.SSID
+                                wifi?.SSID ?: getString(R.string.unknown),
+                                wifi?.preSharedKey ?: getString(R.string.unknown),
                             )
                         }
                     }
@@ -332,27 +339,27 @@ class LessonDetailsFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun createAP() {
         val viewModel = _viewModel.value
-        (requireActivity().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
-            .startLocalOnlyHotspot(object : LocalOnlyHotspotCallback() {
+        val wifiManager =
+            requireActivity().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiManager.startLocalOnlyHotspot(object : LocalOnlyHotspotCallback() {
+            override fun onStarted(reservation: LocalOnlyHotspotReservation) {
+                super.onStarted(reservation)
+                toast(R.string.ap_started)
+                viewModel.setReservation(reservation)
+                viewModel.setControlStatus(ControlStatus.Running)
+            }
 
-                override fun onStarted(reservation: LocalOnlyHotspotReservation) {
-                    super.onStarted(reservation)
-                    toast(R.string.ap_started)
-                    viewModel.setReservation(reservation)
-                    viewModel.setControlStatus(ControlStatus.Running)
-                }
+            override fun onStopped() {
+                super.onStopped()
+                toast(R.string.ap_stopped)
+                checkTime()
+            }
 
-                override fun onStopped() {
-                    super.onStopped()
-                    toast(R.string.ap_stopped)
-                    checkTime()
-                }
-
-                override fun onFailed(reason: Int) {
-                    super.onFailed(reason)
-                    toast(R.string.ap_error)
-                }
-            }, Handler())
+            override fun onFailed(reason: Int) {
+                super.onFailed(reason)
+                toast(R.string.ap_error)
+            }
+        }, Handler())
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
