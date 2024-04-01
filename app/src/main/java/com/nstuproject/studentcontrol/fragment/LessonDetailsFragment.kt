@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-
 @AndroidEntryPoint
 class LessonDetailsFragment : Fragment() {
 
@@ -96,11 +95,6 @@ class LessonDetailsFragment : Fragment() {
             }
         )
         val viewModel = _viewModel.value
-
-        val prefs = requireActivity().applicationContext.getSharedPreferences(
-            Constants.AP_PREFERENCES,
-            Context.MODE_PRIVATE
-        )
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter

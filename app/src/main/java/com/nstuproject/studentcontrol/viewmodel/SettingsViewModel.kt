@@ -17,11 +17,18 @@ class SettingsViewModel @AssistedInject constructor(
     private val _ssidState = MutableStateFlow("")
     val ssidState = _ssidState.asStateFlow()
 
+    private val _permissionStatus = MutableStateFlow(false)
+    val permissionStatus = _permissionStatus.asStateFlow()
+
     init {
         setState(ssid)
     }
 
     fun setState(name: String) {
         _ssidState.update { name }
+    }
+
+    fun setPermissionStatus(status: Boolean) {
+        _permissionStatus.update { status }
     }
 }

@@ -76,11 +76,14 @@
     <string name="ap_settings_title">Access point</string>
     <string name="global_settings_title">Global settings</string>
     <string name="ssid_hint">Name</string>
-    <string name="open_permission_settings">Open permissions</string>
+    <string name="open_settings">Open settings</string>
     <string name="light_theme">Light theme</string>
     <string name="dark_theme">Dark theme</string>
     <string name="empty_ssid">AP\'s name cannot be empty</string>
     <string name="saved_data">Data saved</string>
     <string name="default_ssid">Teacher hotspot</string>
     <string name="unknown"><![CDATA[<unknown>]]></string>
+    <string name="permissions_fine">Permissions are fine!</string>
+    <string name="permissions_fail">Permissions are required to create an access point!</string>
+    <string name="request_permission">Request permission</string>
 </resources>

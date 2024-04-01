@@ -1,10 +1,15 @@
 package com.nstuproject.studentcontrol.fragment
 
+import android.Manifest
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentSettingsBinding
 import com.nstuproject.studentcontrol.utils.Constants
+import com.nstuproject.studentcontrol.utils.isPermissionGranted
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.SettingsViewModel
 import com.nstuproject.studentcontrol.viewmodel.di.SettingsViewModelFactory
@@ -22,6 +28,9 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
+
+    private lateinit var pLauncher: ActivityResultLauncher<String>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +51,22 @@ class SettingsFragment : Fragment() {
                 }
             }
         )
+
+        pLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            viewModel.setPermissionStatus(it)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            binding.openPermissionSettings.setOnClickListener {
+                pLauncher.launch(Manifest.permission.NEARBY_WIFI_DEVICES)
+            }
+            viewModel.setPermissionStatus(checkNearbyDevicesPermission())
+        } else {
+            binding.openPermissionSettings.setOnClickListener {
+                pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            viewModel.setPermissionStatus(checkFineLocationPermission())
+        }
 
         binding.saveData.setOnClickListener {
             val ssid = binding.ssid.text.toString().trim()
@@ -64,6 +89,31 @@ class SettingsFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.permissionStatus
+            .onEach { state ->
+                if (state) {
+                    binding.permissionStatus.apply {
+                        text = getString(R.string.permissions_fine)
+                        setTextColor(resources.getColor(R.color.permission_fine, null))
+                    }
+                    binding.openPermissionSettings.isEnabled = false
+                } else {
+                    binding.permissionStatus.apply {
+                        text = getString(R.string.permissions_fail)
+                        setTextColor(resources.getColor(R.color.permission_fail, null))
+                    }
+                    binding.openPermissionSettings.isEnabled = true
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         return binding.root
     }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNearbyDevicesPermission(): Boolean =
+        isPermissionGranted(Manifest.permission.NEARBY_WIFI_DEVICES)
+
+    private fun checkFineLocationPermission(): Boolean =
+        isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)
 }
