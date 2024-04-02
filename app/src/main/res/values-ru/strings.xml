@@ -87,4 +87,6 @@
     <string name="permissions_fine">С разрешениями все в порядке!</string>
     <string name="permissions_fail">Для создания точки доступа необходимы разрешения!</string>
     <string name="request_permission">Запросить разрешение</string>
+    <string name="permission_check_error">Ошибка проверки разрешений</string>
+    <string name="ask_stop_control">Вы действительно хотите остановить контроль?</string>
 </resources>

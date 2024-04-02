@@ -10,13 +10,12 @@ import android.net.wifi.WifiManager.LocalOnlyHotspotReservation
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -35,7 +34,8 @@ import com.nstuproject.studentcontrol.model.LessonType
 import com.nstuproject.studentcontrol.recyclerview.groupsSelected.GroupSelectedAdapter
 import com.nstuproject.studentcontrol.utils.Constants
 import com.nstuproject.studentcontrol.utils.TimeFormatter
-import com.nstuproject.studentcontrol.utils.isPermissionGranted
+import com.nstuproject.studentcontrol.utils.checkFineLocationPermission
+import com.nstuproject.studentcontrol.utils.checkNearbyDevicesPermission
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.LessonDetailsViewModel
 import com.nstuproject.studentcontrol.viewmodel.ToolbarViewModel
@@ -53,7 +53,9 @@ import kotlinx.serialization.json.Json
 class LessonDetailsFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+
     private lateinit var _viewModel: Lazy<LessonDetailsViewModel>
+    val viewModel get() = _viewModel.value
 
     private lateinit var lessonArg: Lesson
 
@@ -94,7 +96,6 @@ class LessonDetailsFragment : Fragment() {
                 }
             }
         )
-        val viewModel = _viewModel.value
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
@@ -282,11 +283,18 @@ class LessonDetailsFragment : Fragment() {
             }
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (viewModel.controlStatus.value is ControlStatus.Running) {
+                showExitDialog()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+
         return binding.root
     }
 
     private fun checkTime() {
-        val viewModel = _viewModel.value
         val status = viewModel.controlStatus.value
         if (status is ControlStatus.ReadyToStart || status is ControlStatus.NotReadyToStart
             || status is ControlStatus.Stopping
@@ -312,13 +320,17 @@ class LessonDetailsFragment : Fragment() {
     }
 
     private fun turnOnHotspot() {
-        val viewModel = _viewModel.value
         checkPermission()
 
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkNearbyDevicesPermission())
             || (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && checkFineLocationPermission())
         ) {
-            createAP()
+            try {
+                createAP()
+            } catch (_: Exception) {
+                viewModel.setControlStatus(ControlStatus.ReadyToStart)
+                toast(R.string.ap_error)
+            }
         } else {
             viewModel.setControlStatus(ControlStatus.ReadyToStart)
             toast(R.string.cant_create_ap)
@@ -326,13 +338,12 @@ class LessonDetailsFragment : Fragment() {
     }
 
     private fun turnOffHotspot() {
-        _viewModel.value.turnOffHotspot()
+        viewModel.turnOffHotspot()
         toast(R.string.ap_stopped)
     }
 
     @SuppressLint("MissingPermission")
     private fun createAP() {
-        val viewModel = _viewModel.value
         val wifiManager =
             requireActivity().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         wifiManager.startLocalOnlyHotspot(object : LocalOnlyHotspotCallback() {
@@ -356,13 +367,6 @@ class LessonDetailsFragment : Fragment() {
         }, Handler())
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkNearbyDevicesPermission(): Boolean =
-        isPermissionGranted(Manifest.permission.NEARBY_WIFI_DEVICES)
-
-    private fun checkFineLocationPermission(): Boolean =
-        isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)
-
     private fun checkPermission() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -378,8 +382,21 @@ class LessonDetailsFragment : Fragment() {
                     pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
             }
-        } catch (e: Exception) {
-            Log.d("TEST", e.toString())
+        } catch (_: Exception) {
+            toast(R.string.permission_check_error)
         }
+    }
+
+    private fun showExitDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.ask_stop_control))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                dialog.dismiss()
+                findNavController().navigateUp()
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }

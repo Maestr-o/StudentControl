@@ -1,10 +1,13 @@
 package com.nstuproject.studentcontrol.utils
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.pm.PackageManager
 import android.icu.util.Calendar
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -31,14 +34,6 @@ fun Fragment.toast(resId: Int) {
         show()
     }
 }
-
-//fun Fragment.toast(resId: Int) {
-//    Toast.makeText(
-//        requireContext(),
-//        getString(resId),
-//        Toast.LENGTH_LONG
-//    ).show()
-//}
 
 fun Fragment.showDatePicker(view: TextInputEditText) {
     val calendar = Calendar.getInstance()
@@ -115,3 +110,10 @@ fun Fragment.isPermissionGranted(p: String): Boolean =
         activity as AppCompatActivity,
         p
     ) == PackageManager.PERMISSION_GRANTED
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun Fragment.checkNearbyDevicesPermission(): Boolean =
+    isPermissionGranted(Manifest.permission.NEARBY_WIFI_DEVICES)
+
+fun Fragment.checkFineLocationPermission(): Boolean =
+    isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)

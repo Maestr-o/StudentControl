@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.nstuproject.studentcontrol.R
 import com.nstuproject.studentcontrol.databinding.FragmentSettingsBinding
 import com.nstuproject.studentcontrol.utils.Constants
-import com.nstuproject.studentcontrol.utils.isPermissionGranted
+import com.nstuproject.studentcontrol.utils.checkFineLocationPermission
+import com.nstuproject.studentcontrol.utils.checkNearbyDevicesPermission
 import com.nstuproject.studentcontrol.utils.toast
 import com.nstuproject.studentcontrol.viewmodel.SettingsViewModel
 import com.nstuproject.studentcontrol.viewmodel.di.SettingsViewModelFactory
@@ -109,11 +109,4 @@ class SettingsFragment : Fragment() {
 
         return binding.root
     }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkNearbyDevicesPermission(): Boolean =
-        isPermissionGranted(Manifest.permission.NEARBY_WIFI_DEVICES)
-
-    private fun checkFineLocationPermission(): Boolean =
-        isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)
 }
