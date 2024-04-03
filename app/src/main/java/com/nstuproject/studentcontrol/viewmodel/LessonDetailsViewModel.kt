@@ -1,6 +1,5 @@
 package com.nstuproject.studentcontrol.viewmodel
 
-import android.net.wifi.WifiManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nstuproject.studentcontrol.model.ControlStatus
@@ -32,9 +31,6 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
     val controlStatus = _controlStatus.asStateFlow()
 
-    private val _wifiReservation = MutableStateFlow<WifiManager.LocalOnlyHotspotReservation?>(null)
-    val wifiReservation = _wifiReservation.asStateFlow()
-
     init {
         setLesson(lesson)
     }
@@ -64,19 +60,5 @@ class LessonDetailsViewModel @AssistedInject constructor(
 
     fun setControlStatus(status: ControlStatus) {
         _controlStatus.update { status }
-    }
-
-    fun setReservation(reservation: WifiManager.LocalOnlyHotspotReservation) {
-        _wifiReservation.update { reservation }
-    }
-
-    fun turnOffHotspot() {
-        wifiReservation.value?.close()
-        _wifiReservation.value = null
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        turnOffHotspot()
     }
 }

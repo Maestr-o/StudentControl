@@ -10,20 +10,6 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/ssid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/ssid_back"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/small_spacing"
-            android:textColor="#1D1B20"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Название ТД: Teacher hotspot" />
-
-        <TextView
             android:id="@+id/subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +18,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ssid"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Android-разработка" />
 
         <TextView

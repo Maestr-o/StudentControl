@@ -71,7 +71,6 @@
     <string name="starting_control">Starting…</string>
     <string name="stopping_control">Stopping…</string>
     <string name="ask_turn_off_ap_while_running">Do you want to turn off the access point?</string>
-    <string name="ap_ssid">Name: %s\nPass: %s</string>
     <string name="back_while_control">Do you want to stop control?</string>
     <string name="ap_settings_title">Access point</string>
     <string name="global_settings_title">Global settings</string>
@@ -82,10 +81,12 @@
     <string name="empty_ssid">AP\'s name cannot be empty</string>
     <string name="saved_data">Data saved</string>
     <string name="default_ssid">Teacher hotspot</string>
-    <string name="unknown"><![CDATA[<unknown>]]></string>
+    <string name="ap_info">AP\'s name: %s</string>
     <string name="permissions_fine">Permissions are fine!</string>
     <string name="permissions_fail">Permissions are required to create an access point!</string>
     <string name="request_permission">Request permission</string>
     <string name="permission_check_error">Permission check error</string>
     <string name="ask_stop_control">Do you really want to stop control?</string>
+    <string name="create_ap_hint">To start monitoring, you must configure the access point and launch it, then tell students the name and password if necessary. Before doing this, it is recommended to turn off the mobile Internet.\n\nWant to go to settings?</string>
+    <string name="create_ap">Create AP</string>
 </resources>

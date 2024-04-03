@@ -72,7 +72,6 @@
     <string name="starting_control">Запуск…</string>
     <string name="stopping_control">Остановка…</string>
     <string name="ask_turn_off_ap_while_running">Вы действительно хотите отключить точку доступа?</string>
-    <string name="ap_ssid">Название: %s\nПароль: %s</string>
     <string name="back_while_control">Хотите остановить контроль и выйти?</string>
     <string name="ap_settings_title">Точка доступа</string>
     <string name="global_settings_title">Общие настройки</string>
@@ -83,10 +82,12 @@
     <string name="empty_ssid">Имя точки доступа не может быть пустым</string>
     <string name="saved_data">Данные сохранены</string>
     <string name="default_ssid">Teacher hotspot</string>
-    <string name="unknown"><![CDATA[<unknown>]]></string>
     <string name="permissions_fine">С разрешениями все в порядке!</string>
     <string name="permissions_fail">Для создания точки доступа необходимы разрешения!</string>
     <string name="request_permission">Запросить разрешение</string>
     <string name="permission_check_error">Ошибка проверки разрешений</string>
     <string name="ask_stop_control">Вы действительно хотите остановить контроль?</string>
+    <string name="ap_info">Название ТД: %s</string>
+    <string name="create_ap_hint">Для начала контроля, вы должны настроить точку доступа и запустить ее, затем сообщить студентам название и пароль при необходимости. Перед этим рекомендуется выключить мобильный интернет.\n\nХотите перейти в настройки?</string>
+    <string name="create_ap">Создать точку доступа</string>
 </resources>
