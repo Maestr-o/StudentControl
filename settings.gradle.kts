@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "StudentControl"
-include(":app")
- 
+include(":teacherApp")
+include(":studentApp")
