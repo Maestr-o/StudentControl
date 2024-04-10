@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My attendance</string>
+    <string name="current_network">Network: %s</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="check_in">Check in</string>
+    <string name="my_data">My data</string>
+    <string name="data_placeholder">Group: %s\nName: %s</string>
 </resources>
