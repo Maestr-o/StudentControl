@@ -5,4 +5,8 @@
     <string name="check_in">Check in</string>
     <string name="my_data">My data</string>
     <string name="data_placeholder">Group: %s\nName: %s</string>
+    <string name="loading_wifi">Updating the list of networks…</string>
+    <string name="no_connection">No connection</string>
+    <string name="wifi_is_down">Wi-Fi module is disabled</string>
+    <string name="turn_on">Turn on</string>
 </resources>
