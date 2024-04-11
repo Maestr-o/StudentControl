@@ -19,19 +19,15 @@ class ControlViewModel @Inject constructor() : ViewModel() {
         // load personal data from persistence
     }
 
-    fun changeWifiModuleState(wifiState: Boolean) {
+    fun changeWifiState(network: String?) {
         _state.update {
-            if (wifiState) {
+            if (network != null) {
                 it.copy(
-                    networks = emptyList(),
-                    wifiState = WifiState.Loading,
-                    currentWifi = "",
+                    wifiState = WifiState.Connected(network),
                 )
             } else {
                 it.copy(
-                    networks = emptyList(),
-                    wifiState = WifiState.Down,
-                    currentWifi = "",
+                    wifiState = WifiState.NotConnected,
                 )
             }
         }

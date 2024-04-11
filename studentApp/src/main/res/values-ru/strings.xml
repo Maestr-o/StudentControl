@@ -6,8 +6,7 @@
     <string name="check_in">Отметиться</string>
     <string name="my_data">Мои данные</string>
     <string name="data_placeholder">Группа: %s\nИмя: %s</string>
-    <string name="loading_wifi">Обновление списка сетей…</string>
-    <string name="no_connection">Нет соединения</string>
-    <string name="wifi_is_down">Модуль Wi-Fi выключен</string>
-    <string name="turn_on">Включить</string>
+    <string name="go_to_settings">Перейти в настройки</string>
+    <string name="no_connection">Нет подключения</string>
+    <string name="connect_to_network">Подключитесь к сети преподавателя</string>
 </resources>

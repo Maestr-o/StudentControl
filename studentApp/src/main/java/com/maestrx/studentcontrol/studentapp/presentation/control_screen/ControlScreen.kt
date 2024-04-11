@@ -1,9 +1,13 @@
 package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
+import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.wifi.WifiManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.provider.Settings
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,21 +15,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,50 +38,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
 import com.maestrx.studentcontrol.studentapp.domain.model.WifiState
-import com.maestrx.studentcontrol.studentapp.presentation.control_screen.components.NetworkCard
-import com.maestrx.studentcontrol.studentapp.util.WifiService
-import com.maestrx.studentcontrol.studentapp.util.WifiStateReceiver
+import com.maestrx.studentcontrol.studentapp.util.WifiManagerHelper
 
 @Composable
 internal fun ControlScreen(
-    viewModel: ControlViewModel = hiltViewModel()
+    viewModel: ControlViewModel = hiltViewModel(),
+    wifiManager: WifiManagerHelper,
 ) {
-    val context = LocalContext.current
-    viewModel.changeWifiModuleState(WifiService.isWifiEnabled(context))
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ControlContent(viewModel, state)
+    ControlContent(viewModel, state, wifiManager)
 }
 
 @Composable
 fun ControlContent(
     viewModel: ControlViewModel,
     state: ControlUiState,
+    wifiManager: WifiManagerHelper,
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val wifiStateReceiver = WifiStateReceiver(viewModel)
-
-    val filter = IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
-    context.registerReceiver(wifiStateReceiver, filter)
-
-    lifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_DESTROY) {
-            context.unregisterReceiver(wifiStateReceiver)
-        }
-    })
-
-    // UI
+    WifiStateReceiverCompose(viewModel, wifiManager)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(12.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -90,23 +79,47 @@ fun ControlContent(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start,
-                    text = if (state.currentWifi.isBlank()) {
-                        stringResource(id = R.string.no_connection)
-                    } else {
-                        stringResource(id = R.string.current_network, state.currentWifi)
+                    text = when (state.wifiState) {
+                        is WifiState.NotConnected -> {
+                            stringResource(id = R.string.no_connection)
+                        }
+
+                        is WifiState.Connected -> {
+                            stringResource(id = R.string.current_network, state.wifiState.network)
+                        }
                     },
                     fontSize = 16.sp,
                 )
-                Button(
-                    enabled = state.currentWifi.isNotBlank(),
+
+                if (state.wifiState is WifiState.Connected) {
+                    IconButton(
+                        onClick = {
+                            wifiManager.disconnect()
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.baseline_signal_wifi_off_24
+                            ),
+                            contentDescription = stringResource(
+                                id = R.string.disconnect
+                            ),
+                        )
+                    }
+                }
+
+                IconButton(
                     onClick = {
-                        // disconnect, go to NetworksScreen
+                        startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
                     },
-                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.disconnect),
-                        fontSize = 16.sp,
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.baseline_settings_24
+                        ),
+                        contentDescription = stringResource(
+                            id = R.string.go_to_settings
+                        ),
                     )
                 }
             }
@@ -114,107 +127,134 @@ fun ControlContent(
 
         Box(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            contentAlignment = Alignment.Center
         ) {
             when (state.wifiState) {
-                is WifiState.Down -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(bottom = 8.dp),
-                            text = stringResource(id = R.string.wifi_is_down),
-                            fontSize = 18.sp,
-                        )
-                        Button(
-                            onClick = {
-                                startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
-                            },
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.turn_on),
-                                fontSize = 16.sp,
-                            )
-                        }
-                    }
+                is WifiState.NotConnected -> {
+                    DisconnectedGroup()
                 }
 
-                WifiState.Loading -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(bottom = 8.dp),
-                            text = stringResource(id = R.string.loading_wifi),
-                            fontSize = 18.sp,
-                        )
-                        CircularProgressIndicator()
-                    }
-                }
-
-                WifiState.Idle -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        itemsIndexed(state.networks) { _, item ->
-                            NetworkCard(item, state.currentWifi)
-                        }
-                    }
+                is WifiState.Connected -> {
+                    ConnectedGroup()
                 }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .padding(vertical = 4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (state.personalData.fullName.isNotBlank() && state.personalData.group.isNotBlank()) {
-                Card(
-                    modifier = Modifier
-                        .padding(vertical = 4.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        text = stringResource(
-                            id = R.string.data_placeholder,
-                            state.personalData.group,
-                            state.personalData.fullName
-                        ),
-                        fontSize = 16.sp,
-                    )
-                }
-            }
-
-            Button(
+        if (state.personalData.fullName.isNotBlank() && state.personalData.group.isNotBlank()) {
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                enabled = state.currentWifi.isNotBlank(),
-                shape = RoundedCornerShape(10.dp),
-                onClick = {
-                    // check in, LoadingScreen
-                },
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
             ) {
                 Text(
-                    text = stringResource(id = R.string.check_in),
-                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    text = stringResource(
+                        id = R.string.data_placeholder,
+                        state.personalData.group,
+                        state.personalData.fullName
+                    ),
+                    fontSize = 16.sp,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun DisconnectedGroup() {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(bottom = 8.dp),
+            text = stringResource(id = R.string.connect_to_network),
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+        )
+        Button(
+            onClick = {
+                startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+            },
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.go_to_settings),
+                fontSize = 16.sp,
+            )
+        }
+    }
+}
+
+@Composable
+fun ConnectedGroup() {
+    val buttonSize = 200.dp
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        IconButton(
+            modifier = Modifier
+                .size(buttonSize),
+            onClick = {
+                // check in, LoadingScreen
+            },
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(buttonSize),
+                painter = painterResource(id = R.drawable.start_control),
+                contentDescription = "start control"
+            )
+        }
+        Text(
+            modifier = Modifier
+                .padding(top = 8.dp),
+            text = stringResource(id = R.string.check_in),
+            fontSize = 20.sp,
+        )
+    }
+}
+
+@Composable
+fun WifiStateReceiverCompose(viewModel: ControlViewModel, wifiManager: WifiManagerHelper) {
+    val context = LocalContext.current
+
+    DisposableEffect(key1 = context) {
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                viewModel.changeWifiState(wifiManager.getSSID())
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                viewModel.changeWifiState(null)
+            }
+        }
+
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val networkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+
+        onDispose {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
         }
     }
 }
@@ -225,10 +265,9 @@ fun ControlPreview() {
     ControlContent(
         ControlViewModel(),
         ControlUiState(
-            wifiState = WifiState.Idle,
+            wifiState = WifiState.Connected("AndroidShare_5478"),
             personalData = PersonalData("АВТ-042", "Иванов Иван Иванович"),
-            currentWifi = "AndroidShare-1236",
-            networks = listOf("AndroidShare-1236", "AndroidShare-8236", "AndroidShare-1256")
-        )
+        ),
+        WifiManagerHelper(LocalContext.current),
     )
 }
