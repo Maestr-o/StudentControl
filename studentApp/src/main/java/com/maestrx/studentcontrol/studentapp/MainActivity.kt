@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlScreen
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentControlTheme
-import com.maestrx.studentcontrol.studentapp.util.WifiManagerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var wifiManager: WifiManagerHelper
+    lateinit var prefs: SharedPreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ControlScreen(wifiManager = wifiManager)
+                    ControlScreen(prefs = prefs)
                 }
             }
         }

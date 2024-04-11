@@ -6,6 +6,7 @@
     <string name="my_data">My data</string>
     <string name="data_placeholder">Group: %s\nName: %s</string>
     <string name="go_to_settings">Go to settings</string>
-    <string name="no_connection">No commection</string>
+    <string name="no_connection">No connection</string>
     <string name="connect_to_network">Connect to teacher\'s network</string>
+    <string name="connected">Connected</string>
 </resources>

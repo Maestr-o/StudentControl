@@ -40,27 +40,17 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maestrx.studentcontrol.studentapp.R
-import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
-import com.maestrx.studentcontrol.studentapp.domain.model.WifiState
-import com.maestrx.studentcontrol.studentapp.util.WifiManagerHelper
+import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 
 @Composable
 internal fun ControlScreen(
     viewModel: ControlViewModel = hiltViewModel(),
-    wifiManager: WifiManagerHelper,
+    prefs: SharedPreferencesManager,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ControlContent(viewModel, state, wifiManager)
-}
 
-@Composable
-fun ControlContent(
-    viewModel: ControlViewModel,
-    state: ControlUiState,
-    wifiManager: WifiManagerHelper,
-) {
     val context = LocalContext.current
-    WifiStateReceiverCompose(viewModel, wifiManager)
+    WifiStateReceiverCompose(viewModel)
 
     Column(
         modifier = Modifier
@@ -77,7 +67,9 @@ fun ControlContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .weight(1f),
                     textAlign = TextAlign.Start,
                     text = when (state.wifiState) {
                         is WifiState.NotConnected -> {
@@ -85,28 +77,11 @@ fun ControlContent(
                         }
 
                         is WifiState.Connected -> {
-                            stringResource(id = R.string.current_network, state.wifiState.network)
+                            stringResource(id = R.string.connected)
                         }
                     },
-                    fontSize = 16.sp,
+                    fontSize = 17.sp,
                 )
-
-                if (state.wifiState is WifiState.Connected) {
-                    IconButton(
-                        onClick = {
-                            wifiManager.disconnect()
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                id = R.drawable.baseline_signal_wifi_off_24
-                            ),
-                            contentDescription = stringResource(
-                                id = R.string.disconnect
-                            ),
-                        )
-                    }
-                }
 
                 IconButton(
                     onClick = {
@@ -141,7 +116,11 @@ fun ControlContent(
             }
         }
 
-        if (state.personalData.fullName.isNotBlank() && state.personalData.group.isNotBlank()) {
+        val personalData = prefs.getPersonalData()
+        if (
+            state.wifiState is WifiState.Connected &&
+            personalData != null && personalData.group.isNotBlank() && personalData.fullName.isNotBlank()
+        ) {
             Card(
                 modifier = Modifier
                     .padding(vertical = 4.dp),
@@ -154,8 +133,8 @@ fun ControlContent(
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                     text = stringResource(
                         id = R.string.data_placeholder,
-                        state.personalData.group,
-                        state.personalData.fullName
+                        personalData.group,
+                        personalData.fullName
                     ),
                     fontSize = 16.sp,
                 )
@@ -197,7 +176,7 @@ fun DisconnectedGroup() {
 
 @Composable
 fun ConnectedGroup() {
-    val buttonSize = 200.dp
+    val buttonSize = 175.dp
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -228,19 +207,19 @@ fun ConnectedGroup() {
 }
 
 @Composable
-fun WifiStateReceiverCompose(viewModel: ControlViewModel, wifiManager: WifiManagerHelper) {
+fun WifiStateReceiverCompose(viewModel: ControlViewModel) {
     val context = LocalContext.current
 
     DisposableEffect(key1 = context) {
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                viewModel.changeWifiState(wifiManager.getSSID())
+                viewModel.changeWifiState(true)
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-                viewModel.changeWifiState(null)
+                viewModel.changeWifiState(false)
             }
         }
 
@@ -262,12 +241,9 @@ fun WifiStateReceiverCompose(viewModel: ControlViewModel, wifiManager: WifiManag
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ControlPreview() {
-    ControlContent(
-        ControlViewModel(),
-        ControlUiState(
-            wifiState = WifiState.Connected("AndroidShare_5478"),
-            personalData = PersonalData("АВТ-042", "Иванов Иван Иванович"),
-        ),
-        WifiManagerHelper(LocalContext.current),
+    val context = LocalContext.current
+    ControlScreen(
+        viewModel = ControlViewModel(),
+        prefs = SharedPreferencesManager(context),
     )
 }
