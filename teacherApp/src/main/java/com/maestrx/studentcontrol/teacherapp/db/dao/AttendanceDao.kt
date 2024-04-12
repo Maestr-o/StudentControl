@@ -9,12 +9,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AttendanceDao {
 
-    @Query("SELECT * FROM Attendance")
-    fun getAll(): Flow<List<AttendanceEntity>>
+    @Query(
+        """
+        SELECT Attendance.id, Attendance.lessonId, Attendance.studentId
+        FROM Attendance, Lesson
+        WHERE Attendance.lessonId == Lesson.id AND Attendance.lessonId == :lessonId
+    """
+    )
+    fun getByLesson(lessonId: Long): Flow<List<AttendanceEntity>>
 
     @Upsert
     suspend fun save(data: AttendanceEntity)
-
-    @Query("DELETE FROM Attendance WHERE id=:id")
-    suspend fun deleteById(id: Long)
 }

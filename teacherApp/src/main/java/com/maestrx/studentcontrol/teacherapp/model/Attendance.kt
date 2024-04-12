@@ -12,14 +12,12 @@ data class Attendance(
     val lessonId: Long = 0L,
     @SerialName("studentId")
     val studentId: Long = 0L,
-    @SerialName("attended")
-    val attended: Boolean = false,
 ) {
     companion object {
         fun toData(entity: AttendanceEntity) = with(entity) {
-            Attendance(id, lessonId, studentId, attended)
+            Attendance(id, lessonId, studentId)
         }
     }
 
-    fun toEntity() = AttendanceEntity(id, lessonId, studentId, attended)
+    fun toEntity() = AttendanceEntity(id, lessonId, studentId)
 }

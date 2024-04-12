@@ -65,7 +65,7 @@ class LessonDetailsFragment : Fragment() {
 
         lessonArg = arguments?.let {
             Json.decodeFromString<Lesson>(
-                it.getString(Constants.LESSON_DATA) ?: Lesson().toString()
+                it.getString(Constants.LESSON_DATA)!!
             )
         } ?: Lesson()
 
@@ -97,11 +97,6 @@ class LessonDetailsFragment : Fragment() {
             } else if (viewModel.controlStatus.value is ControlStatus.Running) {
                 APUtils.goToAPSettings(requireContext())
             }
-            //
-            val messageToSend = "Hello, UDP Server!"
-            val ipAddress = "192.168.43.1"
-            val port = 5051
-            viewModel.sendData(messageToSend, ipAddress, port)
         }
 
         toolbarViewModel.editClicked
@@ -237,6 +232,18 @@ class LessonDetailsFragment : Fragment() {
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.students
+            .onEach { students ->
+                binding.registeredCount.text =
+                    getString(R.string.registered_students, students.count())
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        // TEST
+        binding.registeredCount.setOnClickListener {
+            viewModel.saveAttendance(1L)
+        }
 
         return binding.root
     }

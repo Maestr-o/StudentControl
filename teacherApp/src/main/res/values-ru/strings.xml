@@ -61,7 +61,7 @@
     <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
     <string name="ask_delete_lesson">Вы действительно хотите удалить занятие?</string>
     <string name="invalid_times">Время начала занятия должно быть больше времени окончания!</string>
-    <string name="registered_students">Отметившиеся студенты: %d/%d</string>
+    <string name="registered_students">Отметившиеся студенты: %d</string>
     <string name="stop_control">Остановить контроль</string>
     <string name="end_control">Контроль окончен</string>
     <string name="early_control">Начинать рано</string>

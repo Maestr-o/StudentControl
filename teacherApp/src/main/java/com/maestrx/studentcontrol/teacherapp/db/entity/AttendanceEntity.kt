@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -21,6 +22,9 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
         ),
     ],
+    indices = [
+        Index(value = ["lessonId", "studentId"], unique = true)
+    ]
 )
 data class AttendanceEntity(
     @PrimaryKey(autoGenerate = true)
@@ -30,6 +34,4 @@ data class AttendanceEntity(
     val lessonId: Long = 0L,
     @ColumnInfo(name = "studentId")
     val studentId: Long = 0L,
-    @ColumnInfo(name = "attended")
-    val attended: Boolean = false,
 )
