@@ -39,11 +39,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.maestrx.studentcontrol.studentapp.R
+import com.maestrx.studentcontrol.studentapp.Screen
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 
 @Composable
 internal fun ControlScreen(
+    navController: NavController,
     viewModel: ControlViewModel = hiltViewModel(),
     prefs: SharedPreferencesManager,
 ) {
@@ -111,7 +114,7 @@ internal fun ControlScreen(
                 }
 
                 is WifiState.Connected -> {
-                    ConnectedGroup()
+                    ConnectedGroup(navController)
                 }
             }
         }
@@ -175,7 +178,7 @@ fun DisconnectedGroup() {
 }
 
 @Composable
-fun ConnectedGroup() {
+fun ConnectedGroup(navController: NavController) {
     val buttonSize = 175.dp
     Column(
         modifier = Modifier
@@ -187,7 +190,7 @@ fun ConnectedGroup() {
             modifier = Modifier
                 .size(buttonSize),
             onClick = {
-                // check in, LoadingScreen
+                navController.navigate(Screen.Loading.route)
             },
         ) {
             Image(
@@ -244,6 +247,7 @@ fun ControlPreview() {
     val context = LocalContext.current
     ControlScreen(
         viewModel = ControlViewModel(),
+        navController = NavController(context),
         prefs = SharedPreferencesManager(context),
     )
 }
