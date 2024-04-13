@@ -11,6 +11,8 @@ import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -29,6 +31,9 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
     @Assisted private val lesson: Lesson,
 ) : ViewModel() {
+
+    private val _statusMessage = MutableStateFlow(Event(""))
+    val message = _statusMessage.asStateFlow()
 
     private val _lessonState = MutableStateFlow(Lesson())
     val lessonState = _lessonState.asStateFlow()
@@ -73,6 +78,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
             try {
                 lessonRepository.deleteById(lesson.id)
             } catch (e: Exception) {
+                _statusMessage.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
                 Log.d("TeacherApp", "Error deleting lesson: $e")
             }
         }

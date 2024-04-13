@@ -91,4 +91,12 @@
     <string name="create_ap">Create AP</string>
     <string name="control_started">Control started</string>
     <string name="control_stopped">Control stopped</string>
+    <string name="error_deleting_lesson">Error deleting lesson</string>
+    <string name="error_saving_lesson">Error saving lesson</string>
+    <string name="error_saving_group">Error saving group</string>
+    <string name="error_deleting_group">Error deleting group</string>
+    <string name="error_saving_student">Error saving student</string>
+    <string name="error_deleting_student">Error deleting student</string>
+    <string name="error_saving_subject">Error saving subject</string>
+    <string name="error_deleting_subject">Error deleting subject</string>
 </resources>

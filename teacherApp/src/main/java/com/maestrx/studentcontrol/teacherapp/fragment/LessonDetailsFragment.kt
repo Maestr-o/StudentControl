@@ -23,6 +23,7 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonType
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groupsSelected.GroupSelectedAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonDetailsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
@@ -240,9 +241,21 @@ class LessonDetailsFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.message
+            .onEach { event ->
+                event.getContentIfNotHandled()?.let { message ->
+                    when (message) {
+                        Constants.MESSAGE_ERROR_DELETING_LESSON -> {
+                            toast(R.string.error_deleting_lesson)
+                        }
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         // TEST
         binding.registeredCount.setOnClickListener {
-            viewModel.saveAttendance(1L)
+            viewModel.saveAttendance(10L)
         }
 
         return binding.root

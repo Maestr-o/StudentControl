@@ -223,6 +223,20 @@ class EditLessonFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.message
+            .onEach { event ->
+                when (event.getContentIfNotHandled()) {
+                    Constants.MESSAGE_ERROR_SAVING_LESSON -> {
+                        toast(R.string.error_saving_lesson)
+                    }
+
+                    Constants.MESSAGE_ERROR_DELETING_LESSON -> {
+                        toast(R.string.error_deleting_lesson)
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         return binding.root
     }
 

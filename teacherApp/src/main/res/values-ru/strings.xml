@@ -92,4 +92,12 @@
     <string name="create_ap">Создать точку доступа</string>
     <string name="control_started">Контроль запущен</string>
     <string name="control_stopped">Контроль закончен</string>
+    <string name="error_deleting_lesson">Ошибка удаления занятия</string>
+    <string name="error_saving_lesson">Ошибка сохранения занятия</string>
+    <string name="error_saving_group">Ошибка сохранения группы</string>
+    <string name="error_deleting_group">Ошибка удаления группы</string>
+    <string name="error_saving_student">Ошибка сохранения данных студента</string>
+    <string name="error_deleting_student">Ошибка удаления студента</string>
+    <string name="error_saving_subject">Ошибка сохранения предмета</string>
+    <string name="error_deleting_subject">Ошибка удаления предмета</string>
 </resources>

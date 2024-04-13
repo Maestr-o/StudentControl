@@ -14,6 +14,8 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditLineBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentSubjectsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.recyclerview.subjects.SubjectsAdapter
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,6 +75,20 @@ class SubjectsFragment : Fragment() {
         viewModel.state.onEach { state ->
             adapter.submitList(state)
         }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.message
+            .onEach { state ->
+                when (state.getContentIfNotHandled()) {
+                    Constants.MESSAGE_ERROR_SAVING_SUBJECT -> {
+                        toast(R.string.error_saving_subject)
+                    }
+
+                    Constants.MESSAGE_ERROR_DELETING_SUBJECT -> {
+                        toast(R.string.error_deleting_subject)
+                    }
+                }
+            }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         requireActivity().onBackPressedDispatcher.addCallback(

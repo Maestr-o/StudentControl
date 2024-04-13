@@ -17,6 +17,7 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentGroupsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups.GroupsAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.GroupsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
@@ -89,6 +90,20 @@ class GroupsFragment : Fragment() {
         viewModel.state.onEach { state ->
             adapter.submitList(state)
         }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.message
+            .onEach { event ->
+                when (event.getContentIfNotHandled()) {
+                    Constants.MESSAGE_ERROR_SAVING_GROUP -> {
+                        toast(R.string.error_saving_group)
+                    }
+
+                    Constants.MESSAGE_ERROR_DELETING_GROUP -> {
+                        toast(R.string.error_deleting_group)
+                    }
+                }
+            }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         requireActivity().onBackPressedDispatcher.addCallback(

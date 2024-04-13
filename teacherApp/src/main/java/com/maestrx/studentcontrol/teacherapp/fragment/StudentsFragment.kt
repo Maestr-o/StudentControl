@@ -128,6 +128,20 @@ class StudentsFragment : Fragment() {
         }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.message
+            .onEach { event ->
+                when (event.getContentIfNotHandled()) {
+                    Constants.MESSAGE_ERROR_SAVING_STUDENT -> {
+                        toast(R.string.error_saving_student)
+                    }
+
+                    Constants.MESSAGE_ERROR_DELETING_STUDENT -> {
+                        toast(R.string.error_deleting_student)
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         return binding.root
     }
 }

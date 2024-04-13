@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -26,6 +28,9 @@ class StudentsViewModel @AssistedInject constructor(
     private val _state = MutableStateFlow(emptyList<Student>())
     val state = _state.asStateFlow()
 
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
+
     init {
         studentRepository.getStudentsByGroup(groupId).onEach { list ->
             _state.update {
@@ -42,7 +47,8 @@ class StudentsViewModel @AssistedInject constructor(
             try {
                 studentRepository.save(student.toEntity())
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_SAVING_STUDENT)
+                Log.e("TeacherApp", "Error saving student: $e")
             }
         }
     }
@@ -52,7 +58,8 @@ class StudentsViewModel @AssistedInject constructor(
             try {
                 studentRepository.deleteById(id)
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_DELETING_STUDENT)
+                Log.e("TeacherApp", "Error deleting student: $e")
             }
         }
     }

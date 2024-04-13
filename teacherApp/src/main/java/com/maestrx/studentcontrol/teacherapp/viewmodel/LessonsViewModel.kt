@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
@@ -58,10 +59,14 @@ class LessonsViewModel @Inject constructor(
 
     fun updateLessonsForPeriod(startTime: Long, endTime: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {
-                lessonRepository.getLessonsForPeriod(startTime, endTime).map {
-                    Lesson.fromResponseToData(it)
+            try {
+                _state.update {
+                    lessonRepository.getLessonsForPeriod(startTime, endTime).map {
+                        Lesson.fromResponseToData(it)
+                    }
                 }
+            } catch (e: Exception) {
+                Log.d("TeacherApp", "Error updating lessons for period: $e")
             }
         }
     }

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,9 @@ class GroupsViewModel @Inject constructor(
     private val _state = MutableStateFlow(emptyList<Group>())
     val state = _state.asStateFlow()
 
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
+
     init {
         groupRepository.getAll().onEach { list ->
             _state.update {
@@ -39,7 +44,8 @@ class GroupsViewModel @Inject constructor(
             try {
                 groupRepository.save(group.toEntity())
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_SAVING_GROUP)
+                Log.e("TeacherApp", "Error saving group: $e")
             }
         }
     }
@@ -49,7 +55,8 @@ class GroupsViewModel @Inject constructor(
             try {
                 groupRepository.deleteById(id)
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_DELETING_GROUP)
+                Log.e("TeacherApp", "Error deleting group: $e")
             }
         }
     }

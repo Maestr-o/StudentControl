@@ -170,6 +170,16 @@ class NewLessonFragment : Fragment() {
         }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.message
+            .onEach { event ->
+                when (event.getContentIfNotHandled()) {
+                    Constants.MESSAGE_ERROR_SAVING_LESSON -> {
+                        toast(R.string.error_saving_lesson)
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         return binding.root
     }
 

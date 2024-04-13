@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,9 @@ class SubjectsViewModel @Inject constructor(
     private val _state = MutableStateFlow(emptyList<Subject>())
     val state = _state.asStateFlow()
 
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
+
     init {
         subjectRepository.getAll().onEach { list ->
             _state.update {
@@ -39,7 +44,8 @@ class SubjectsViewModel @Inject constructor(
             try {
                 subjectRepository.save(subject.toEntity())
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_SAVING_SUBJECT)
+                Log.e("TeacherApp", "Error saving subject: $e")
             }
         }
     }
@@ -49,7 +55,8 @@ class SubjectsViewModel @Inject constructor(
             try {
                 subjectRepository.deleteById(id)
             } catch (e: Exception) {
-                Log.e("TEST", e.toString())
+                _message.value = Event(Constants.MESSAGE_ERROR_DELETING_SUBJECT)
+                Log.e("TeacherApp", "Error deleting subject: $e")
             }
         }
     }
