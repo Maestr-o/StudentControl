@@ -17,12 +17,15 @@ import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.DatagramPacket
+import java.net.DatagramSocket
 
 @HiltViewModel(assistedFactory = LessonDetailsViewModelFactory::class)
 class LessonDetailsViewModel @AssistedInject constructor(
@@ -32,8 +35,11 @@ class LessonDetailsViewModel @AssistedInject constructor(
     @Assisted private val lesson: Lesson,
 ) : ViewModel() {
 
-    private val _statusMessage = MutableStateFlow(Event(""))
-    val message = _statusMessage.asStateFlow()
+    private val serverPort = 5951
+    private val socket = DatagramSocket(serverPort)
+
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
 
     private val _lessonState = MutableStateFlow(Lesson())
     val lessonState = _lessonState.asStateFlow()
@@ -74,11 +80,11 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     fun deleteLesson() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 lessonRepository.deleteById(lesson.id)
             } catch (e: Exception) {
-                _statusMessage.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
+                _message.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
                 Log.d("TeacherApp", "Error deleting lesson: $e")
             }
         }
@@ -86,10 +92,13 @@ class LessonDetailsViewModel @AssistedInject constructor(
 
     fun setControlStatus(status: ControlStatus) {
         _controlStatus.update { status }
+        if (status is ControlStatus.Running) {
+            dataExchange()
+        }
     }
 
     fun saveAttendance(studentId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 attendanceRepository.save(
                     AttendanceEntity(
@@ -101,5 +110,35 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 Log.d("TeacherApp", "Error save attendance: $e")
             }
         }
+    }
+
+    private fun dataExchange() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                while (true) {
+                    val buffer = ByteArray(1024)
+                    val receivePacket = DatagramPacket(buffer, buffer.size)
+                    socket.receive(receivePacket) // Получение данных от студента
+                    val receivedData = String(receivePacket.data, 0, receivePacket.length)
+                    Log.d("TeacherApp", "Received data from student: $receivedData")
+
+                    // Отправка ACK обратно студенту
+                    val sendData = "ACK".toByteArray()
+                    val studentAddress = receivePacket.address
+                    val studentPort = receivePacket.port
+                    val sendPacket =
+                        DatagramPacket(sendData, sendData.size, studentAddress, studentPort)
+                    socket.send(sendPacket)
+                    Log.d("TeacherApp", "Sent ACK to student")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        socket.close()
     }
 }

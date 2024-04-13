@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.ap
+package com.maestrx.studentcontrol.teacherapp.wifi
 
 import android.content.ComponentName
 import android.content.Context
@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.wifi.WifiManager
 import android.util.Log
 
-object APUtils {
+object WifiHelper {
 
     fun isWifiApEnabled(context: Context): Boolean {
         val wifiManager =

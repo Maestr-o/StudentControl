@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.ap.APUtils
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonDetailsBinding
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
@@ -27,6 +26,7 @@ import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonDetailsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
+import com.maestrx.studentcontrol.teacherapp.wifi.WifiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.delay
@@ -88,7 +88,7 @@ class LessonDetailsFragment : Fragment() {
                     .setTitle(getString(R.string.create_ap))
                     .setView(dialogBinding.root)
                     .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                        APUtils.goToAPSettings(requireContext())
+                        WifiHelper.goToAPSettings(requireContext())
                         dialog.dismiss()
                     }
                     .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -96,7 +96,7 @@ class LessonDetailsFragment : Fragment() {
                     }
                     .show()
             } else if (viewModel.controlStatus.value is ControlStatus.Running) {
-                APUtils.goToAPSettings(requireContext())
+                WifiHelper.goToAPSettings(requireContext())
             }
         }
 
@@ -253,11 +253,6 @@ class LessonDetailsFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        // TEST
-        binding.registeredCount.setOnClickListener {
-            viewModel.saveAttendance(10L)
-        }
-
         return binding.root
     }
 
@@ -276,13 +271,17 @@ class LessonDetailsFragment : Fragment() {
             val endTime = lesson.timeEnd
             val time = System.currentTimeMillis()
 
-            if (time in startTime..endTime && APUtils.isWifiApEnabled(requireContext())) {
+            if (time in startTime..endTime && WifiHelper.isWifiApEnabled(requireContext()) &&
+                status !is ControlStatus.Running
+            ) {
                 viewModel.setControlStatus(ControlStatus.Running)
-            } else if (time in startTime..endTime && !APUtils.isWifiApEnabled(requireContext())) {
+            } else if (time in startTime..endTime && !WifiHelper.isWifiApEnabled(requireContext())
+                && status !is ControlStatus.ReadyToStart
+            ) {
                 viewModel.setControlStatus(ControlStatus.ReadyToStart)
-            } else if (time < startTime) {
+            } else if (time < startTime && status !is ControlStatus.NotReadyToStart) {
                 viewModel.setControlStatus(ControlStatus.NotReadyToStart)
-            } else if (time > endTime) {
+            } else if (time > endTime && status !is ControlStatus.Finished) {
                 viewModel.setControlStatus(ControlStatus.Finished)
             }
         }

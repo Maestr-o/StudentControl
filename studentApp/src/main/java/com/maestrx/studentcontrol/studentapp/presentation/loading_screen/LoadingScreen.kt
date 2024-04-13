@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +44,9 @@ fun LoadingScreen(
                 )
                 CircularProgressIndicator()
             }
+            SideEffect {
+                viewModel.dataExchange()
+            }
         }
 
         is LoadingState.Input -> {
@@ -53,12 +54,10 @@ fun LoadingScreen(
 //            state.list.forEach {
 //                groups += it.group
 //            }
-            val groups = listOf("123", "456", "789")
-
-            var expanded by rememberSaveable { mutableStateOf(false) }
-            var selectedGroup by rememberSaveable { mutableStateOf<String?>(null) }
-
-
+//            val groups = listOf("123", "456", "789")
+//
+//            var expanded by rememberSaveable { mutableStateOf(false) }
+//            var selectedGroup by rememberSaveable { mutableStateOf<String?>(null) }
         }
     }
 }
@@ -69,6 +68,5 @@ fun LoadingPreview() {
     val context = LocalContext.current
     LoadingScreen(
         navController = NavController(context),
-        viewModel = LoadingViewModel(),
     )
 }
