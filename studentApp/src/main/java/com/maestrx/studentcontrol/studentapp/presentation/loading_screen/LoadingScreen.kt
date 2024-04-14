@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +20,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.maestrx.studentcontrol.studentapp.R
+import com.maestrx.studentcontrol.studentapp.util.Toast
 
 @Composable
 fun LoadingScreen(
     navController: NavController,
     viewModel: LoadingViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state.screenState) {
@@ -44,9 +46,14 @@ fun LoadingScreen(
                 )
                 CircularProgressIndicator()
             }
-            SideEffect {
-                viewModel.dataExchange()
+            LaunchedEffect(Unit) {
+                viewModel.startDataExchange()
             }
+        }
+
+        is LoadingState.Error -> {
+            context.Toast(res = R.string.error_sending_data)
+            viewModel.setScreenStatus(LoadingState.ReadyToBack)
         }
 
         is LoadingState.Input -> {
@@ -58,6 +65,15 @@ fun LoadingScreen(
 //
 //            var expanded by rememberSaveable { mutableStateOf(false) }
 //            var selectedGroup by rememberSaveable { mutableStateOf<String?>(null) }
+        }
+
+        is LoadingState.Success -> {
+            context.Toast(res = R.string.connected)
+            viewModel.setScreenStatus(LoadingState.ReadyToBack)
+        }
+
+        is LoadingState.ReadyToBack -> {
+            navController.navigateUp()
         }
     }
 }

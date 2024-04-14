@@ -14,6 +14,7 @@ import com.maestrx.studentcontrol.teacherapp.repository.lessonGroupCrossRef.Less
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
+import com.maestrx.studentcontrol.teacherapp.wifi.ServerInteractor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,19 +25,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.net.DatagramPacket
-import java.net.DatagramSocket
 
 @HiltViewModel(assistedFactory = LessonDetailsViewModelFactory::class)
 class LessonDetailsViewModel @AssistedInject constructor(
     private val attendanceRepository: AttendanceRepository,
     private val lessonRepository: LessonRepository,
     private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
+    private val serverInteractor: ServerInteractor,
     @Assisted private val lesson: Lesson,
 ) : ViewModel() {
-
-    private val serverPort = 5951
-    private val socket = DatagramSocket(serverPort)
 
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
@@ -93,7 +90,17 @@ class LessonDetailsViewModel @AssistedInject constructor(
     fun setControlStatus(status: ControlStatus) {
         _controlStatus.update { status }
         if (status is ControlStatus.Running) {
-            dataExchange()
+            startDataExchange()
+        }
+    }
+
+    private fun startDataExchange() {
+        viewModelScope.launch {
+            try {
+                serverInteractor.dataExchange()
+            } catch (e: Exception) {
+                _controlStatus.update { ControlStatus.ReadyToStart }
+            }
         }
     }
 
@@ -112,33 +119,8 @@ class LessonDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun dataExchange() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                while (true) {
-                    val buffer = ByteArray(1024)
-                    val receivePacket = DatagramPacket(buffer, buffer.size)
-                    socket.receive(receivePacket) // Получение данных от студента
-                    val receivedData = String(receivePacket.data, 0, receivePacket.length)
-                    Log.d("TeacherApp", "Received data from student: $receivedData")
-
-                    // Отправка ACK обратно студенту
-                    val sendData = "ACK".toByteArray()
-                    val studentAddress = receivePacket.address
-                    val studentPort = receivePacket.port
-                    val sendPacket =
-                        DatagramPacket(sendData, sendData.size, studentAddress, studentPort)
-                    socket.send(sendPacket)
-                    Log.d("TeacherApp", "Sent ACK to student")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     override fun onCleared() {
         super.onCleared()
-        socket.close()
+        serverInteractor.closeSocket()
     }
 }

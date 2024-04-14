@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
-import com.maestrx.studentcontrol.studentapp.domain.wifi.WifiHelper
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlScreen
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingScreen
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentControlTheme
@@ -23,9 +22,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var prefs: SharedPreferencesManager
-
-    @Inject
-    lateinit var wifiHelper: WifiHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
