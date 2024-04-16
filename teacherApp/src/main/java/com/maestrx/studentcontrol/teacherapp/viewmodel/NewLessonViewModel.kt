@@ -80,7 +80,7 @@ class NewLessonViewModel @Inject constructor(
                 lessonGroupCrossRefRepository.save(lessonGroupCrossRefs)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_LESSON)
-                Log.d("TeacherApp", "Error saving lesson: $e")
+                Log.d(Constants.DEBUG_TAG, "Error saving lesson: $e")
             }
         }
     }

@@ -3,7 +3,6 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import com.maestrx.studentcontrol.teacherapp.model.Attendance
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Group
@@ -71,7 +70,10 @@ class LessonDetailsViewModel @AssistedInject constructor(
                                 it.name
                             }
                     )
-                _lessonState.update { lessonWithGroups }
+                _lessonState.update {
+                    lessonWithGroups
+                }
+                setControlStatus(controlStatus.value)
             }
             .launchIn(viewModelScope)
     }
@@ -82,14 +84,14 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 lessonRepository.deleteById(lesson.id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
-                Log.d("TeacherApp", "Error deleting lesson: $e")
+                Log.d(Constants.DEBUG_TAG, "Error deleting lesson: $e")
             }
         }
     }
 
     fun setControlStatus(status: ControlStatus) {
         _controlStatus.update { status }
-        if (status is ControlStatus.Running) {
+        if (status is ControlStatus.Running && _lessonState.value.groups.isNotEmpty()) {
             startDataExchange()
         }
     }
@@ -97,24 +99,9 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private fun startDataExchange() {
         viewModelScope.launch {
             try {
-                serverInteractor.dataExchange()
+                serverInteractor.dataExchange(lessonState.value)
             } catch (e: Exception) {
                 _controlStatus.update { ControlStatus.ReadyToStart }
-            }
-        }
-    }
-
-    fun saveAttendance(studentId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                attendanceRepository.save(
-                    AttendanceEntity(
-                        lessonId = lesson.id,
-                        studentId = studentId,
-                    )
-                )
-            } catch (e: Exception) {
-                Log.d("TeacherApp", "Error save attendance: $e")
             }
         }
     }

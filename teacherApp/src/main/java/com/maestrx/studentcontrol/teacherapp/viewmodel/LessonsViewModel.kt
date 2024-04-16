@@ -7,6 +7,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +67,7 @@ class LessonsViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Log.d("TeacherApp", "Error updating lessons for period: $e")
+                Log.d(Constants.DEBUG_TAG, "Error updating lessons for period: $e")
             }
         }
     }

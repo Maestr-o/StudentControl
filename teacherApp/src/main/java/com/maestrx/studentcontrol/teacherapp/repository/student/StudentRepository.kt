@@ -8,4 +8,6 @@ interface StudentRepository {
     fun getStudentsByGroup(groupId: Long): Flow<List<StudentResponse>>
     suspend fun save(data: StudentEntity)
     suspend fun deleteById(id: Long)
+    suspend fun getStudentIdByDeviceId(deviceId: String): Long
+    suspend fun saveDeviceId(studentId: Long, deviceId: String)
 }

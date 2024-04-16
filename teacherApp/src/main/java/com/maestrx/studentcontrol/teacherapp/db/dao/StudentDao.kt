@@ -25,4 +25,10 @@ interface StudentDao {
 
     @Query("DELETE FROM Student WHERE id=:id")
     suspend fun deleteById(id: Long)
+
+    @Query("SELECT id FROM Student WHERE deviceId = :deviceId")
+    suspend fun getStudentIdByDeviceId(deviceId: String): Long
+
+    @Query("UPDATE Student SET deviceId = :deviceId WHERE id = :studentId")
+    suspend fun saveDeviceId(studentId: Long, deviceId: String)
 }

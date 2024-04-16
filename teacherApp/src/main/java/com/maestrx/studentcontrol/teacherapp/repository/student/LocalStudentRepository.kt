@@ -23,4 +23,10 @@ class LocalStudentRepository @Inject constructor(
 
     override suspend fun deleteById(id: Long) =
         db.studentDao.deleteById(id)
+
+    override suspend fun getStudentIdByDeviceId(deviceId: String): Long =
+        db.studentDao.getStudentIdByDeviceId(deviceId)
+
+    override suspend fun saveDeviceId(studentId: Long, deviceId: String) =
+        db.studentDao.saveDeviceId(studentId, deviceId)
 }
