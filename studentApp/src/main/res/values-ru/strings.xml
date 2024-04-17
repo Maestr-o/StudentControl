@@ -12,4 +12,7 @@
     <string name="connected">Подключено</string>
     <string name="sending_data">Отправка данных…</string>
     <string name="error_sending_data">Ошибка отправки данных. Пожалуйста, повторите попытку</string>
+    <string name="send">Отправить</string>
+    <string name="choose_group">Выберите группу</string>
+    <string name="choose_student">Выберите студента</string>
 </resources>

@@ -9,6 +9,8 @@ import com.maestrx.studentcontrol.studentapp.util.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -22,9 +24,16 @@ class ServerInteractor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val wifiHelper: WifiHelper,
 ) {
+    interface StudentListCallback {
+        fun onStudentsReceived(students: List<Student>)
+    }
+
+    var studentListCallback: StudentListCallback? = null
 
     private val serverPort = 5951
     private lateinit var socket: DatagramSocket
+
+    var stId = 0L
 
     @SuppressLint("HardwareIds")
     suspend fun dataExchange() = withContext(Dispatchers.IO) {
@@ -36,16 +45,36 @@ class ServerInteractor @Inject constructor(
         val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
         send(serverAddress, deviceId)
 
-        val data = receive()
+        var timer = launch {
+            delay(3_000)
+            throw Exception("Timeout")
+        }
+        var data = receive()
+        timer.cancel()
+
         if (data == "ACK$deviceId") {
             // Send to screen success
             Log.d(Constants.DEBUG_TAG, "Student attended!")
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
-            val studentId = 1L // get studentId
-            send(serverAddress, studentId.toString())
+            studentListCallback?.onStudentsReceived(list)
 
-            if (receive() == "ACK2$deviceId") {
+            launch {
+                while (stId == 0L) {
+                }
+            }.join()
+
+            send(serverAddress, stId.toString())
+            stId = 0L
+
+            timer = launch {
+                delay(3_000)
+                throw Exception("Timeout")
+            }
+            data = receive()
+            timer.cancel()
+
+            if (data == "ACK2$deviceId") {
                 // Success
             } else {
                 // Error

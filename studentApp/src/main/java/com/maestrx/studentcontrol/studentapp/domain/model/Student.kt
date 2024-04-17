@@ -17,4 +17,7 @@ data class Student(
     val lastName: String = "",
     @SerialName("deviceId")
     val deviceId: String = "",
-)
+) {
+    val fullName
+        get() = "$lastName $firstName $midName"
+}

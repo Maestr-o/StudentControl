@@ -1,46 +1,64 @@
 package com.maestrx.studentcontrol.studentapp.presentation.loading_screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.studentapp.domain.model.Student
 import com.maestrx.studentcontrol.studentapp.domain.wifi.ServerInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoadingViewModel @Inject constructor(
     private val serverInteractor: ServerInteractor,
-) : ViewModel() {
+) : ViewModel(), ServerInteractor.StudentListCallback {
 
-    private val _state = MutableStateFlow(LoadingUiState())
-    val state = _state.asStateFlow()
+    var state by mutableStateOf(LoadingUiState())
+        private set
 
     private var isDataExchangeStarted = false
 
-    fun startDataExchange() {
+    init {
+        serverInteractor.studentListCallback = this
+    }
+
+    fun onEvent(event: LoadingEvent) {
+        when (event) {
+            is LoadingEvent.StartDataExchange -> startDataExchange()
+            is LoadingEvent.SetScreenStatus -> setScreenStatus(event.status)
+            is LoadingEvent.SetStudentId -> setStudentId(event.id)
+        }
+    }
+
+    private fun startDataExchange() {
         if (isDataExchangeStarted) return
         isDataExchangeStarted = true
         viewModelScope.launch {
-            try {
+            state = try {
                 serverInteractor.dataExchange()
-                _state.update {
-                    it.copy(screenState = LoadingState.Success)
-                }
+                state.copy(screenState = LoadingStatus.Success)
             } catch (e: Exception) {
-                _state.update {
-                    it.copy(screenState = LoadingState.Error)
-                }
+                state.copy(screenState = LoadingStatus.Error)
             }
         }
     }
 
-    fun setScreenStatus(status: LoadingState) {
-        _state.update {
-            it.copy(screenState = status)
-        }
+    private fun setScreenStatus(status: LoadingStatus) {
+        state = state.copy(screenState = status)
+    }
+
+    private fun setStudentId(id: Long) {
+        serverInteractor.stId = id
+    }
+
+    override fun onStudentsReceived(students: List<Student>) {
+        state = LoadingUiState(
+            screenState = LoadingStatus.Input,
+            students = students,
+        )
     }
 
     override fun onCleared() {

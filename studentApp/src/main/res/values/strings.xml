@@ -11,4 +11,7 @@
     <string name="connected">Connected</string>
     <string name="sending_data">Sending data…</string>
     <string name="error_sending_data">Error sending data. Please retry</string>
+    <string name="send">Send</string>
+    <string name="choose_group">Choose group</string>
+    <string name="choose_student">Choose student</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.maestrx.studentcontrol.studentapp.domain.wifi
 
 import android.content.Context
-import android.net.ConnectivityManager
 import android.net.DhcpInfo
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -14,9 +13,7 @@ import javax.inject.Singleton
 class WifiHelper @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-
-    private val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-    private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val wm: WifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
     private val dhcpInfo: DhcpInfo = wm.dhcpInfo
     private val gateway = dhcpInfo.gateway
