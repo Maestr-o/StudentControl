@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,8 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.Screen
@@ -47,13 +44,12 @@ import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 @Composable
 internal fun ControlScreen(
     navController: NavController,
-    viewModel: ControlViewModel = hiltViewModel(),
+    state: ControlStatus,
+    onEvent: (ControlEvent) -> Unit,
     prefs: SharedPreferencesManager,
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
     val context = LocalContext.current
-    WifiStateReceiverCompose(viewModel)
+    WifiStateReceiverCompose(onEvent)
 
     Column(
         modifier = Modifier
@@ -74,12 +70,12 @@ internal fun ControlScreen(
                         .padding(start = 6.dp)
                         .weight(1f),
                     textAlign = TextAlign.Start,
-                    text = when (state.wifiState) {
-                        is WifiState.NotConnected -> {
+                    text = when (state) {
+                        is ControlStatus.NotConnected -> {
                             stringResource(id = R.string.no_connection)
                         }
 
-                        is WifiState.Connected -> {
+                        is ControlStatus.Connected -> {
                             stringResource(id = R.string.connected)
                         }
                     },
@@ -108,12 +104,12 @@ internal fun ControlScreen(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            when (state.wifiState) {
-                is WifiState.NotConnected -> {
+            when (state) {
+                is ControlStatus.NotConnected -> {
                     DisconnectedGroup()
                 }
 
-                is WifiState.Connected -> {
+                is ControlStatus.Connected -> {
                     ConnectedGroup(navController)
                 }
             }
@@ -121,7 +117,7 @@ internal fun ControlScreen(
 
         val personalData = prefs.getPersonalData()
         if (
-            state.wifiState is WifiState.Connected &&
+            state is ControlStatus.Connected &&
             personalData != null && personalData.group.isNotBlank() && personalData.fullName.isNotBlank()
         ) {
             Card(
@@ -210,19 +206,19 @@ fun ConnectedGroup(navController: NavController) {
 }
 
 @Composable
-fun WifiStateReceiverCompose(viewModel: ControlViewModel) {
+fun WifiStateReceiverCompose(onEvent: (ControlEvent) -> Unit) {
     val context = LocalContext.current
 
     DisposableEffect(key1 = context) {
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                viewModel.changeWifiState(true)
+                onEvent(ControlEvent.SetScreenStatus(ControlStatus.Connected))
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-                viewModel.changeWifiState(false)
+                onEvent(ControlEvent.SetScreenStatus(ControlStatus.NotConnected))
             }
         }
 
@@ -246,8 +242,9 @@ fun WifiStateReceiverCompose(viewModel: ControlViewModel) {
 fun ControlPreview() {
     val context = LocalContext.current
     ControlScreen(
-        viewModel = ControlViewModel(),
         navController = NavController(context),
+        state = ControlStatus.Connected,
+        onEvent = {},
         prefs = SharedPreferencesManager(context),
     )
 }

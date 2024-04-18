@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlScreen
+import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlViewModel
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingScreen
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingViewModel
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentControlTheme
@@ -40,7 +41,14 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.Control.route
                     ) {
                         composable(route = Screen.Control.route) {
-                            ControlScreen(navController = navController, prefs = prefs)
+                            val viewModel = hiltViewModel<ControlViewModel>()
+                            val state = viewModel.state
+                            ControlScreen(
+                                navController = navController,
+                                state = state.value,
+                                onEvent = viewModel::onEvent,
+                                prefs = prefs
+                            )
                         }
 
                         composable(route = Screen.Loading.route) {
@@ -49,7 +57,8 @@ class MainActivity : ComponentActivity() {
                             LoadingScreen(
                                 navController = navController,
                                 state = state,
-                                onEvent = viewModel::onEvent
+                                onEvent = viewModel::onEvent,
+                                prefs = prefs,
                             )
                         }
                     }

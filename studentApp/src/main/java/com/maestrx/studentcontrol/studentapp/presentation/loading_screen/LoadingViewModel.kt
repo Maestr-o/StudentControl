@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
 import com.maestrx.studentcontrol.studentapp.domain.wifi.ServerInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +25,12 @@ class LoadingViewModel @Inject constructor(
 
     init {
         serverInteractor.studentListCallback = this
+
+        serverInteractor.interState
+            .onEach { status ->
+                setScreenStatus(status)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onEvent(event: LoadingEvent) {
@@ -37,11 +45,10 @@ class LoadingViewModel @Inject constructor(
         if (isDataExchangeStarted) return
         isDataExchangeStarted = true
         viewModelScope.launch {
-            state = try {
+            try {
                 serverInteractor.dataExchange()
-                state.copy(screenState = LoadingStatus.Success)
             } catch (e: Exception) {
-                state.copy(screenState = LoadingStatus.Error)
+                setScreenStatus(LoadingStatus.Error)
             }
         }
     }
@@ -51,6 +58,7 @@ class LoadingViewModel @Inject constructor(
     }
 
     private fun setStudentId(id: Long) {
+        setScreenStatus(LoadingStatus.Loading)
         serverInteractor.stId = id
     }
 

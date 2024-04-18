@@ -5,11 +5,14 @@ import android.content.Context
 import android.provider.Settings.Secure
 import android.util.Log
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
+import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingStatus
 import com.maestrx.studentcontrol.studentapp.util.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.ListSerializer
@@ -17,6 +20,7 @@ import kotlinx.serialization.json.Json
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -27,6 +31,9 @@ class ServerInteractor @Inject constructor(
     interface StudentListCallback {
         fun onStudentsReceived(students: List<Student>)
     }
+
+    private val _interState = MutableStateFlow<LoadingStatus>(LoadingStatus.Loading)
+    val interState = _interState.asStateFlow()
 
     var studentListCallback: StudentListCallback? = null
 
@@ -45,15 +52,9 @@ class ServerInteractor @Inject constructor(
         val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
         send(serverAddress, deviceId)
 
-        var timer = launch {
-            delay(3_000)
-            throw Exception("Timeout")
-        }
         var data = receive()
-        timer.cancel()
-
         if (data == "ACK$deviceId") {
-            // Send to screen success
+            _interState.update { LoadingStatus.Success }
             Log.d(Constants.DEBUG_TAG, "Student attended!")
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
@@ -67,17 +68,11 @@ class ServerInteractor @Inject constructor(
             send(serverAddress, stId.toString())
             stId = 0L
 
-            timer = launch {
-                delay(3_000)
-                throw Exception("Timeout")
-            }
             data = receive()
-            timer.cancel()
-
             if (data == "ACK2$deviceId") {
-                // Success
+                _interState.update { LoadingStatus.Success }
             } else {
-                // Error
+                _interState.update { LoadingStatus.Error }
             }
         }
     }
@@ -92,10 +87,15 @@ class ServerInteractor @Inject constructor(
     private fun receive(): String {
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        socket.receive(receivePacket)
-        val data = String(receivePacket.data, 0, receivePacket.length)
-        Log.d(Constants.DEBUG_TAG, "Received data: $data")
-        return data
+        socket.soTimeout = 3000
+        try {
+            socket.receive(receivePacket)
+            val data = String(receivePacket.data, 0, receivePacket.length)
+            Log.d(Constants.DEBUG_TAG, "Received data: $data")
+            return data
+        } catch (e: SocketTimeoutException) {
+            throw Exception("Receive operation timed out", e)
+        }
     }
 
     fun closeSocket() {
