@@ -29,4 +29,7 @@ class LocalStudentRepository @Inject constructor(
 
     override suspend fun saveDeviceId(studentId: Long, deviceId: String) =
         db.studentDao.saveDeviceId(studentId, deviceId)
+
+    override suspend fun getStudentsCountByGroup(groupId: Long): Int =
+        db.studentDao.getStudentsCountByGroup(groupId)
 }

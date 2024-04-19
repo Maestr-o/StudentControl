@@ -60,7 +60,7 @@
     <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
     <string name="ask_delete_lesson">Do you want to delete this lesson?</string>
     <string name="invalid_times">The start time of the lesson must be greater than the end time!</string>
-    <string name="registered_students">Registered students: %d</string>
+    <string name="registered_students">Registered students: %d/%d</string>
     <string name="stop_control">Stop control</string>
     <string name="end_control">Control completed</string>
     <string name="early_control">Early to start</string>
@@ -99,4 +99,5 @@
     <string name="error_deleting_student">Error deleting student</string>
     <string name="error_saving_subject">Error saving subject</string>
     <string name="error_deleting_subject">Error deleting subject</string>
+    <string name="student_count_placeholder">%d/%d people</string>
 </resources>

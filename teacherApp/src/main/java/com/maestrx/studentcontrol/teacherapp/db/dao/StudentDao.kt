@@ -30,4 +30,12 @@ interface StudentDao {
 
     @Query("UPDATE Student SET deviceId = :deviceId WHERE id = :studentId")
     suspend fun saveDeviceId(studentId: Long, deviceId: String)
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM Student, `Group`
+        WHERE Student.groupId == :groupId AND Student.groupId == `Group`.id
+        """
+    )
+    suspend fun getStudentsCountByGroup(groupId: Long): Int
 }

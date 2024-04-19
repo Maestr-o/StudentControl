@@ -12,6 +12,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
@@ -33,6 +34,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val attendanceRepository: AttendanceRepository,
     private val lessonRepository: LessonRepository,
     private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
+    private val studentRepository: StudentRepository,
     private val serverInteractor: ServerInteractor,
     @Assisted private val lesson: Lesson,
 ) : ViewModel() {
@@ -46,8 +48,8 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
     val controlStatus = _controlStatus.asStateFlow()
 
-    private val _studentsWithGroups = MutableStateFlow(LessonDetailsUiState())
-    val studentsWithGroups = _studentsWithGroups.asStateFlow()
+    private val _studentsWithGroupsState = MutableStateFlow(LessonDetailsUiState())
+    val studentsWithGroupsState = _studentsWithGroupsState.asStateFlow()
 
     init {
         setLesson(lesson)
@@ -55,12 +57,12 @@ class LessonDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             attendanceRepository.getByLesson(lesson.id)
                 .onEach { list ->
-                    _studentsWithGroups.update {
-                        LessonDetailsUiState(
-                            attendance = list.map {
-                                Attendance.toData(it)
+                    _studentsWithGroupsState.update {
+                        it.copy(
+                            attendance = list.map { attendance ->
+                                Attendance.toData(attendance)
                             },
-                            studentsWithGroups = getStudentsWithGroups(getListOfStudents()),
+                            studentsWithGroups = getStudentsWithGroups(),
                         )
                     }
                 }
@@ -82,6 +84,11 @@ class LessonDetailsViewModel @AssistedInject constructor(
                     )
                 _lessonState.update {
                     lessonWithGroups
+                }
+                if (studentsWithGroupsState.value.totalStudentsCount == 0) {
+                    _studentsWithGroupsState.update {
+                        it.copy(totalStudentsCount = getTotalStudentsCount(lessonWithGroups.groups))
+                    }
                 }
                 setControlStatus(controlStatus.value)
             }
@@ -116,29 +123,46 @@ class LessonDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun getListOfStudents(): List<Student> =
+    private suspend fun getStudentsWithGroups(): List<Any> =
         viewModelScope.async {
-            lessonRepository.getStudentsByLessonId(lessonState.value.id).map {
-                Student.fromResponseToData(it)
+            val listOfStudents = async {
+                lessonRepository.getStudentsByLessonId(lessonState.value.id).map {
+                    Student.fromResponseToData(it)
+                }
             }
+                .await()
+
+            val attendedList = async {
+                listOfStudents
+                    .groupBy { it.group }
+                    .map { (group, groupStudents) ->
+                        AttendedInGroup(
+                            name = group.name,
+                            count = groupStudents.size,
+                            max = studentRepository.getStudentsCountByGroup(group.id),
+                        )
+                    }
+            }
+
+            val result = mutableListOf<Any>()
+            val groupedStudents = listOfStudents.groupBy { it.group }
+            for ((group, groupStudents) in groupedStudents) {
+                result.addAll(attendedList.await().filter { it.name == group.name })
+                result.addAll(groupStudents)
+            }
+            result
         }
             .await()
 
-    private fun getStudentsWithGroups(listOfStudents: List<Student>): List<Any> {
-        val attendedList = listOfStudents
-            .groupBy { it.group }
-            .map { (group, groupStudents) ->
-                AttendedInGroup(group.name, groupStudents.size)
+    private suspend fun getTotalStudentsCount(groups: List<Group>): Int =
+        viewModelScope.async {
+            var count = 0
+            groups.forEach { group ->
+                count += studentRepository.getStudentsCountByGroup(group.id)
             }
-
-        val result = mutableListOf<Any>()
-        val groupedStudents = listOfStudents.groupBy { it.group }
-        for ((group, groupStudents) in groupedStudents) {
-            result.addAll(attendedList.filter { it.name == group.name })
-            result.addAll(groupStudents)
+            count
         }
-        return result
-    }
+            .await()
 
     override fun onCleared() {
         super.onCleared()

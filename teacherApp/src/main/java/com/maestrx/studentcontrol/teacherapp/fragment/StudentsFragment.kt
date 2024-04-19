@@ -96,7 +96,7 @@ class StudentsFragment : Fragment() {
                 }
             }
         )
-        binding.students.adapter = adapter
+        binding.attended.adapter = adapter
 
         binding.add.setOnClickListener {
             val dialogBinding = DialogEditStudentBinding.inflate(inflater)

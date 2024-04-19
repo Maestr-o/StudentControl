@@ -198,7 +198,7 @@ class LessonDetailsFragment : Fragment() {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.early_control)
                             registeredCount.isGone = true
-                            students.isGone = true
+                            attended.isGone = true
                         }
                     }
 
@@ -207,8 +207,8 @@ class LessonDetailsFragment : Fragment() {
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.start_control)
-                            registeredCount.isGone = true
-                            students.isGone = true
+                            registeredCount.isVisible = true
+                            attended.isVisible = true
                         }
                     }
 
@@ -218,7 +218,7 @@ class LessonDetailsFragment : Fragment() {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
                             registeredCount.isVisible = true
-                            students.isVisible = true
+                            attended.isVisible = true
                         }
                     }
 
@@ -228,19 +228,23 @@ class LessonDetailsFragment : Fragment() {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.end_control)
                             registeredCount.isVisible = true
-                            students.isVisible = true
+                            attended.isVisible = true
                         }
                     }
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.studentsWithGroups
+        viewModel.studentsWithGroupsState
             .onEach { state ->
                 val attendedAdapter = AttendedStudentsAdapter(state.studentsWithGroups)
                 binding.registeredCount.text =
-                    getString(R.string.registered_students, state.attendance.count())
-                binding.students.adapter = attendedAdapter
+                    getString(
+                        R.string.registered_students,
+                        state.attendance.count(),
+                        state.totalStudentsCount
+                    )
+                binding.attended.adapter = attendedAdapter
 
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

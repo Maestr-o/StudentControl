@@ -156,11 +156,10 @@
             tools:text="@string/registered_students" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/students"
+            android:id="@+id/attended"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/common_spacing"
-            android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registeredCount"
