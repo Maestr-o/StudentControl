@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 import com.maestrx.studentcontrol.studentapp.domain.model.Group
@@ -38,10 +37,10 @@ import com.maestrx.studentcontrol.studentapp.util.Toast
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LoadingScreen(
-    navController: NavController,
     state: LoadingUiState,
     onEvent: (LoadingEvent) -> Unit,
     prefs: SharedPreferencesManager,
+    navClick: (isConnected: Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -68,7 +67,7 @@ internal fun LoadingScreen(
 
         is LoadingStatus.Error -> {
             context.Toast(res = R.string.error_sending_data)
-            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack))
+            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(false)))
         }
 
         is LoadingStatus.Input -> {
@@ -220,11 +219,11 @@ internal fun LoadingScreen(
 
         is LoadingStatus.Success -> {
             context.Toast(res = R.string.connected)
-            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack))
+            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(true)))
         }
 
         is LoadingStatus.ReadyToBack -> {
-            navController.navigateUp()
+            navClick(state.screenState.isConnected)
         }
     }
 }
@@ -234,7 +233,6 @@ internal fun LoadingScreen(
 fun LoadingPreview() {
     val context = LocalContext.current
     LoadingScreen(
-        navController = NavController(context),
         state = LoadingUiState(
             screenState = LoadingStatus.Input,
             students = listOf(
@@ -254,5 +252,6 @@ fun LoadingPreview() {
         ),
         onEvent = {},
         prefs = SharedPreferencesManager(context),
+        navClick = {},
     )
 }

@@ -7,5 +7,5 @@ import androidx.compose.ui.res.stringResource
 
 @Composable
 fun Context.Toast(res: Int) {
-    Toast.makeText(this, stringResource(id = res), Toast.LENGTH_LONG).show()
+    Toast.makeText(this, stringResource(id = res), Toast.LENGTH_SHORT).show()
 }

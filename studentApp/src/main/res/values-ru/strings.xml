@@ -15,4 +15,5 @@
     <string name="send">Отправить</string>
     <string name="choose_group">Выберите группу</string>
     <string name="choose_student">Выберите студента</string>
+    <string name="checked_in">Вы отмечены!</string>
 </resources>

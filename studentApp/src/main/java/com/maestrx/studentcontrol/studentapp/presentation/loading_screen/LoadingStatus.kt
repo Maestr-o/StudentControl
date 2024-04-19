@@ -5,5 +5,5 @@ sealed interface LoadingStatus {
     data object Input : LoadingStatus
     data object Error : LoadingStatus
     data object Success : LoadingStatus
-    data object ReadyToBack : LoadingStatus
+    data class ReadyToBack(val isConnected: Boolean) : LoadingStatus
 }

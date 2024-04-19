@@ -55,7 +55,6 @@ class ServerInteractor @Inject constructor(
         var data = receive()
         if (data == "ACK$deviceId") {
             _interState.update { LoadingStatus.Success }
-            Log.d(Constants.DEBUG_TAG, "Student attended!")
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
             studentListCallback?.onStudentsReceived(list)
@@ -87,7 +86,7 @@ class ServerInteractor @Inject constructor(
     private fun receive(): String {
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        socket.soTimeout = 3000
+        socket.soTimeout = Constants.TIMEOUT
         try {
             socket.receive(receivePacket)
             val data = String(receivePacket.data, 0, receivePacket.length)

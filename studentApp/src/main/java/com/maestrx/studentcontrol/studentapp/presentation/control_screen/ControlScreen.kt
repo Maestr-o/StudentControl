@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,17 +37,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavController
 import com.maestrx.studentcontrol.studentapp.R
-import com.maestrx.studentcontrol.studentapp.Screen
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
+import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
 
 @Composable
 internal fun ControlScreen(
-    navController: NavController,
     state: ControlStatus,
     onEvent: (ControlEvent) -> Unit,
     prefs: SharedPreferencesManager,
+    isDataExchanged: Boolean,
+    navClick: () -> Unit,
 ) {
     val context = LocalContext.current
     WifiStateReceiverCompose(onEvent)
@@ -110,7 +111,7 @@ internal fun ControlScreen(
                 }
 
                 is ControlStatus.Connected -> {
-                    ConnectedGroup(navController)
+                    ConnectedGroup(navClick, isDataExchanged)
                 }
             }
         }
@@ -174,7 +175,10 @@ fun DisconnectedGroup() {
 }
 
 @Composable
-fun ConnectedGroup(navController: NavController) {
+fun ConnectedGroup(
+    navClick: () -> Unit,
+    isDataExchanged: Boolean,
+) {
     val buttonSize = 175.dp
     Column(
         modifier = Modifier
@@ -185,21 +189,33 @@ fun ConnectedGroup(navController: NavController) {
         IconButton(
             modifier = Modifier
                 .size(buttonSize),
+            enabled = !isDataExchanged,
             onClick = {
-                navController.navigate(Screen.Loading.route)
+                navClick()
             },
         ) {
             Image(
                 modifier = Modifier
                     .size(buttonSize),
                 painter = painterResource(id = R.drawable.start_control),
-                contentDescription = "start control"
+                contentDescription = "start control",
             )
         }
         Text(
             modifier = Modifier
                 .padding(top = 8.dp),
-            text = stringResource(id = R.string.check_in),
+            text = stringResource(
+                id = if (isDataExchanged) {
+                    R.string.checked_in
+                } else {
+                    R.string.check_in
+                }
+            ),
+            color = if (isDataExchanged) {
+                Connected
+            } else {
+                Color.Black
+            },
             fontSize = 20.sp,
         )
     }
@@ -242,9 +258,10 @@ fun WifiStateReceiverCompose(onEvent: (ControlEvent) -> Unit) {
 fun ControlPreview() {
     val context = LocalContext.current
     ControlScreen(
-        navController = NavController(context),
+        navClick = {},
         state = ControlStatus.Connected,
         onEvent = {},
         prefs = SharedPreferencesManager(context),
+        isDataExchanged = true,
     )
 }
