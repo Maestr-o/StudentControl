@@ -5,19 +5,27 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.maestrx.studentcontrol.teacherapp.db.entity.LessonEntity
 import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
+import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 
 @Dao
 interface LessonDao {
-
     @Query(
         """
-        SELECT Lesson.id, Lesson.auditory, Lesson.description, Lesson.timeStart, Lesson.timeEnd,
-            Lesson.title, Lesson.type, Subject.id as subjectId, Subject.name as subjectName
+        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.*
         FROM Lesson, Subject
         WHERE Subject.id = Lesson.subjectId AND Lesson.timeStart BETWEEN :startTime AND :endTime
         """
     )
     suspend fun getLessonsForPeriod(startTime: Long, endTime: Long): List<LessonResponse>
+
+    @Query(
+        """
+        SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, Attendance, `Group`
+        WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id AND Attendance.studentId == Student.id
+            AND `Group`.id == Student.groupId
+        """
+    )
+    suspend fun getStudentsByLessonId(lessonId: Long): List<StudentResponse>
 
     @Upsert
     suspend fun save(data: LessonEntity): Long

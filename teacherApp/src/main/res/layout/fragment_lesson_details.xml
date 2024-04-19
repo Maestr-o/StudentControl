@@ -146,7 +146,7 @@
             android:id="@+id/registeredCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:layout_marginHorizontal="17dp"
             android:layout_marginTop="@dimen/small_spacing"
             android:paddingHorizontal="@dimen/small_spacing"
             android:textSize="18sp"
@@ -160,6 +160,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/common_spacing"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registeredCount"
             tools:listitem="@layout/card_registered_group" />

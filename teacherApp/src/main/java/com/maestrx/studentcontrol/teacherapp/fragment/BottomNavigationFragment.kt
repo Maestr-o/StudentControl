@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -15,16 +14,14 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditLineBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentBottomNavigationBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Subject
+import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.GroupsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel
-import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
-
-    private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +51,7 @@ class BottomNavigationFragment : Fragment() {
                 .setTitle(getString(R.string.add_new_subject))
                 .setView(dialogBinding.root)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newSubjectName = dialogBinding.line.text.toString().trim()
+                    val newSubjectName = dialogBinding.line.text.toString().trim().capitalize()
                     if (newSubjectName.isNotBlank()) {
                         subjectsViewModel.save(
                             Subject(name = newSubjectName)

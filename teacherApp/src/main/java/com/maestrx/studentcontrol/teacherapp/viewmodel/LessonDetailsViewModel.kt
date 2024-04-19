@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Attendance
+import com.maestrx.studentcontrol.teacherapp.model.AttendedInGroup
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
+import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
-import com.maestrx.studentcontrol.teacherapp.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
@@ -18,6 +20,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -43,19 +46,26 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
     val controlStatus = _controlStatus.asStateFlow()
 
-    private val _students = MutableStateFlow<List<Attendance>>(mutableListOf())
-    val students = _students.asStateFlow()
+    private val _studentsWithGroups = MutableStateFlow(LessonDetailsUiState())
+    val studentsWithGroups = _studentsWithGroups.asStateFlow()
 
     init {
         setLesson(lesson)
 
-        attendanceRepository.getByLesson(lesson.id)
-            .onEach { list ->
-                _students.value = list.map {
-                    Attendance.toData(it)
+        viewModelScope.launch {
+            attendanceRepository.getByLesson(lesson.id)
+                .onEach { list ->
+                    _studentsWithGroups.update {
+                        LessonDetailsUiState(
+                            attendance = list.map {
+                                Attendance.toData(it)
+                            },
+                            studentsWithGroups = getStudentsWithGroups(getListOfStudents()),
+                        )
+                    }
                 }
-            }
-            .launchIn(viewModelScope)
+                .launchIn(viewModelScope)
+        }
     }
 
     private fun setLesson(lesson: Lesson) {
@@ -104,6 +114,30 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 _controlStatus.update { ControlStatus.ReadyToStart }
             }
         }
+    }
+
+    private suspend fun getListOfStudents(): List<Student> =
+        viewModelScope.async {
+            lessonRepository.getStudentsByLessonId(lessonState.value.id).map {
+                Student.fromResponseToData(it)
+            }
+        }
+            .await()
+
+    private fun getStudentsWithGroups(listOfStudents: List<Student>): List<Any> {
+        val attendedList = listOfStudents
+            .groupBy { it.group }
+            .map { (group, groupStudents) ->
+                AttendedInGroup(group.name, groupStudents.size)
+            }
+
+        val result = mutableListOf<Any>()
+        val groupedStudents = listOfStudents.groupBy { it.group }
+        for ((group, groupStudents) in groupedStudents) {
+            result.addAll(attendedList.filter { it.name == group.name })
+            result.addAll(groupStudents)
+        }
+        return result
     }
 
     override fun onCleared() {

@@ -19,7 +19,8 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonDetailsBi
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
-import com.maestrx.studentcontrol.teacherapp.recyclerview.groupsSelected.GroupSelectedAdapter
+import com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students.AttendedStudentsAdapter
+import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected.GroupSelectedAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.utils.toast
@@ -234,10 +235,13 @@ class LessonDetailsFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.students
-            .onEach { students ->
+        viewModel.studentsWithGroups
+            .onEach { state ->
+                val attendedAdapter = AttendedStudentsAdapter(state.studentsWithGroups)
                 binding.registeredCount.text =
-                    getString(R.string.registered_students, students.count())
+                    getString(R.string.registered_students, state.attendance.count())
+                binding.students.adapter = attendedAdapter
+
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

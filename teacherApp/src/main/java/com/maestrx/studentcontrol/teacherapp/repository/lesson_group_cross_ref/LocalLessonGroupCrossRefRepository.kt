@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.repository.lessonGroupCrossRef
+package com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref
 
 import com.maestrx.studentcontrol.teacherapp.db.AppDb
 import com.maestrx.studentcontrol.teacherapp.db.entity.GroupEntity

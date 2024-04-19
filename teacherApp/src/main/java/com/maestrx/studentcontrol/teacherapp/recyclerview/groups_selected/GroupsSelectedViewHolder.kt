@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.recyclerview.groupsSelected
+package com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.databinding.CardGroupSelectBinding

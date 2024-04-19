@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.recyclerview.groupsSelect
+package com.maestrx.studentcontrol.teacherapp.recyclerview.groups_select
 
 import android.graphics.Color
 import androidx.recyclerview.widget.RecyclerView.ViewHolder

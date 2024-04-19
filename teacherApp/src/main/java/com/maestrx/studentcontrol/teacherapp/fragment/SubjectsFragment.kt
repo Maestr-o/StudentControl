@@ -15,6 +15,7 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentSubjectsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.recyclerview.subjects.SubjectsAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel
@@ -42,7 +43,8 @@ class SubjectsFragment : Fragment() {
                         .setTitle(getString(R.string.change_subject_name))
                         .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                            val newSubjectName = dialogBinding.line.text.toString().trim()
+                            val newSubjectName =
+                                dialogBinding.line.text.toString().trim().capitalize()
                             if (newSubjectName.isNotBlank()) {
                                 viewModel.save(Subject(subject.id, newSubjectName))
                             } else {

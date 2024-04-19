@@ -9,7 +9,7 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonGroupCrossRef
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
-import com.maestrx.studentcontrol.teacherapp.repository.lessonGroupCrossRef.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event

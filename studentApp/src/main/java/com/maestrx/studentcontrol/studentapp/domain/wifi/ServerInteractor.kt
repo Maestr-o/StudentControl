@@ -84,7 +84,7 @@ class ServerInteractor @Inject constructor(
     }
 
     private fun receive(): String {
-        val buffer = ByteArray(1024)
+        val buffer = ByteArray(50000)
         val receivePacket = DatagramPacket(buffer, buffer.size)
         socket.soTimeout = Constants.TIMEOUT
         try {

@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.recyclerview.groupsSelect
+package com.maestrx.studentcontrol.teacherapp.recyclerview.groups_select
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

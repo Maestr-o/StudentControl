@@ -15,6 +15,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory
@@ -56,9 +57,12 @@ class StudentsFragment : Fragment() {
                         .setTitle(getString(R.string.edit_student_data))
                         .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                            val newFirstName = dialogBinding.firstName.text.toString().trim()
-                            val newMidName = dialogBinding.midName.text.toString().trim()
-                            val newLastName = dialogBinding.lastName.text.toString().trim()
+                            val newFirstName =
+                                dialogBinding.firstName.text.toString().trim().capitalize()
+                            val newMidName =
+                                dialogBinding.midName.text.toString().trim().capitalize()
+                            val newLastName =
+                                dialogBinding.lastName.text.toString().trim().capitalize()
                             if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
                                 viewModel.save(
                                     student.copy(
@@ -100,9 +104,9 @@ class StudentsFragment : Fragment() {
                 .setTitle(getString(R.string.add_new_student))
                 .setView(dialogBinding.root)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newFirstName = dialogBinding.firstName.text.toString().trim()
-                    val newMidName = dialogBinding.midName.text.toString().trim()
-                    val newLastName = dialogBinding.lastName.text.toString().trim()
+                    val newFirstName = dialogBinding.firstName.text.toString().trim().capitalize()
+                    val newMidName = dialogBinding.midName.text.toString().trim().capitalize()
+                    val newLastName = dialogBinding.lastName.text.toString().trim().capitalize()
                     if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
                         viewModel.save(
                             Student(

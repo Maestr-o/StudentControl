@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StudentDao {
-
     @Query(
         """
         SELECT Student.id, `Group`.id as groupId, `Group`.name as groupName, Student.firstName, Student.midName,
