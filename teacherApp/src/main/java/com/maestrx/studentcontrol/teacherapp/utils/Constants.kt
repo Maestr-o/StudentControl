@@ -8,6 +8,7 @@ object Constants {
     const val GROUP_ID = "GROUP_ID"
     const val LESSON_UPDATED = "LESSON_UPDATED"
 
+    const val TIMEOUT = 45_000
     const val TIME_CHECK_DELAY = 2_000L
     const val TIME_RECESS = 15
 

@@ -2,6 +2,7 @@ package com.maestrx.studentcontrol.studentapp.domain.wifi
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.wifi.WifiManager
 import android.provider.Settings.Secure
 import android.util.Log
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
@@ -26,7 +27,6 @@ import javax.inject.Inject
 @ViewModelScoped
 class ServerInteractor @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val wifiHelper: WifiHelper,
 ) {
     interface StudentListCallback {
         fun onStudentsReceived(students: List<Student>)
@@ -37,7 +37,8 @@ class ServerInteractor @Inject constructor(
 
     var studentListCallback: StudentListCallback? = null
 
-    private val serverPort = 5951
+    private val defaultServerPort = 5951
+    private val defaultClientPort = 5952
     private lateinit var socket: DatagramSocket
 
     var stId = 0L
@@ -45,14 +46,17 @@ class ServerInteractor @Inject constructor(
     @SuppressLint("HardwareIds")
     suspend fun dataExchange() = withContext(Dispatchers.IO) {
         closeSocket()
-        socket = DatagramSocket(serverPort)
-        Log.d(Constants.DEBUG_TAG, "Socket is open")
-        val serverAddress = requireNotNull(wifiHelper.getGatewayIpAddress())
+        socket = DatagramSocket(defaultClientPort)
+        Log.d(Constants.DEBUG_TAG, "Socket is open in port: ${socket.localPort}")
+
+        val wm: WifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val serverAddress = InetAddress.getByAddress(intToByteArray(wm.dhcpInfo.gateway))
 
         val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
-        send(serverAddress, deviceId)
+        send(serverAddress, defaultServerPort, deviceId)
 
-        var data = receive()
+        var receivePacket = receive()
+        var data = getData(receivePacket)
         if (data == "ACK$deviceId") {
             _interState.update { LoadingStatus.Success }
         } else {
@@ -64,10 +68,11 @@ class ServerInteractor @Inject constructor(
                 }
             }.join()
 
-            send(serverAddress, stId.toString())
+            send(serverAddress, receivePacket.port, stId.toString())
             stId = 0L
 
-            data = receive()
+            receivePacket = receive()
+            data = getData(receivePacket)
             if (data == "ACK2$deviceId") {
                 _interState.update { LoadingStatus.Success }
             } else {
@@ -76,25 +81,38 @@ class ServerInteractor @Inject constructor(
         }
     }
 
-    private fun send(serverAddress: InetAddress, message: String) {
+    private fun send(serverAddress: InetAddress, serverPort: Int, message: String) {
         val sendData = message.toByteArray()
         val sendPacket = DatagramPacket(sendData, sendData.size, serverAddress, serverPort)
         socket.send(sendPacket)
-        Log.d(Constants.DEBUG_TAG, "Sent data: $message")
+        Log.d(Constants.DEBUG_TAG, "Sent data to port $serverPort: $message")
     }
 
-    private fun receive(): String {
+    private fun receive(): DatagramPacket {
         val buffer = ByteArray(50000)
         val receivePacket = DatagramPacket(buffer, buffer.size)
         socket.soTimeout = Constants.TIMEOUT
         try {
             socket.receive(receivePacket)
-            val data = String(receivePacket.data, 0, receivePacket.length)
-            Log.d(Constants.DEBUG_TAG, "Received data: $data")
-            return data
+            return receivePacket
         } catch (e: SocketTimeoutException) {
             throw Exception("Receive operation timed out", e)
         }
+    }
+
+    private fun getData(packet: DatagramPacket): String {
+        val data = String(packet.data, 0, packet.length)
+        Log.d(Constants.DEBUG_TAG, "Received data: $data")
+        return data
+    }
+
+    private fun intToByteArray(value: Int): ByteArray {
+        val byteBuffer = ByteArray(4)
+        byteBuffer[0] = (value and 0xFF).toByte()
+        byteBuffer[1] = (value shr 8 and 0xFF).toByte()
+        byteBuffer[2] = (value shr 16 and 0xFF).toByte()
+        byteBuffer[3] = (value shr 24 and 0xFF).toByte()
+        return byteBuffer
     }
 
     fun closeSocket() {
