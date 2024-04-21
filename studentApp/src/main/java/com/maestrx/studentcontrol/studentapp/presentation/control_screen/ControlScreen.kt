@@ -1,11 +1,6 @@
 package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,13 +38,11 @@ import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
 @Composable
 internal fun ControlScreen(
     state: ControlStatus,
-    onEvent: (ControlEvent) -> Unit,
     prefs: SharedPreferencesManager,
     isDataExchanged: Boolean,
     navClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    WifiStateReceiverCompose(onEvent)
 
     Column(
         modifier = Modifier
@@ -221,38 +213,6 @@ fun ConnectedGroup(
     }
 }
 
-@Composable
-fun WifiStateReceiverCompose(onEvent: (ControlEvent) -> Unit) {
-    val context = LocalContext.current
-
-    DisposableEffect(key1 = context) {
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                onEvent(ControlEvent.SetScreenStatus(ControlStatus.Connected))
-            }
-
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                onEvent(ControlEvent.SetScreenStatus(ControlStatus.NotConnected))
-            }
-        }
-
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        val networkRequest = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .build()
-
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-
-        onDispose {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
-        }
-    }
-}
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ControlPreview() {
@@ -260,7 +220,6 @@ fun ControlPreview() {
     ControlScreen(
         navClick = {},
         state = ControlStatus.Connected,
-        onEvent = {},
         prefs = SharedPreferencesManager(context),
         isDataExchanged = true,
     )
