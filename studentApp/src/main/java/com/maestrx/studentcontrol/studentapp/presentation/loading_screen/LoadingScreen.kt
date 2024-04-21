@@ -228,13 +228,13 @@ internal fun LoadingScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0)
 @Composable
 fun LoadingPreview() {
     val context = LocalContext.current
     LoadingScreen(
         state = LoadingUiState(
-            screenState = LoadingStatus.Input,
+            screenState = LoadingStatus.Loading,
             students = listOf(
                 Student(
                     id = 1L,

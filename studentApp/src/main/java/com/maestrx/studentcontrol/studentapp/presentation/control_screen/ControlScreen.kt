@@ -46,48 +46,58 @@ internal fun ControlScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
+        Card(
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = 0.dp,
+                bottomStart = 20.dp,
+                bottomEnd = 20.dp
+            )
+        ) {
+            Column {
+                Row(
                     modifier = Modifier
-                        .padding(start = 6.dp)
-                        .weight(1f),
-                    textAlign = TextAlign.Start,
-                    text = when (state) {
-                        is ControlStatus.NotConnected -> {
-                            stringResource(id = R.string.no_connection)
-                        }
-
-                        is ControlStatus.Connected -> {
-                            stringResource(id = R.string.connected)
-                        }
-                    },
-                    fontSize = 17.sp,
-                )
-
-                IconButton(
-                    onClick = {
-                        startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
-                    },
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.baseline_settings_24
-                        ),
-                        contentDescription = stringResource(
-                            id = R.string.go_to_settings
-                        ),
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 14.dp)
+                            .weight(1f),
+                        textAlign = TextAlign.Start,
+                        text = when (state) {
+                            is ControlStatus.NotConnected -> {
+                                stringResource(id = R.string.no_connection)
+                            }
+
+                            is ControlStatus.Connected -> {
+                                stringResource(id = R.string.connected)
+                            }
+                        },
+                        fontSize = 17.sp,
                     )
+
+                    IconButton(
+                        onClick = {
+                            startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.baseline_settings_24
+                            ),
+                            contentDescription = stringResource(
+                                id = R.string.go_to_settings
+                            ),
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         }
@@ -115,8 +125,8 @@ internal fun ControlScreen(
         ) {
             Card(
                 modifier = Modifier
-                    .padding(vertical = 4.dp),
-                shape = RoundedCornerShape(8.dp),
+                    .padding(12.dp),
+                shape = MaterialTheme.shapes.small,
                 colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
             ) {
                 Text(
@@ -171,7 +181,7 @@ fun ConnectedGroup(
     navClick: () -> Unit,
     isDataExchanged: Boolean,
 ) {
-    val buttonSize = 175.dp
+    val buttonSize = 160.dp
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -206,14 +216,14 @@ fun ConnectedGroup(
             color = if (isDataExchanged) {
                 Connected
             } else {
-                Color.Black
+                Color.White
             },
             fontSize = 20.sp,
         )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, backgroundColor = 0)
 @Composable
 fun ControlPreview() {
     val context = LocalContext.current

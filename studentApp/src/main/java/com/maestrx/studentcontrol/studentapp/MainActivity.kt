@@ -27,7 +27,7 @@ import com.maestrx.studentcontrol.studentapp.presentation.control_screen.Control
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlViewModel
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingScreen
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingViewModel
-import com.maestrx.studentcontrol.studentapp.ui.theme.StudentControlTheme
+import com.maestrx.studentcontrol.studentapp.ui.theme.StudentAppTheme
 import com.maestrx.studentcontrol.studentapp.util.Constants
 import com.maestrx.studentcontrol.studentapp.util.WifiHelper.isWifiConnected
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,10 +42,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            StudentControlTheme {
+            StudentAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     val navController = rememberNavController()
 
