@@ -3,7 +3,6 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 class ToolbarViewModel : ViewModel() {
 
@@ -28,8 +27,8 @@ class ToolbarViewModel : ViewModel() {
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()
 
-    private val _isStartedControl = MutableStateFlow(false)
-    val isStartedControl = _isStartedControl.asStateFlow()
+    private val _isControlRunning = MutableStateFlow(false)
+    val isControlRunning = _isControlRunning.asStateFlow()
 
     fun showSave(show: Boolean) {
         _showSave.value = show
@@ -59,7 +58,7 @@ class ToolbarViewModel : ViewModel() {
         _title.value = title
     }
 
-    fun startControl(flag: Boolean) {
-        _isStartedControl.update { flag }
+    fun setControlRunning(status: Boolean) {
+        _isControlRunning.value = status
     }
 }

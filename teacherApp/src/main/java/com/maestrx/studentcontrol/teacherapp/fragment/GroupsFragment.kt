@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditLineBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentGroupsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups.GroupsAdapter
@@ -72,8 +73,11 @@ class GroupsFragment : Fragment() {
                 }
 
                 override fun onDeleteClickListener(group: Group) {
+                    val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
+                        line.text = getString(R.string.delete_group, group.name)
+                    }
                     AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.delete_group, group.name))
+                        .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteById(group.id)
                             dialog.dismiss()

@@ -25,13 +25,13 @@
     <string name="students">Студенты</string>
     <string name="change_subject_name">Изменить название предмета</string>
     <string name="cancel">Отмена</string>
-    <string name="delete_subject">Удалить предмет \"%s\"?</string>
+    <string name="delete_subject">Удалить предмет \"%s\"?\nВсе связанные данные будут удалены!</string>
     <string name="ok">ОК</string>
     <string name="add_new_subject">Добавить предмет</string>
     <string name="change_group_s_name">Изменить название группы</string>
-    <string name="delete_group">Удалить группу \"%s\"?</string>
+    <string name="delete_group">Удалить группу \"%s\"?\nВсе связанные данные будут удалены!</string>
     <string name="add_new_group">Добавить группу</string>
-    <string name="delete_student">Удалить студента: %s?</string>
+    <string name="delete_student">Удалить студента: %s?\nВсе связанные данные будут удалены!</string>
     <string name="change_student_data">Изменить данные студента</string>
     <string name="add_new_student">Добавить студента</string>
     <string name="first_name">Имя</string>
@@ -59,19 +59,14 @@
     <string name="start_control">Начать контроль</string>
     <string name="students_double">Студенты:</string>
     <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
-    <string name="ask_delete_lesson">Вы действительно хотите удалить занятие?</string>
+    <string name="ask_delete_lesson">Вы действительно хотите удалить это занятие?</string>
     <string name="invalid_times">Время начала занятия должно быть больше времени окончания!</string>
     <string name="registered_students">Отметившиеся студенты: %d/%d</string>
     <string name="stop_control">Остановить контроль</string>
     <string name="end_control">Контроль окончен</string>
     <string name="early_control">Начинать рано</string>
-    <string name="ap_error">Ошибка создания точки доступа</string>
-    <string name="ap_stopped">Точка доступа выключается</string>
-    <string name="ap_started">Точка доступа была включена</string>
-    <string name="cant_create_ap">Невозможно создать точку доступа, поскольку у приложения нет необходимых разрешений. Для исправления перейдите в настройки приложения</string>
     <string name="starting_control">Запуск…</string>
     <string name="stopping_control">Остановка…</string>
-    <string name="ask_turn_off_ap_while_running">Вы действительно хотите отключить точку доступа?</string>
     <string name="back_while_control">Хотите остановить контроль и выйти?</string>
     <string name="ap_settings_title">Точка доступа</string>
     <string name="global_settings_title">Общие настройки</string>
@@ -87,8 +82,7 @@
     <string name="request_permission">Запросить разрешение</string>
     <string name="permission_check_error">Ошибка проверки разрешений</string>
     <string name="ask_stop_control">Вы действительно хотите остановить контроль?</string>
-    <string name="ap_info">Название ТД: %s</string>
-    <string name="create_ap_hint">Для начала контроля, вы должны настроить точку доступа и запустить ее, затем сообщить студентам название и пароль при необходимости. Перед этим рекомендуется выключить мобильный интернет.\n\nХотите перейти в настройки?</string>
+    <string name="create_ap_hint">Для старта контроля вы должны настроить точку доступа и запустить ее, затем сообщить студентам название и пароль (если был установлен). Перед этим рекомендуется выключить мобильный интернет.\n\nХотите перейти в настройки?</string>
     <string name="create_ap">Создать точку доступа</string>
     <string name="control_started">Контроль запущен</string>
     <string name="control_stopped">Контроль закончен</string>
@@ -101,4 +95,5 @@
     <string name="error_saving_subject">Ошибка сохранения предмета</string>
     <string name="error_deleting_subject">Ошибка удаления предмета</string>
     <string name="student_count_placeholder">%d/%d чел</string>
+    <string name="quit_from_control">Вы действительно хотите выйти и остановить контроль?</string>
 </resources>

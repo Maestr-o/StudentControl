@@ -24,13 +24,13 @@
     <string name="students">Students</string>
     <string name="change_subject_name">Change subject\'s name</string>
     <string name="cancel">Cancel</string>
-    <string name="delete_subject">Delete subject \"%s\"?</string>
+    <string name="delete_subject">Delete subject \"%s\"?\nAll associated data will be deleted!</string>
     <string name="ok">OK</string>
     <string name="add_new_subject">Add new subject</string>
     <string name="change_group_s_name">Change group\'s name</string>
-    <string name="delete_group">Delete group \"%s\"?</string>
+    <string name="delete_group">Delete group \"%s\"?\nAll associated data will be deleted!</string>
     <string name="add_new_group">Add new group</string>
-    <string name="delete_student">Delete student %s?</string>
+    <string name="delete_student">Delete student %s?\nAll associated data will be deleted!</string>
     <string name="change_student_data">Change student\'s data</string>
     <string name="add_new_student">Add new student</string>
     <string name="first_name">First name</string>
@@ -58,19 +58,14 @@
     <string name="start_control">Start control</string>
     <string name="students_double">Students:</string>
     <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
-    <string name="ask_delete_lesson">Do you want to delete this lesson?</string>
+    <string name="ask_delete_lesson">"Do you really want to delete this lesson?"</string>
     <string name="invalid_times">The start time of the lesson must be greater than the end time!</string>
     <string name="registered_students">Registered students: %d/%d</string>
     <string name="stop_control">Stop control</string>
     <string name="end_control">Control completed</string>
     <string name="early_control">Early to start</string>
-    <string name="ap_error">Error creating access point</string>
-    <string name="ap_stopped">The access point turns off</string>
-    <string name="ap_started">The access point was turned on</string>
-    <string name="cant_create_ap">Can\'t create access point because the app doesn\'t have permissions. Go to app settings</string>
     <string name="starting_control">Starting…</string>
     <string name="stopping_control">Stopping…</string>
-    <string name="ask_turn_off_ap_while_running">Do you want to turn off the access point?</string>
     <string name="back_while_control">Do you want to stop control?</string>
     <string name="ap_settings_title">Access point</string>
     <string name="global_settings_title">Global settings</string>
@@ -81,7 +76,6 @@
     <string name="empty_ssid">AP\'s name cannot be empty</string>
     <string name="saved_data">Data saved</string>
     <string name="default_ssid">Teacher hotspot</string>
-    <string name="ap_info">AP\'s name: %s</string>
     <string name="permissions_fine">Permissions are fine!</string>
     <string name="permissions_fail">Permissions are required to create an access point!</string>
     <string name="request_permission">Request permission</string>
@@ -100,4 +94,5 @@
     <string name="error_saving_subject">Error saving subject</string>
     <string name="error_deleting_subject">Error deleting subject</string>
     <string name="student_count_placeholder">%d/%d people</string>
+    <string name="quit_from_control">Do you really want to stop control and exit?</string>
 </resources>

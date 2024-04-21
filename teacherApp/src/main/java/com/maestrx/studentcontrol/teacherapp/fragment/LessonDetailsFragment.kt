@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -84,7 +85,9 @@ class LessonDetailsFragment : Fragment() {
 
         binding.startControl.setOnClickListener {
             if (viewModel.controlStatus.value is ControlStatus.ReadyToStart) {
-                val dialogBinding = DialogMultilineTextBinding.inflate(inflater)
+                val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
+                    line.text = getString(R.string.create_ap_hint)
+                }
                 AlertDialog.Builder(context)
                     .setTitle(getString(R.string.create_ap))
                     .setView(dialogBinding.root)
@@ -193,7 +196,7 @@ class LessonDetailsFragment : Fragment() {
             .onEach { state ->
                 when (state) {
                     is ControlStatus.NotReadyToStart -> {
-                        toolbarViewModel.startControl(false)
+                        toolbarViewModel.setControlRunning(false)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.early_control)
@@ -203,7 +206,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.ReadyToStart -> {
-                        toolbarViewModel.startControl(false)
+                        toolbarViewModel.setControlRunning(false)
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.start_control)
@@ -213,7 +216,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Running -> {
-                        toolbarViewModel.startControl(true)
+                        toolbarViewModel.setControlRunning(true)
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
@@ -223,7 +226,7 @@ class LessonDetailsFragment : Fragment() {
                     }
 
                     ControlStatus.Finished -> {
-                        toolbarViewModel.startControl(false)
+                        toolbarViewModel.setControlRunning(false)
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.end_control)
@@ -260,6 +263,29 @@ class LessonDetailsFragment : Fragment() {
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (viewModel.controlStatus.value is ControlStatus.Running) {
+                        val dialogBinding = DialogMultilineTextBinding.inflate(inflater)
+                        dialogBinding.line.text = getString(R.string.quit_from_control)
+                        AlertDialog.Builder(context)
+                            .setView(dialogBinding.root)
+                            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                                findNavController().navigateUp()
+                                dialog.dismiss()
+                            }
+                            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    } else {
+                        findNavController().navigateUp()
+                    }
+                }
+            })
 
         return binding.root
     }

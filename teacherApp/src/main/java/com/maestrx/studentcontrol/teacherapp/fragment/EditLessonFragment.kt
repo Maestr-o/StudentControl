@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentEditLessonBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
@@ -203,8 +204,11 @@ class EditLessonFragment : Fragment() {
         toolbarViewModel.deleteClicked
             .onEach { state ->
                 if (state) {
+                    val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
+                        line.text = getString(R.string.ask_delete_lesson)
+                    }
                     AlertDialog.Builder(context)
-                        .setTitle(R.string.ask_delete_lesson)
+                        .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteLesson()
                             requireActivity().supportFragmentManager.setFragmentResult(

@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.fragment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.maestrx.studentcontrol.teacherapp.R
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentToolbarBinding
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +89,7 @@ class ToolbarFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.isStartedControl
+        viewModel.isControlRunning
             .onEach { state ->
                 if (state) {
                     edit.isEnabled = false
@@ -102,6 +104,26 @@ class ToolbarFragment : Fragment() {
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        binding.toolbar.setNavigationOnClickListener {
+            val currentFragment = navController.currentBackStackEntry?.destination?.id
+            if (currentFragment == R.id.lessonDetailsFragment && viewModel.isControlRunning.value) {
+                val dialogBinding = DialogMultilineTextBinding.inflate(inflater)
+                dialogBinding.line.text = getString(R.string.quit_from_control)
+                AlertDialog.Builder(context)
+                    .setView(dialogBinding.root)
+                    .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                        navController.navigateUp()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            } else {
+                navController.navigateUp()
+            }
+        }
 
         return binding.root
     }

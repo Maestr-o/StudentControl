@@ -47,7 +47,7 @@ class StudentDataHandler(
                 )
             )
             val newStudentId = getData(receive()).toLong()
-            //studentRepository.saveDeviceId(newStudentId, deviceId)
+            studentRepository.saveDeviceId(newStudentId, deviceId)
             saveAttendance(lesson.id, newStudentId)
             send(packetDeviceId.address, packetDeviceId.port, "ACK2$deviceId")
         }

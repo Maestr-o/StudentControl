@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
@@ -83,8 +84,11 @@ class StudentsFragment : Fragment() {
                 }
 
                 override fun onDeleteClickListener(student: Student) {
+                    val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
+                        line.text = getString(R.string.delete_student, student.fullName)
+                    }
                     AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.delete_student, student.fullName))
+                        .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteById(student.id)
                             dialog.dismiss()
