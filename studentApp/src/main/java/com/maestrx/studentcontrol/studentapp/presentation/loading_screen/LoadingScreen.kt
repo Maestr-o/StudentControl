@@ -12,13 +12,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -90,8 +89,8 @@ internal fun LoadingScreen(
 
                 var isExpandedGroups by rememberSaveable { mutableStateOf(false) }
                 var isExpandedStudents by rememberSaveable { mutableStateOf(false) }
-                var selectedGroup by remember { mutableStateOf(groups[0]) }
-                var selectedStudent by remember { mutableStateOf<Student?>(null) }
+                var selectedGroup by rememberSaveable { mutableStateOf(groups[0]) }
+                var selectedStudent by rememberSaveable { mutableStateOf<Student?>(null) }
 
                 val students = state.students.filter { student ->
                     student.group.id == selectedGroup.id
@@ -126,7 +125,7 @@ internal fun LoadingScreen(
                                 isExpandedGroups = !isExpandedGroups
                             }
                         ) {
-                            TextField(
+                            OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .menuAnchor()
@@ -149,6 +148,7 @@ internal fun LoadingScreen(
                                         onClick = {
                                             selectedGroup = groups[index]
                                             isExpandedGroups = false
+                                            selectedStudent = null
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                     )
@@ -169,7 +169,7 @@ internal fun LoadingScreen(
                                 isExpandedStudents = !isExpandedStudents
                             }
                         ) {
-                            TextField(
+                            OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .menuAnchor(),
@@ -197,6 +197,13 @@ internal fun LoadingScreen(
                                 }
                             }
                         }
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            text = "Введенные данные сохранятся в памяти для последующих подключений",
+                            fontSize = 16.sp,
+                        )
                     }
 
                     Button(
@@ -218,7 +225,6 @@ internal fun LoadingScreen(
         }
 
         is LoadingStatus.Success -> {
-            context.Toast(res = R.string.connected)
             onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(true)))
         }
 
@@ -228,13 +234,13 @@ internal fun LoadingScreen(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0)
+@Preview(showBackground = true)
 @Composable
 fun LoadingPreview() {
     val context = LocalContext.current
     LoadingScreen(
         state = LoadingUiState(
-            screenState = LoadingStatus.Loading,
+            screenState = LoadingStatus.Input,
             students = listOf(
                 Student(
                     id = 1L,

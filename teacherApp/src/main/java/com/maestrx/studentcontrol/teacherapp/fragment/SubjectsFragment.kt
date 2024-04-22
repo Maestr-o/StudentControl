@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -48,6 +49,10 @@ class SubjectsFragment : Fragment() {
                                 dialogBinding.line.text.toString().trim().capitalize()
                             if (newSubjectName.isNotBlank()) {
                                 viewModel.save(Subject(subject.id, newSubjectName))
+                                requireActivity().supportFragmentManager.setFragmentResult(
+                                    Constants.LESSON_UPDATED,
+                                    bundleOf()
+                                )
                             } else {
                                 toastBlankData()
                             }
@@ -67,6 +72,10 @@ class SubjectsFragment : Fragment() {
                         .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteById(subject.id)
+                            requireActivity().supportFragmentManager.setFragmentResult(
+                                Constants.LESSON_UPDATED,
+                                bundleOf()
+                            )
                             dialog.dismiss()
                         }
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->

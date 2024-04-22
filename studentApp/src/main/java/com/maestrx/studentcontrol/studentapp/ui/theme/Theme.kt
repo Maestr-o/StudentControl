@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.studentapp.ui.theme
 
 import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -10,9 +11,14 @@ import androidx.core.view.WindowCompat
 
 @Composable
 fun StudentAppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colors = DarkThemePalette
+    val colors = if (darkTheme) {
+        DarkThemePalette
+    } else {
+        LightThemePalette
+    }
 
     val view = LocalView.current
     if (!view.isInEditMode) {

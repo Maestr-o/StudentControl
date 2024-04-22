@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Моя посещаемость</string>
-    <string name="current_network">Сеть: %s</string>
-    <string name="disconnect">Отключиться</string>
     <string name="check_in">Отметиться</string>
-    <string name="my_data">Мои данные</string>
     <string name="data_placeholder">Группа: %s\nИмя: %s</string>
     <string name="go_to_settings">Перейти в настройки</string>
     <string name="no_connection">Нет подключения</string>
     <string name="connect_to_network">Подключитесь к сети преподавателя</string>
-    <string name="connected">Подключено</string>
+    <string name="connected">Подключено к Wi-Fi сети</string>
     <string name="sending_data">Отправка данных…</string>
     <string name="error_sending_data">Ошибка отправки данных. Пожалуйста, повторите попытку</string>
     <string name="send">Отправить</string>

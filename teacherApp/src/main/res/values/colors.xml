@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="purple200">#B39DDB</color>
+    <color name="purple200_30">#4DB39DDB</color>
+
     <color name="BW">#1D1B20</color>
     <color name="registered">#00BB00</color>
-    <color name="unregistered">#666666</color>
+    <color name="unregistered">#80666666</color>
     <color name="lesson_type">#1CAC78</color>
-    <color name="group_choose">#A990A4</color>
+    <color name="group_choose">#B39DDB</color>
     <color name="disabled_button">#666666</color>
-    <color name="ssid_back">#009900</color>
-    <color name="permission_fine">#00BB00</color>
-    <color name="permission_fail">#BB0000</color>
 </resources>

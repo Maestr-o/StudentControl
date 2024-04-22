@@ -1,8 +1,11 @@
 package com.maestrx.studentcontrol.studentapp.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
 data class Student(
     @SerialName("id")
@@ -17,7 +20,7 @@ data class Student(
     val lastName: String = "",
     @SerialName("deviceId")
     val deviceId: String = "",
-) {
+) : Parcelable {
     val fullName
         get() = "$lastName $firstName $midName"
 }

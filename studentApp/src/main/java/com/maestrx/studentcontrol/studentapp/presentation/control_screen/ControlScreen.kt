@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import com.maestrx.studentcontrol.studentapp.R
-import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
+import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
 import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
 
 @Composable
 internal fun ControlScreen(
     state: ControlStatus,
-    prefs: SharedPreferencesManager,
+    personalData: PersonalData?,
     isDataExchanged: Boolean,
     navClick: () -> Unit,
 ) {
@@ -55,8 +56,8 @@ internal fun ControlScreen(
             shape = RoundedCornerShape(
                 topStart = 0.dp,
                 topEnd = 0.dp,
-                bottomStart = 20.dp,
-                bottomEnd = 20.dp
+                bottomStart = 18.dp,
+                bottomEnd = 18.dp
             )
         ) {
             Column {
@@ -95,9 +96,29 @@ internal fun ControlScreen(
                             contentDescription = stringResource(
                                 id = R.string.go_to_settings
                             ),
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
+                }
+                if (personalData != null &&
+                    personalData.group.isNotBlank() && personalData.fullName.isNotBlank()
+                ) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 14.dp),
+                        color = Color.White,
+                        thickness = 2.dp
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                        text = stringResource(
+                            id = R.string.data_placeholder,
+                            personalData.group,
+                            personalData.fullName
+                        ),
+                        fontSize = 16.sp,
+                    )
                 }
             }
         }
@@ -115,31 +136,6 @@ internal fun ControlScreen(
                 is ControlStatus.Connected -> {
                     ConnectedGroup(navClick, isDataExchanged)
                 }
-            }
-        }
-
-        val personalData = prefs.getPersonalData()
-        if (
-            state is ControlStatus.Connected &&
-            personalData != null && personalData.group.isNotBlank() && personalData.fullName.isNotBlank()
-        ) {
-            Card(
-                modifier = Modifier
-                    .padding(12.dp),
-                shape = MaterialTheme.shapes.small,
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    text = stringResource(
-                        id = R.string.data_placeholder,
-                        personalData.group,
-                        personalData.fullName
-                    ),
-                    fontSize = 16.sp,
-                )
             }
         }
     }
@@ -181,7 +177,7 @@ fun ConnectedGroup(
     navClick: () -> Unit,
     isDataExchanged: Boolean,
 ) {
-    val buttonSize = 160.dp
+    val buttonSize = 165.dp
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -199,7 +195,7 @@ fun ConnectedGroup(
             Image(
                 modifier = Modifier
                     .size(buttonSize),
-                painter = painterResource(id = R.drawable.start_control),
+                painter = painterResource(id = R.drawable.control_start),
                 contentDescription = "start control",
             )
         }
@@ -213,24 +209,22 @@ fun ConnectedGroup(
                     R.string.check_in
                 }
             ),
-            color = if (isDataExchanged) {
-                Connected
-            } else {
-                Color.White
-            },
-            fontSize = 20.sp,
+            color = Connected,
+            fontSize = 22.sp,
         )
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0)
+@Preview(showBackground = true)
 @Composable
 fun ControlPreview() {
-    val context = LocalContext.current
     ControlScreen(
         navClick = {},
         state = ControlStatus.Connected,
-        prefs = SharedPreferencesManager(context),
+        personalData = PersonalData(
+            group = "АВТ-042",
+            fullName = "Сидоров Иван Сидорович"
+        ),
         isDataExchanged = true,
     )
 }

@@ -15,7 +15,7 @@
 
         <View
             android:id="@+id/indicator"
-            android:layout_width="10dp"
+            android:layout_width="8dp"
             android:layout_height="0dp"
             android:background="@color/registered"
             app:layout_constraintBottom_toBottomOf="parent"

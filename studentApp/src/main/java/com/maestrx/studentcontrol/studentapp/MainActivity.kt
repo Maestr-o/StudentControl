@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             ),
                         ) { entry ->
+                            val personalData = prefs.getPersonalData()
                             val viewModel = hiltViewModel<ControlViewModel>()
                             val state = viewModel.state
                             WifiStateReceiverCompose(viewModel::onEvent)
@@ -71,7 +72,7 @@ class MainActivity : ComponentActivity() {
                             }
                             ControlScreen(
                                 state = state.value,
-                                prefs = prefs,
+                                personalData = personalData,
                                 isDataExchanged = entry.arguments?.getBoolean(Constants.IS_DATA_EXCHANGED)
                                     ?: false,
                             ) {

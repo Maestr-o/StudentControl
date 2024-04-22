@@ -107,9 +107,12 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     fun setControlStatus(status: ControlStatus) {
+        val lastStatus = controlStatus.value
         _controlStatus.update { status }
         if (status is ControlStatus.Running && _lessonState.value.groups.isNotEmpty()) {
             startDataExchange()
+        } else if (lastStatus is ControlStatus.Running && status !is ControlStatus.Running) {
+            serverInteractor.closeSocket()
         }
     }
 
