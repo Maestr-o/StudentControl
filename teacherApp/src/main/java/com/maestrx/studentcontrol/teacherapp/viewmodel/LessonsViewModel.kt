@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.teacherapp.db.AppDb
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
+    private val db: AppDb,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
 ) : ViewModel() {
@@ -86,5 +88,10 @@ class LessonsViewModel @Inject constructor(
         _date.update {
             TimeFormatter.decDay(it)
         }
+    }
+
+    fun cleanDatabase() {
+        db.clearAllTables()
+        _state.update { emptyList() }
     }
 }

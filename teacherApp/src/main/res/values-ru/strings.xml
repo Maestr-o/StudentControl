@@ -70,4 +70,9 @@
     <string name="error_deleting_subject">Ошибка удаления предмета</string>
     <string name="student_count_placeholder">%d/%d чел</string>
     <string name="quit_from_control">Вы действительно хотите выйти и остановить контроль?</string>
+    <string name="data_control">Управление данными</string>
+    <string name="export_excel">Экспорт в Excel-файл</string>
+    <string name="clean_data">Очистить данные</string>
+    <string name="sure_clean_data">Вы действительно хотите очистить все данные?</string>
+    <string name="back">Назад</string>
 </resources>

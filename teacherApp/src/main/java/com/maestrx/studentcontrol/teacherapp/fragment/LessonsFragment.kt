@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.fragment
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -8,10 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogDataControlBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.recyclerview.lessons.LessonAdapter
@@ -19,6 +23,7 @@ import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonsViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,6 +33,7 @@ import kotlinx.serialization.json.Json
 @AndroidEntryPoint
 class LessonsFragment : Fragment() {
 
+    private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
     private val viewModel by viewModels<LessonsViewModel>()
 
     override fun onCreateView(
@@ -75,6 +81,43 @@ class LessonsFragment : Fragment() {
         viewModel.state
             .onEach { state ->
                 adapter.submitList(state)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        toolbarViewModel.dataControlClicked
+            .onEach { state ->
+                if (state) {
+                    val dialogBinding = DialogDataControlBinding.inflate(inflater).apply {
+                        clean.setOnClickListener {
+                            val sureDialogBinding =
+                                DialogMultilineTextBinding.inflate(inflater).apply {
+                                    line.text = getString(R.string.sure_clean_data)
+                                }
+                            AlertDialog.Builder(context)
+                                .setView(sureDialogBinding.root)
+                                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                                    viewModel.cleanDatabase()
+                                    dialog.dismiss()
+                                }
+                                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        }
+
+                        exportExcel.setOnClickListener {
+
+                        }
+                    }
+                    AlertDialog.Builder(context)
+                        .setTitle(getString(R.string.data_control))
+                        .setView(dialogBinding.root)
+                        .setNegativeButton(getString(R.string.back)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                    toolbarViewModel.dataControlClicked(false)
+                }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

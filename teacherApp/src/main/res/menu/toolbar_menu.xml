@@ -23,4 +23,11 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/dataControl"
+        android:icon="@drawable/baseline_dataset_24"
+        android:title="@string/data_control"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
 </menu>

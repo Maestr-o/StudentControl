@@ -69,4 +69,9 @@
     <string name="error_deleting_subject">Error deleting subject</string>
     <string name="student_count_placeholder">%d/%d people</string>
     <string name="quit_from_control">Do you really want to stop control and exit?</string>
+    <string name="data_control">Data control</string>
+    <string name="export_excel">Export to Excel-file</string>
+    <string name="clean_data">Clean data</string>
+    <string name="sure_clean_data">Do you really want to clean all data?</string>
+    <string name="back">Back</string>
 </resources>

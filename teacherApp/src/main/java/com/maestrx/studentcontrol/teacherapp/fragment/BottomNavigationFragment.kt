@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -18,10 +19,23 @@ import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.GroupsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
+
+    private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+
+    override fun onStart() {
+        super.onStart()
+        toolbarViewModel.showDataControl(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        toolbarViewModel.showDataControl(false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

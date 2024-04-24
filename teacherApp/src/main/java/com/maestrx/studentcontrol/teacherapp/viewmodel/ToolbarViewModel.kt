@@ -24,6 +24,12 @@ class ToolbarViewModel : ViewModel() {
     private val _deleteClicked = MutableStateFlow(false)
     val deleteClicked = _deleteClicked.asStateFlow()
 
+    private val _showDataControl = MutableStateFlow(false)
+    val showDataControl = _showDataControl.asStateFlow()
+
+    private val _dataControlClicked = MutableStateFlow(false)
+    val dataControlClicked = _dataControlClicked.asStateFlow()
+
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()
 
@@ -42,6 +48,10 @@ class ToolbarViewModel : ViewModel() {
         _showEdit.value = show
     }
 
+    fun showDataControl(show: Boolean) {
+        _showDataControl.value = show
+    }
+
     fun saveClicked(pending: Boolean) {
         _saveClicked.value = pending
     }
@@ -52,6 +62,10 @@ class ToolbarViewModel : ViewModel() {
 
     fun editClicked(pending: Boolean) {
         _editClicked.value = pending
+    }
+
+    fun dataControlClicked(pending: Boolean) {
+        _dataControlClicked.value = pending
     }
 
     fun setTitle(title: String) {
