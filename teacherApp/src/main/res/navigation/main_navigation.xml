@@ -12,16 +12,20 @@
         tools:layout="@layout/fragment_bottom_navigation">
         <action
             android:id="@+id/action_bottomNavigationFragment_to_studentsFragment"
-            app:destination="@id/studentsFragment" />
+            app:destination="@id/studentsFragment"
+            app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_lessonDetailsFragment"
-            app:destination="@id/lessonDetailsFragment" />
+            app:destination="@id/lessonDetailsFragment"
+            app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_newLessonFragment"
-            app:destination="@id/newLessonFragment" />
+            app:destination="@id/newLessonFragment"
+            app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_studentsFragment2"
-            app:destination="@id/studentsFragment" />
+            app:destination="@id/studentsFragment"
+            app:enterAnim="@anim/transition_in" />
     </fragment>
     <fragment
         android:id="@+id/editLessonFragment"
@@ -30,10 +34,12 @@
         tools:layout="@layout/fragment_edit_lesson">
         <action
             android:id="@+id/action_editLessonFragment_to_bottomNavigationFragment"
-            app:destination="@id/bottomNavigationFragment" />
+            app:destination="@id/bottomNavigationFragment"
+            app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_editLessonFragment_to_lessonDetailsFragment"
             app:destination="@id/lessonDetailsFragment"
+            app:enterAnim="@anim/transition_in"
             app:popUpTo="@id/bottomNavigationFragment" />
     </fragment>
     <fragment
@@ -47,7 +53,8 @@
         tools:layout="@layout/fragment_lesson_details">
         <action
             android:id="@+id/action_lessonDetailsFragment_to_editLessonFragment"
-            app:destination="@id/editLessonFragment" />
+            app:destination="@id/editLessonFragment"
+            app:enterAnim="@anim/transition_in" />
     </fragment>
     <fragment
         android:id="@+id/newLessonFragment"

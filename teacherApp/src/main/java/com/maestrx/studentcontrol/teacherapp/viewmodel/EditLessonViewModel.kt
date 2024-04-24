@@ -109,22 +109,24 @@ class EditLessonViewModel @Inject constructor(
     }
 
     fun updateGroups(selGroups: List<Group>) {
-        val groups = groupsState.value.sortedBy { it.name }
+        viewModelScope.launch(Dispatchers.Default) {
+            val groups = groupsState.value.sortedBy { it.name }
 
-        val positions = mutableListOf<Int>()
-        groups.forEachIndexed { index, group ->
-            if (selGroups.contains(group)) {
-                positions += index
+            val positions = mutableListOf<Int>()
+            groups.forEachIndexed { index, group ->
+                if (selGroups.contains(group)) {
+                    positions += index
+                }
             }
-        }
 
-        _selectedGroupsState.update { _ ->
-            GroupsChooseUiState(positions, selGroups)
+            _selectedGroupsState.update { _ ->
+                GroupsChooseUiState(positions, selGroups)
+            }
         }
     }
 
     fun deleteLesson() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 lessonRepository.deleteById(lessonState.value.id)
             } catch (e: Exception) {

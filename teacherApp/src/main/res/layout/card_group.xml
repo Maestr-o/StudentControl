@@ -7,22 +7,23 @@
     android:layout_marginHorizontal="@dimen/small_spacing"
     android:layout_marginVertical="@dimen/tiny_spacing">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/small_spacing">
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/small_spacing"
+        android:paddingEnd="@dimen/tiny_spacing"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_spacing"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/common_spacing"
             android:layout_marginEnd="@dimen/small_spacing"
+            android:layout_weight="1"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/delete"
-            app:layout_constraintEnd_toStartOf="@+id/edit"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/delete"
             tools:text="АВТ-042" />
 
         <com.google.android.material.button.MaterialButton
@@ -30,21 +31,15 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/baseline_edit_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/delete"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:icon="@drawable/baseline_edit_24" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/baseline_delete_forever_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:icon="@drawable/baseline_delete_forever_24" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

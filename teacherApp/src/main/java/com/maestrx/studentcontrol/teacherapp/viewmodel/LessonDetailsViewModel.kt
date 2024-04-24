@@ -54,7 +54,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     init {
         setLesson(lesson)
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             attendanceRepository.getByLesson(lesson.id)
                 .onEach { list ->
                     _studentsWithGroupsState.update {
@@ -127,7 +127,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     private suspend fun getStudentsWithGroups(): List<Any> =
-        viewModelScope.async {
+        viewModelScope.async(Dispatchers.Default) {
             val listOfStudents = async {
                 lessonRepository.getStudentsByLessonId(lessonState.value.id).map {
                     Student.fromResponseToData(it)
@@ -158,7 +158,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
             .await()
 
     private suspend fun getTotalStudentsCount(groups: List<Group>): Int =
-        viewModelScope.async {
+        viewModelScope.async(Dispatchers.IO) {
             var count = 0
             groups.forEach { group ->
                 count += studentRepository.getStudentsCountByGroup(group.id)
