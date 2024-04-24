@@ -18,7 +18,7 @@
             android:id="@+id/indicator"
             android:layout_width="8dp"
             android:layout_height="match_parent"
-            android:background="@color/registered" />
+            tools:background="@color/primary" />
 
         <TextView
             android:id="@+id/student"
@@ -36,16 +36,18 @@
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/tiny_spacing"
-            app:icon="@drawable/baseline_edit_24" />
+            android:layout_marginVertical="@dimen/small_spacing"
+            app:icon="@drawable/baseline_edit_24"
+            app:iconTint="@color/BW" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete"
             style="@style/Widget.Material3.Button.IconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/tiny_spacing"
-            app:icon="@drawable/baseline_delete_forever_24" />
+            android:layout_marginVertical="@dimen/small_spacing"
+            app:icon="@drawable/baseline_delete_forever_24"
+            app:iconTint="@color/BW" />
 
     </LinearLayout>
 

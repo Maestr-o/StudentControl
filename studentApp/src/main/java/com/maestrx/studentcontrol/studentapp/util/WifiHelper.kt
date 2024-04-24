@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import android.util.Log
 import java.net.InetAddress
 
 object WifiHelper {
@@ -19,7 +20,9 @@ object WifiHelper {
 
     fun getServerAddress(context: Context): InetAddress {
         val wm: WifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        return InetAddress.getByAddress(intToByteArray(wm.dhcpInfo.gateway))
+        val address = InetAddress.getByAddress(intToByteArray(wm.dhcpInfo.gateway))
+        Log.d(Constants.DEBUG_TAG, "Server address: $address")
+        return address
     }
 
     private fun intToByteArray(value: Int): ByteArray {

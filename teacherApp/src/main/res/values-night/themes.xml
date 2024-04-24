@@ -1,6 +1,9 @@
 <resources>
     <style name="Base.Theme.StudentControl" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimaryDark">@color/purple200</item>
-        <item name="colorSecondaryContainer">@color/purple200_30</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorSecondaryContainer">@color/blue200_30</item>
+        <item name="colorPrimaryContainer">@color/primarySuperDark</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
     </style>
 </resources>

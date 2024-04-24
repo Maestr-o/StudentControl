@@ -12,7 +12,7 @@ class StudentsViewHolder(
     fun bind(item: Student) = with(binding) {
         student.text = item.fullName
         if (item.deviceId.isNotBlank()) {
-            indicator.setBackgroundResource(R.color.registered)
+            indicator.setBackgroundResource(R.color.primaryLight)
         } else {
             indicator.setBackgroundResource(R.color.unregistered)
         }

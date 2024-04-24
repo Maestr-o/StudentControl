@@ -49,7 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_spacing"
-            android:textColor="@color/lesson_type"
+            android:textColor="@color/lessonType"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/placemark"
             app:layout_constraintStart_toStartOf="parent"

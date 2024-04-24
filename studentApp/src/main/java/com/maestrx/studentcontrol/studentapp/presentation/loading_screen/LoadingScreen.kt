@@ -77,151 +77,152 @@ internal fun LoadingScreen(
                 }
                 if (check.isNotEmpty()) {
                     onEvent(LoadingEvent.SetStudentId(check[0].id))
-                }
-            } else {
-                var groups = mutableListOf<Group>()
-                state.students.forEach {
-                    groups += it.group
-                }
-                groups = groups.distinct().sortedBy { group ->
-                    group.name
-                }.toMutableList()
-
-                var isExpandedGroups by rememberSaveable { mutableStateOf(false) }
-                var isExpandedStudents by rememberSaveable { mutableStateOf(false) }
-                var selectedGroup by rememberSaveable { mutableStateOf(groups[0]) }
-                var selectedStudent by rememberSaveable { mutableStateOf<Student?>(null) }
-
-                val students = state.students.filter { student ->
-                    student.group.id == selectedGroup.id
-                }.sortedBy { student ->
-                    student.lastName
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp),
-                            text = stringResource(id = R.string.choose_group),
-                            fontSize = 18.sp,
-                        )
-                        ExposedDropdownMenuBox(
-                            modifier = Modifier
-                                .padding(bottom = 8.dp),
-                            expanded = isExpandedGroups,
-                            onExpandedChange = {
-                                isExpandedGroups = !isExpandedGroups
-                            }
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor()
-                                    .padding(bottom = 8.dp),
-                                value = selectedGroup.name,
-                                onValueChange = {},
-                                readOnly = true,
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedGroups)
-                                },
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = isExpandedGroups,
-                                onDismissRequest = { isExpandedGroups = false }
-                            ) {
-                                groups.forEachIndexed { index, group ->
-                                    DropdownMenuItem(
-                                        text = { Text(text = group.name) },
-                                        onClick = {
-                                            selectedGroup = groups[index]
-                                            isExpandedGroups = false
-                                            selectedStudent = null
-                                        },
-                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                    )
-                                }
-                            }
-                        }
-
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp),
-                            text = stringResource(id = R.string.choose_student),
-                            fontSize = 18.sp,
-                        )
-                        ExposedDropdownMenuBox(
-                            expanded = isExpandedStudents,
-                            onExpandedChange = {
-                                isExpandedStudents = !isExpandedStudents
-                            }
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(),
-                                value = selectedStudent?.fullName ?: "",
-                                onValueChange = {},
-                                readOnly = true,
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStudents)
-                                },
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = isExpandedStudents,
-                                onDismissRequest = { isExpandedStudents = false }
-                            ) {
-                                students.forEachIndexed { index, student ->
-                                    DropdownMenuItem(
-                                        text = { Text(text = student.fullName) },
-                                        onClick = {
-                                            selectedStudent = students[index]
-                                            isExpandedStudents = false
-                                        },
-                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                    )
-                                }
-                            }
-                        }
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp),
-                            text = "Введенные данные сохранятся в памяти для последующих подключений",
-                            fontSize = 16.sp,
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            selectedStudent?.id?.let { id ->
-                                onEvent(LoadingEvent.SetStudentId(id))
-                                selectedStudent?.fullName?.let { name ->
-                                    prefs.savePersonalData(selectedGroup.name, name)
-                                }
-                            }
-                        },
-                        enabled = selectedStudent != null,
-                        shape = RoundedCornerShape(10.dp),
-                    ) {
-                        Text(text = stringResource(id = R.string.send))
-                    }
+                    return
                 }
             }
+            var groups = mutableListOf<Group>()
+            state.students.forEach {
+                groups += it.group
+            }
+            groups = groups.distinct().sortedBy { group ->
+                group.name
+            }.toMutableList()
+
+            var isExpandedGroups by rememberSaveable { mutableStateOf(false) }
+            var isExpandedStudents by rememberSaveable { mutableStateOf(false) }
+            var selectedGroup by rememberSaveable { mutableStateOf(groups[0]) }
+            var selectedStudent by rememberSaveable { mutableStateOf<Student?>(null) }
+
+            val students = state.students.filter { student ->
+                student.group.id == selectedGroup.id
+            }.sortedBy { student ->
+                student.lastName
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        text = stringResource(id = R.string.choose_group),
+                        fontSize = 18.sp,
+                    )
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier
+                            .padding(bottom = 8.dp),
+                        expanded = isExpandedGroups,
+                        onExpandedChange = {
+                            isExpandedGroups = !isExpandedGroups
+                        }
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor()
+                                .padding(bottom = 8.dp),
+                            value = selectedGroup.name,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedGroups)
+                            },
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpandedGroups,
+                            onDismissRequest = { isExpandedGroups = false }
+                        ) {
+                            groups.forEachIndexed { index, group ->
+                                DropdownMenuItem(
+                                    text = { Text(text = group.name) },
+                                    onClick = {
+                                        selectedGroup = groups[index]
+                                        isExpandedGroups = false
+                                        selectedStudent = null
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                )
+                            }
+                        }
+                    }
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        text = stringResource(id = R.string.choose_student),
+                        fontSize = 18.sp,
+                    )
+                    ExposedDropdownMenuBox(
+                        expanded = isExpandedStudents,
+                        onExpandedChange = {
+                            isExpandedStudents = !isExpandedStudents
+                        }
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            value = selectedStudent?.fullName ?: "",
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpandedStudents)
+                            },
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isExpandedStudents,
+                            onDismissRequest = { isExpandedStudents = false }
+                        ) {
+                            students.forEachIndexed { index, student ->
+                                DropdownMenuItem(
+                                    text = { Text(text = student.fullName) },
+                                    onClick = {
+                                        selectedStudent = students[index]
+                                        isExpandedStudents = false
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                        text = stringResource(id = R.string.choose_student_hint),
+                        fontSize = 16.sp,
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        selectedStudent?.id?.let { id ->
+                            onEvent(LoadingEvent.SetStudentId(id))
+                            selectedStudent?.fullName?.let { name ->
+                                prefs.savePersonalData(selectedGroup.name, name)
+                            }
+                        }
+                    },
+                    enabled = selectedStudent != null,
+                    shape = RoundedCornerShape(10.dp),
+                ) {
+                    Text(text = stringResource(id = R.string.send))
+                }
+            }
+
         }
 
         is LoadingStatus.Success -> {

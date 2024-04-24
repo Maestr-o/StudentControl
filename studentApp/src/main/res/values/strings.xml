@@ -12,4 +12,5 @@
     <string name="choose_group">Choose group</string>
     <string name="choose_student">Choose student</string>
     <string name="checked_in">You are checked in!</string>
+    <string name="choose_student_hint">The entered data will be saved in memory for next connections.</string>
 </resources>
