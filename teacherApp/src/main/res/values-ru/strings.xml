@@ -75,4 +75,7 @@
     <string name="clean_data">Очистить данные</string>
     <string name="sure_clean_data">Вы действительно хотите очистить все данные?</string>
     <string name="back">Назад</string>
+    <string name="error_creating_file">Ошибка создания файла</string>
+    <string name="ok_creating_file">Файл успешно создан в папке Загрузки (Downloads).</string>
+    <string name="need_files_permission">Для того, чтобы экспортировать данные в Эксель-файл, нужно разрешение на доступ к внешнему хранилищу.</string>
 </resources>

@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.db.AppDb
+import com.maestrx.studentcontrol.teacherapp.files.ExternalStorageManager
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
     private val db: AppDb,
+    private val sm: ExternalStorageManager,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
 ) : ViewModel() {
@@ -39,6 +42,9 @@ class LessonsViewModel @Inject constructor(
 
     private val _subjectsCount = MutableStateFlow(0L)
     val subjectsCount = _subjectsCount.asStateFlow()
+
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
 
     init {
         date
@@ -87,6 +93,14 @@ class LessonsViewModel @Inject constructor(
     fun decDate() {
         _date.update {
             TimeFormatter.decDay(it)
+        }
+    }
+
+    fun exportToExcel() {
+        _message.value = if (sm.createWorkbook()) {
+            Event(Constants.MESSAGE_OK_CREATE_FILE)
+        } else {
+            Event(Constants.MESSAGE_ERROR_CREATE_FILE)
         }
     }
 

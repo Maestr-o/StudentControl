@@ -4,16 +4,13 @@
     <color name="primaryDark">#1565C0</color>
     <color name="primarySuperDark">#0D47A1</color>
     <color name="primaryLight">#64B5F6</color>
-    <color name="primarySuperLight">#64B5F6</color>
 
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
     <color name="BW">#1D1B20</color>
 
     <color name="blue200_30">#4D90CAF9</color>
     <color name="cardBack">#90CAF9</color>
     <color name="lessonType">#1CAC78</color>
     <color name="unregistered">#80666666</color>
-    <color name="group_choose">#B39DDB</color>
     <color name="disabled_button">#666666</color>
 </resources>

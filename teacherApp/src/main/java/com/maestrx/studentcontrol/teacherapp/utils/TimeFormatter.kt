@@ -42,6 +42,20 @@ object TimeFormatter {
         }
     }
 
+    private fun unixTimeToDateTimeString(milliseconds: Long?): String {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy_HH-mm")
+        return if (milliseconds != null) {
+            val date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault())
+            formatter.format(date)
+        } else {
+            val time = System.currentTimeMillis()
+            val date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault())
+            formatter.format(date)
+        }
+    }
+
     fun unixTimeToTimeString(milliseconds: Long): String {
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val time =
@@ -64,6 +78,9 @@ object TimeFormatter {
             set(Calendar.MILLISECOND, 0)
         }
             .timeInMillis
+
+    fun getCurrentTimeString(): String =
+        unixTimeToDateTimeString(Calendar.getInstance().timeInMillis)
 
     fun getEndTime(time: Long): Long =
         Calendar.getInstance().apply {

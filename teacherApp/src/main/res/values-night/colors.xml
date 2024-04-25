@@ -3,9 +3,7 @@
     <color name="cardBack">#3949AB</color>
 
     <color name="primaryDark">#0D47A1</color>
-    <color name="primarySuperLight">#90CAF9</color>
 
     <color name="BW">#E6E0E9</color>
-    <color name="group_choose">#6750A4</color>
     <color name="disabled_button">#999999</color>
 </resources>

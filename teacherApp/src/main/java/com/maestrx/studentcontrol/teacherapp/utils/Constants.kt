@@ -8,6 +8,9 @@ object Constants {
     const val GROUP_ID = "GROUP_ID"
     const val LESSON_UPDATED = "LESSON_UPDATED"
 
+    const val EXPORT_PREFIX = "Control_"
+    const val EXCEL_FORMAT = ".xls"
+
     const val TIMEOUT = 45_000
     const val TIME_CHECK_DELAY = 2_000L
     const val TIME_RECESS = 15
@@ -20,4 +23,7 @@ object Constants {
     const val MESSAGE_ERROR_DELETING_STUDENT = "MESSAGE_ERROR_DELETING_STUDENT"
     const val MESSAGE_ERROR_SAVING_SUBJECT = "MESSAGE_ERROR_SAVING_SUBJECT"
     const val MESSAGE_ERROR_DELETING_SUBJECT = "MESSAGE_ERROR_DELETING_SUBJECT"
+    const val MESSAGE_ERROR_CREATE_FILE = "MESSAGE_ERROR_CREATE_FILE"
+
+    const val MESSAGE_OK_CREATE_FILE = "MESSAGE_OK_CREATE_FILE"
 }

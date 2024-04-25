@@ -44,7 +44,7 @@ dependencies {
     val navigationVersion = "2.7.7"
     val daggerVersion = "2.50"
     val roomVersion = "2.6.1"
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -52,13 +52,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.activity:activity-ktx:1.8.2")
+    implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     implementation("com.google.dagger:hilt-android:$daggerVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("org.apache.poi:poi:5.0.0")
     ksp("androidx.room:room-compiler:$roomVersion")
     ksp("com.google.dagger:dagger-compiler:$daggerVersion")
     ksp("com.google.dagger:hilt-compiler:$daggerVersion")
