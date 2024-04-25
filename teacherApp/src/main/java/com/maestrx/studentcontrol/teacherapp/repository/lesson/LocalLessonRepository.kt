@@ -23,4 +23,11 @@ class LocalLessonRepository @Inject constructor(
 
     override suspend fun deleteById(id: Long) =
         db.lessonDao.deleteById(id)
+
+    override suspend fun getLessonsBySubjectAndGroup(
+        subjectId: Long,
+        groupId: Long
+    ): List<LessonResponse> =
+        db.lessonDao.getLessonsBySubjectAndGroup(subjectId, groupId)
+            .sortedBy { it.timeStart }
 }

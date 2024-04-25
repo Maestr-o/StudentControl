@@ -77,4 +77,8 @@
     <string name="error_creating_file">Error creating file</string>
     <string name="ok_creating_file">File created successfully! It\'s in download-directory.</string>
     <string name="need_files_permission">Exporting data to an Excel-file requires permission to access external storage.</string>
+    <string name="person_name_header">Name</string>
+    <string name="quantity">N</string>
+    <string name="amount">Amount</string>
+    <string name="percent">%</string>
 </resources>

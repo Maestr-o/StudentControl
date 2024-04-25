@@ -97,10 +97,12 @@ class LessonsViewModel @Inject constructor(
     }
 
     fun exportToExcel() {
-        _message.value = if (sm.createWorkbook()) {
-            Event(Constants.MESSAGE_OK_CREATE_FILE)
-        } else {
-            Event(Constants.MESSAGE_ERROR_CREATE_FILE)
+        viewModelScope.launch {
+            _message.value = if (sm.createWorkbook()) {
+                Event(Constants.MESSAGE_OK_CREATE_FILE)
+            } else {
+                Event(Constants.MESSAGE_ERROR_CREATE_FILE)
+            }
         }
     }
 

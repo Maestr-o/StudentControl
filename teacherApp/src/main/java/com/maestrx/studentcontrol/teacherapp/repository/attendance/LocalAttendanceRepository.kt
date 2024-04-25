@@ -13,4 +13,10 @@ class LocalAttendanceRepository @Inject constructor(
 
     override suspend fun save(data: AttendanceEntity) =
         db.attendanceDao.save(data)
+
+    override suspend fun getBySubjectAndGroup(
+        subjectId: Long,
+        groupId: Long
+    ): List<AttendanceEntity> =
+        db.attendanceDao.getBySubjectAndGroup(subjectId, groupId)
 }

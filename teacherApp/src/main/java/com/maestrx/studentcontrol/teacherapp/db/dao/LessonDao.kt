@@ -32,4 +32,14 @@ interface LessonDao {
 
     @Query("DELETE FROM Lesson WHERE id=:id")
     suspend fun deleteById(id: Long)
+
+    @Query(
+        """
+        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.*
+        FROM Lesson, Subject, `Group`, LessonGroupCrossRef
+        WHERE LessonGroupCrossRef.groupId == `Group`.id AND LessonGroupCrossRef.lessonId == Lesson.id
+            AND `Group`.id == :groupId AND Subject.id == :subjectId
+        """
+    )
+    suspend fun getLessonsBySubjectAndGroup(subjectId: Long, groupId: Long): List<LessonResponse>
 }

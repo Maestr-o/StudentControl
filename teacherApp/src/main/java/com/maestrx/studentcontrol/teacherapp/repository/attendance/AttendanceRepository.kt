@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface AttendanceRepository {
     fun getByLesson(lessonId: Long): Flow<List<AttendanceEntity>>
     suspend fun save(data: AttendanceEntity)
+    suspend fun getBySubjectAndGroup(subjectId: Long, groupId: Long): List<AttendanceEntity>
 }

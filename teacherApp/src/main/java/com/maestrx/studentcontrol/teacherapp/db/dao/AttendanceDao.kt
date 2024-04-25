@@ -14,10 +14,20 @@ interface AttendanceDao {
         SELECT Attendance.id, Attendance.lessonId, Attendance.studentId
         FROM Attendance, Lesson
         WHERE Attendance.lessonId == Lesson.id AND Attendance.lessonId == :lessonId
-    """
+        """
     )
     fun getByLesson(lessonId: Long): Flow<List<AttendanceEntity>>
 
     @Upsert
     suspend fun save(data: AttendanceEntity)
+
+    @Query(
+        """
+        SELECT Attendance.id, Attendance.lessonId, Attendance.studentId
+        FROM Attendance, `Group`, Student, Subject
+        WHERE Subject.id == :subjectId AND `Group`.id == :groupId
+            AND Student.groupId == `Group`.id AND Student.id == Attendance.studentId
+        """
+    )
+    suspend fun getBySubjectAndGroup(subjectId: Long, groupId: Long): List<AttendanceEntity>
 }
