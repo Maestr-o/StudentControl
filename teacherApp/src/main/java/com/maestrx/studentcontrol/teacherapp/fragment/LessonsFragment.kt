@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -97,6 +98,7 @@ class LessonsFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        var dataControlDialog: AlertDialog? = null
         toolbarViewModel.dataControlClicked
             .onEach { state ->
                 if (state) {
@@ -110,6 +112,7 @@ class LessonsFragment : Fragment() {
                                 .setView(sureDialogBinding.root)
                                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                                     viewModel.cleanDatabase()
+                                    dataControlDialog?.dismiss()
                                     dialog.dismiss()
                                 }
                                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -120,11 +123,14 @@ class LessonsFragment : Fragment() {
 
                         exportExcel.setOnClickListener {
                             if (checkPermission()) {
+                                clean.isVisible = false
+                                exportExcel.isVisible = false
+                                progressBar.isVisible = true
                                 viewModel.exportToExcel()
                             }
                         }
                     }
-                    AlertDialog.Builder(context)
+                    dataControlDialog = AlertDialog.Builder(context)
                         .setTitle(getString(R.string.data_control))
                         .setView(dialogBinding.root)
                         .setNegativeButton(getString(R.string.back)) { dialog, _ ->
@@ -146,7 +152,16 @@ class LessonsFragment : Fragment() {
                     Constants.MESSAGE_OK_CREATE_FILE -> {
                         toast(R.string.ok_creating_file)
                     }
+
+                    Constants.MESSAGE_OK_DELETING_ALL_DATA -> {
+                        toast(R.string.ok_data_clear)
+                    }
+
+                    Constants.MESSAGE_ERROR_DELETING_ALL_DATA -> {
+                        toast(R.string.error_data_clear)
+                    }
                 }
+                dataControlDialog?.dismiss()
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

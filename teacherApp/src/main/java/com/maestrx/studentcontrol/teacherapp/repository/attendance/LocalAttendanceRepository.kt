@@ -19,4 +19,7 @@ class LocalAttendanceRepository @Inject constructor(
         groupId: Long
     ): List<AttendanceEntity> =
         db.attendanceDao.getBySubjectAndGroup(subjectId, groupId)
+
+    override suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int =
+        db.attendanceDao.getCountByLessonAndGroup(lessonId, groupId)
 }

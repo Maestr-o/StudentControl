@@ -81,4 +81,7 @@
     <string name="quantity">N</string>
     <string name="amount">Amount</string>
     <string name="percent">%</string>
+    <string name="total">Total</string>
+    <string name="ok_data_clear">All data has been deleted!</string>
+    <string name="error_data_clear">Error deleting data</string>
 </resources>

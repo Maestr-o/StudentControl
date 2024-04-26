@@ -21,8 +21,8 @@ interface LessonDao {
     @Query(
         """
         SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, Attendance, `Group`
-        WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id AND Attendance.studentId == Student.id
-            AND `Group`.id == Student.groupId
+        WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id
+            AND Attendance.studentId == Student.id AND `Group`.id == Student.groupId
         """
     )
     suspend fun getStudentsByLessonId(lessonId: Long): List<StudentResponse>
@@ -38,8 +38,17 @@ interface LessonDao {
         SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.*
         FROM Lesson, Subject, `Group`, LessonGroupCrossRef
         WHERE LessonGroupCrossRef.groupId == `Group`.id AND LessonGroupCrossRef.lessonId == Lesson.id
-            AND `Group`.id == :groupId AND Subject.id == :subjectId
+            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subjectId == Subject.id
         """
     )
     suspend fun getLessonsBySubjectAndGroup(subjectId: Long, groupId: Long): List<LessonResponse>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM Lesson, Subject, `Group`, LessonGroupCrossRef
+        WHERE LessonGroupCrossRef.groupId == `Group`.id AND LessonGroupCrossRef.lessonId == Lesson.id
+            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subjectId == Subject.id
+        """
+    )
+    suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int
 }

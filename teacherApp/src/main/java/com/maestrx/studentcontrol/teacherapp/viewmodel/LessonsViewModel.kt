@@ -107,7 +107,12 @@ class LessonsViewModel @Inject constructor(
     }
 
     fun cleanDatabase() {
-        db.clearAllTables()
-        _state.update { emptyList() }
+        _message.value = try {
+            db.clearAllTables()
+            _state.update { emptyList() }
+            Event(Constants.MESSAGE_OK_DELETING_ALL_DATA)
+        } catch (e: Exception) {
+            Event(Constants.MESSAGE_ERROR_DELETING_ALL_DATA)
+        }
     }
 }

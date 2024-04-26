@@ -82,4 +82,7 @@
     <string name="quantity">N</string>
     <string name="amount">Всего</string>
     <string name="percent">%</string>
+    <string name="total">Итого</string>
+    <string name="ok_data_clear">Все данные удалены!</string>
+    <string name="error_data_clear">Ошибка удаления данных</string>
 </resources>

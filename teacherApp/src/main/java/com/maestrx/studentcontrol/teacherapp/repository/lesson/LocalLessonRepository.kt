@@ -30,4 +30,7 @@ class LocalLessonRepository @Inject constructor(
     ): List<LessonResponse> =
         db.lessonDao.getLessonsBySubjectAndGroup(subjectId, groupId)
             .sortedBy { it.timeStart }
+
+    override suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int =
+        db.lessonDao.getCountBySubjectAndGroup(subjectId, groupId)
 }

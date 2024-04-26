@@ -30,4 +30,12 @@ interface AttendanceDao {
         """
     )
     suspend fun getBySubjectAndGroup(subjectId: Long, groupId: Long): List<AttendanceEntity>
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM LessonGroupCrossRef
+        WHERE LessonGroupCrossRef.groupId == :groupId AND LessonGroupCrossRef.lessonId == :lessonId
+        """
+    )
+    suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int
 }

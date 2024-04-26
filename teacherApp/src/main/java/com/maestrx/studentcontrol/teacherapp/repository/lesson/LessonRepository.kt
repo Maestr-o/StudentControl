@@ -10,4 +10,5 @@ interface LessonRepository {
     suspend fun save(data: LessonEntity): Long
     suspend fun deleteById(id: Long)
     suspend fun getLessonsBySubjectAndGroup(subjectId: Long, groupId: Long): List<LessonResponse>
+    suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int
 }

@@ -8,6 +8,8 @@ import android.provider.MediaStore
 import android.util.Log
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
+import com.maestrx.studentcontrol.teacherapp.db.entity.GroupEntity
+import com.maestrx.studentcontrol.teacherapp.db.entity.SubjectEntity
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
@@ -26,6 +28,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -46,13 +49,32 @@ class ExternalStorageManager @Inject constructor(
     suspend fun createWorkbook(): Boolean {
         val workbook = HSSFWorkbook()
 
-        val subjects = subjectRepository.getAll().first()
-        val groups = groupRepository.getAll().first()
+        coroutineScope {
+            val subjectsDeferred = async(Dispatchers.IO) {
+                subjectRepository.getAll().first()
+            }
+            val groupsDeferred = async(Dispatchers.IO) {
+                groupRepository.getAll().first()
+            }
+            val (subjects, groups) = awaitAll(subjectsDeferred, groupsDeferred)
 
-        // TODO если у предмета нет групп - не создавать лист
-        subjects.forEach { subjectEntity ->
-            groups.forEach { groupEntity ->
-                createSheet(workbook, Subject.toData(subjectEntity), Group.toData(groupEntity))
+            withContext(Dispatchers.IO) {
+                subjects.forEach { subjectEntity ->
+                    groups.forEach { groupEntity ->
+                        if (
+                            lessonRepository.getCountBySubjectAndGroup(
+                                (subjectEntity as SubjectEntity).id,
+                                (groupEntity as GroupEntity).id
+                            ) >= 1
+                        ) {
+                            createSheet(
+                                workbook,
+                                Subject.toData(subjectEntity),
+                                Group.toData(groupEntity)
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -93,9 +115,10 @@ class ExternalStorageManager @Inject constructor(
                             )
                         }
                         createCell(y++).setCellValue(context.getString(R.string.amount))
-                        createCell(y).setCellValue(context.getString(R.string.percent))
+                        createCell(y++).setCellValue(context.getString(R.string.percent))
                     }
 
+                    val listOfPercentAttendance: MutableList<Int> = mutableListOf()
                     students.forEachIndexed { index, studentResponse ->
                         val student =
                             Student.fromResponseToData(studentResponse as StudentResponse)
@@ -119,10 +142,32 @@ class ExternalStorageManager @Inject constructor(
                                 }
                             }
                             createCell(y++).setCellValue(count.toString())
+
+                            val percent = count / lessons.count() * 100
+                            listOfPercentAttendance += percent
+                            createCell(y++).setCellValue(percent.toString())
+                        }
+                    }
+
+                    createRow(x++).apply {
+                        var y = 1
+                        createCell(y++).setCellValue(context.getString(R.string.total))
+                        lessons.forEach { lessonResponse ->
+                            val lesson =
+                                Lesson.fromResponseToData(lessonResponse as LessonResponse)
                             createCell(y++).setCellValue(
-                                (count / lessons.count() * 100).toString()
+                                attendanceRepository.getCountByLessonAndGroup(lesson.id, group.id)
+                                    .toString()
                             )
                         }
+                        createCell(y++).setCellValue(lessons.count().toString())
+
+                        var avgPercentAttendance = 0
+                        listOfPercentAttendance.forEach {
+                            avgPercentAttendance += it
+                        }
+                        avgPercentAttendance /= students.count()
+                        createCell(y++).setCellValue(avgPercentAttendance.toString())
                     }
                 }
             }
