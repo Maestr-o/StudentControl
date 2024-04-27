@@ -33,9 +33,13 @@ interface AttendanceDao {
 
     @Query(
         """
-        SELECT COUNT(*) FROM LessonGroupCrossRef
-        WHERE LessonGroupCrossRef.groupId == :groupId AND LessonGroupCrossRef.lessonId == :lessonId
+        SELECT COUNT(*) FROM Attendance, Student, `Group`
+        WHERE Attendance.lessonId == :lessonId AND Attendance.studentId == Student.id
+            AND `Group`.id == :groupId AND `Group`.id == Student.groupId
         """
     )
     suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int
+
+    @Query("SELECT COUNT(*) FROM Attendance")
+    suspend fun getCount(): Int
 }

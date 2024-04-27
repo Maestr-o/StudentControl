@@ -41,9 +41,10 @@ android {
 }
 
 dependencies {
-    val navigationVersion = "2.7.7"
-    val daggerVersion = "2.50"
-    val roomVersion = "2.6.1"
+    val navigationVer = "2.7.7"
+    val daggerVer = "2.50"
+    val roomVer = "2.6.1"
+    val apachePoiVer = "5.2.2"
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -54,13 +55,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
-    implementation("com.google.dagger:hilt-android:$daggerVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navigationVer")
+    implementation("androidx.navigation:navigation-ui-ktx:$navigationVer")
+    implementation("com.google.dagger:hilt-android:$daggerVer")
+    implementation("androidx.room:room-ktx:$roomVer")
     implementation("com.google.android.gms:play-services-location:21.2.0")
-    implementation("org.apache.poi:poi:5.0.0")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    ksp("com.google.dagger:dagger-compiler:$daggerVersion")
-    ksp("com.google.dagger:hilt-compiler:$daggerVersion")
+    implementation("org.apache.poi:poi:$apachePoiVer")
+    implementation("org.apache.poi:poi-ooxml:$apachePoiVer")
+    ksp("androidx.room:room-compiler:$roomVer")
+    ksp("com.google.dagger:dagger-compiler:$daggerVer")
+    ksp("com.google.dagger:hilt-compiler:$daggerVer")
 }

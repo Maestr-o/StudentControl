@@ -145,11 +145,11 @@ class LessonsFragment : Fragment() {
         viewModel.message
             .onEach { event ->
                 when (event.getContentIfNotHandled()) {
-                    Constants.MESSAGE_ERROR_CREATE_FILE -> {
+                    Constants.MESSAGE_ERROR_EXPORT -> {
                         toast(R.string.error_creating_file)
                     }
 
-                    Constants.MESSAGE_OK_CREATE_FILE -> {
+                    Constants.MESSAGE_END_EXPORT -> {
                         toast(R.string.ok_creating_file)
                     }
 

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.db.AppDb
-import com.maestrx.studentcontrol.teacherapp.files.ExternalStorageManager
+import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
     private val db: AppDb,
-    private val sm: ExternalStorageManager,
+    private val sm: ExcelManager,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
 ) : ViewModel() {
@@ -98,10 +98,10 @@ class LessonsViewModel @Inject constructor(
 
     fun exportToExcel() {
         viewModelScope.launch {
-            _message.value = if (sm.createWorkbook()) {
-                Event(Constants.MESSAGE_OK_CREATE_FILE)
+            _message.value = if (sm.export()) {
+                Event(Constants.MESSAGE_END_EXPORT)
             } else {
-                Event(Constants.MESSAGE_ERROR_CREATE_FILE)
+                Event(Constants.MESSAGE_ERROR_EXPORT)
             }
         }
     }

@@ -22,4 +22,7 @@ class LocalAttendanceRepository @Inject constructor(
 
     override suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int =
         db.attendanceDao.getCountByLessonAndGroup(lessonId, groupId)
+
+    override suspend fun getCount(): Int =
+        db.attendanceDao.getCount()
 }

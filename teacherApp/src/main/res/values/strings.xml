@@ -75,7 +75,7 @@
     <string name="sure_clean_data">Do you really want to clean all data?</string>
     <string name="back">Back</string>
     <string name="error_creating_file">Error creating file</string>
-    <string name="ok_creating_file">File created successfully! It\'s in download-directory.</string>
+    <string name="ok_creating_file">Exported to downloads folder</string>
     <string name="need_files_permission">Exporting data to an Excel-file requires permission to access external storage.</string>
     <string name="person_name_header">Name</string>
     <string name="quantity">N</string>
@@ -84,4 +84,6 @@
     <string name="total">Total</string>
     <string name="ok_data_clear">All data has been deleted!</string>
     <string name="error_data_clear">Error deleting data</string>
+    <string name="export_path_long" translatable="false">%s/Student control - %s</string>
+    <string name="export_path_short" translatable="false">/Student control - %s</string>
 </resources>
