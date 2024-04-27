@@ -119,18 +119,18 @@ class ExcelManager @Inject constructor(
                     createRow(x++).apply {
                         var y = 0
                         createCell(y++).apply {
-                            setCellStyle(styles.textCenter)
+                            setCellStyle(styles.headerText)
                             setCellValue(context.getString(R.string.quantity))
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.textCenter)
+                            setCellStyle(styles.headerText)
                             setCellValue(context.getString(R.string.person_name_header))
                         }
                         lessons.forEach { lessonResponse ->
                             val lesson =
                                 Lesson.fromResponseToData(lessonResponse as LessonResponse)
                             createCell(y++).apply {
-                                setCellStyle(styles.date)
+                                setCellStyle(styles.headerDate)
                                 setCellValue(
                                     LocalDateTime.ofInstant(
                                         Instant.ofEpochMilli(lesson.timeStart),
@@ -140,11 +140,11 @@ class ExcelManager @Inject constructor(
                             }
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.textCenter)
+                            setCellStyle(styles.headerText)
                             setCellValue(context.getString(R.string.amount))
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.textCenter)
+                            setCellStyle(styles.headerText)
                             setCellValue(context.getString(R.string.percent))
                         }
                     }
@@ -178,11 +178,14 @@ class ExcelManager @Inject constructor(
                                     }
                                     attendedCount++
                                 } else {
-                                    y++
+                                    createCell(y++).apply {
+                                        setCellStyle(styles.textCenter)
+                                        setCellValue("")
+                                    }
                                 }
                             }
                             createCell(y++).apply {
-                                setCellStyle(styles.number)
+                                setCellStyle(styles.decimal)
                                 setCellValue(attendedCount.toDouble())
                             }
 
@@ -198,14 +201,14 @@ class ExcelManager @Inject constructor(
                     createRow(x++).apply {
                         var y = 1
                         createCell(y++).apply {
-                            setCellStyle(styles.textCenter)
+                            setCellStyle(styles.headerText)
                             setCellValue(context.getString(R.string.total))
                         }
                         lessons.forEach { lessonResponse ->
                             val lesson =
                                 Lesson.fromResponseToData(lessonResponse as LessonResponse)
                             createCell(y++).apply {
-                                setCellStyle(styles.number)
+                                setCellStyle(styles.headerDecimal)
                                 setCellValue(
                                     attendanceRepository.getCountByLessonAndGroup(
                                         lesson.id,
@@ -216,7 +219,7 @@ class ExcelManager @Inject constructor(
 
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.number)
+                            setCellStyle(styles.headerDecimal)
                             setCellValue(lessons.count().toDouble())
                         }
 
@@ -226,7 +229,7 @@ class ExcelManager @Inject constructor(
                         }
                         avgPercentAttendance /= students.count()
                         createCell(y++).apply {
-                            setCellStyle(styles.percent)
+                            setCellStyle(styles.headerPercent)
                             setCellValue(avgPercentAttendance)
                         }
                     }

@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.excel
 
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.xssf.usermodel.XSSFFont
@@ -16,22 +17,40 @@ class ExcelStyles(workbook: XSSFWorkbook) {
         fontHeightInPoints = 12
     }
 
+    private val boldFont: XSSFFont = workbook.createFont().apply {
+        fontName = "Times New Roman"
+        fontHeightInPoints = 12
+        bold = true
+    }
+
     val textCenter: CellStyle =
         workbook.createCellStyle().apply {
             setAlignment(HorizontalAlignment.CENTER)
             setFont(baseFont)
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
         }
 
     val textLeft: CellStyle =
         workbook.createCellStyle().apply {
             setFont(baseFont)
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
         }
 
-    var number: CellStyle =
+    val decimal: CellStyle =
         workbook.createCellStyle().apply {
             setAlignment(HorizontalAlignment.CENTER)
             setFont(baseFont)
             dataFormat = numberDataFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
         }
 
     val percent: CellStyle =
@@ -39,12 +58,62 @@ class ExcelStyles(workbook: XSSFWorkbook) {
             setAlignment(HorizontalAlignment.CENTER)
             setFont(baseFont)
             dataFormat = percentFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
         }
 
-    val date: CellStyle =
+    val headerDate: CellStyle =
+        workbook.createCellStyle().apply {
+            setAlignment(HorizontalAlignment.CENTER)
+            setFont(boldFont)
+            dataFormat = dateFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
+        }
+
+    val headerText: CellStyle =
+        workbook.createCellStyle().apply {
+            setAlignment(HorizontalAlignment.CENTER)
+            setFont(boldFont)
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
+        }
+
+    val headerDecimal: CellStyle =
+        workbook.createCellStyle().apply {
+            setAlignment(HorizontalAlignment.CENTER)
+            setFont(boldFont)
+            dataFormat = numberDataFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
+        }
+
+    val headerPercent: CellStyle =
+        workbook.createCellStyle().apply {
+            setAlignment(HorizontalAlignment.CENTER)
+            setFont(boldFont)
+            dataFormat = percentFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
+        }
+
+    val number: CellStyle =
         workbook.createCellStyle().apply {
             setAlignment(HorizontalAlignment.CENTER)
             setFont(baseFont)
-            dataFormat = dateFormat
+            borderTop = BorderStyle.THIN
+            borderBottom = BorderStyle.THIN
+            borderLeft = BorderStyle.THIN
+            borderRight = BorderStyle.THIN
         }
 }

@@ -3,14 +3,11 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrx.studentcontrol.teacherapp.db.AppDb
-import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
-    private val db: AppDb,
-    private val sm: ExcelManager,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
 ) : ViewModel() {
@@ -43,8 +38,8 @@ class LessonsViewModel @Inject constructor(
     private val _subjectsCount = MutableStateFlow(0L)
     val subjectsCount = _subjectsCount.asStateFlow()
 
-    private val _message = MutableStateFlow(Event(""))
-    val message = _message.asStateFlow()
+    private val _lessonsCount = MutableStateFlow(0L)
+    val lessonsCount = _lessonsCount.asStateFlow()
 
     init {
         date
@@ -62,6 +57,12 @@ class LessonsViewModel @Inject constructor(
         subjectRepository.getCount()
             .onEach {
                 _subjectsCount.value = it
+            }
+            .launchIn(viewModelScope)
+
+        lessonRepository.getCount()
+            .onEach {
+                _lessonsCount.value = it
             }
             .launchIn(viewModelScope)
     }
@@ -93,26 +94,6 @@ class LessonsViewModel @Inject constructor(
     fun decDate() {
         _date.update {
             TimeFormatter.decDay(it)
-        }
-    }
-
-    fun exportToExcel() {
-        viewModelScope.launch {
-            _message.value = if (sm.export()) {
-                Event(Constants.MESSAGE_END_EXPORT)
-            } else {
-                Event(Constants.MESSAGE_ERROR_EXPORT)
-            }
-        }
-    }
-
-    fun cleanDatabase() {
-        _message.value = try {
-            db.clearAllTables()
-            _state.update { emptyList() }
-            Event(Constants.MESSAGE_OK_DELETING_ALL_DATA)
-        } catch (e: Exception) {
-            Event(Constants.MESSAGE_ERROR_DELETING_ALL_DATA)
         }
     }
 }

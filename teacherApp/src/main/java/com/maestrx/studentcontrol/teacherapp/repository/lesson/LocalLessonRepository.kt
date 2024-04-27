@@ -4,6 +4,7 @@ import com.maestrx.studentcontrol.teacherapp.db.AppDb
 import com.maestrx.studentcontrol.teacherapp.db.entity.LessonEntity
 import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalLessonRepository @Inject constructor(
@@ -33,4 +34,7 @@ class LocalLessonRepository @Inject constructor(
 
     override suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int =
         db.lessonDao.getCountBySubjectAndGroup(subjectId, groupId)
+
+    override fun getCount(): Flow<Long> =
+        db.lessonDao.getCount()
 }

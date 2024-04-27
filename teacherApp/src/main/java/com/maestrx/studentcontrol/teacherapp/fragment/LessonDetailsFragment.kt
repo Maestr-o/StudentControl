@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -129,10 +128,6 @@ class LessonDetailsFragment : Fragment() {
                         .setTitle(R.string.ask_delete_lesson)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteLesson()
-                            requireActivity().supportFragmentManager.setFragmentResult(
-                                Constants.LESSON_UPDATED,
-                                bundleOf()
-                            )
                             findNavController().navigateUp()
                             dialog.dismiss()
                         }

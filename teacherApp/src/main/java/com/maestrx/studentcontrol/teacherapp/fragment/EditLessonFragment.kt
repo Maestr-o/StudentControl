@@ -211,10 +211,6 @@ class EditLessonFragment : Fragment() {
                         .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteLesson()
-                            requireActivity().supportFragmentManager.setFragmentResult(
-                                Constants.LESSON_UPDATED,
-                                bundleOf()
-                            )
                             findNavController().navigate(R.id.action_editLessonFragment_to_bottomNavigationFragment)
                             dialog.dismiss()
                         }

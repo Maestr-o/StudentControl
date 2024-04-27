@@ -6,6 +6,7 @@ import androidx.room.Upsert
 import com.maestrx.studentcontrol.teacherapp.db.entity.LessonEntity
 import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LessonDao {
@@ -51,4 +52,7 @@ interface LessonDao {
         """
     )
     suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int
+
+    @Query("SELECT COUNT(*) FROM Lesson")
+    fun getCount(): Flow<Long>
 }

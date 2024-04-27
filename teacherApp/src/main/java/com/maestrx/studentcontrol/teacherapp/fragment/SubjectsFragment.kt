@@ -72,10 +72,6 @@ class SubjectsFragment : Fragment() {
                         .setView(dialogBinding.root)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             viewModel.deleteById(subject.id)
-                            requireActivity().supportFragmentManager.setFragmentResult(
-                                Constants.LESSON_UPDATED,
-                                bundleOf()
-                            )
                             dialog.dismiss()
                         }
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->

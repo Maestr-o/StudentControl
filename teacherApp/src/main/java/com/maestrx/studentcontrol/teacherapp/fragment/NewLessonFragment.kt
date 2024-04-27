@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -159,10 +158,6 @@ class NewLessonFragment : Fragment() {
                 } else {
                     viewModel.updateLessonState(lesson)
                     viewModel.save()
-                    requireActivity().supportFragmentManager.setFragmentResult(
-                        Constants.LESSON_UPDATED,
-                        bundleOf()
-                    )
                     findNavController().navigateUp()
                 }
             }
