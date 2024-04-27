@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.studentapp.domain.wifi
+package com.maestrx.studentcontrol.studentapp.data
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -61,6 +61,10 @@ class ServerInteractor @Inject constructor(
             _interState.update { LoadingStatus.Success }
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
+            if (list.isEmpty()) {
+                _interState.update { LoadingStatus.Error }
+                return@withContext
+            }
             studentListCallback?.onStudentsReceived(list)
 
             launch {

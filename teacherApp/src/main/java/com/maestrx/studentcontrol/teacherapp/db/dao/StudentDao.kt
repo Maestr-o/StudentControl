@@ -17,7 +17,7 @@ interface StudentDao {
         WHERE Student.groupId == :groupId AND `Group`.id == :groupId
         """
     )
-    fun getStudentsByGroup(groupId: Long): Flow<List<StudentResponse>>
+    fun getByGroupId(groupId: Long): Flow<List<StudentResponse>>
 
     @Upsert
     suspend fun save(data: StudentEntity)
@@ -26,7 +26,7 @@ interface StudentDao {
     suspend fun deleteById(id: Long)
 
     @Query("SELECT id FROM Student WHERE deviceId = :deviceId")
-    suspend fun getStudentIdByDeviceId(deviceId: String): Long
+    suspend fun getIdByDeviceId(deviceId: String): Long
 
     @Query("UPDATE Student SET deviceId = :deviceId WHERE id = :studentId")
     suspend fun saveDeviceId(studentId: Long, deviceId: String)
@@ -37,5 +37,14 @@ interface StudentDao {
         WHERE Student.groupId == :groupId AND Student.groupId == `Group`.id
         """
     )
-    suspend fun getStudentsCountByGroup(groupId: Long): Int
+    suspend fun getCountByGroupId(groupId: Long): Int
+
+    @Query(
+        """
+        SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, Attendance, `Group`
+        WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id
+            AND Attendance.studentId == Student.id AND `Group`.id == Student.groupId
+        """
+    )
+    suspend fun getByLessonId(lessonId: Long): List<StudentResponse>
 }

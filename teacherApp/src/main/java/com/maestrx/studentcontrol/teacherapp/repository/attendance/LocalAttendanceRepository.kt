@@ -1,28 +1,28 @@
 package com.maestrx.studentcontrol.teacherapp.repository.attendance
 
-import com.maestrx.studentcontrol.teacherapp.db.AppDb
+import com.maestrx.studentcontrol.teacherapp.db.dao.AttendanceDao
 import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalAttendanceRepository @Inject constructor(
-    private val db: AppDb,
+    private val attendanceDao: AttendanceDao,
 ) : AttendanceRepository {
-    override fun getByLesson(lessonId: Long): Flow<List<AttendanceEntity>> =
-        db.attendanceDao.getByLesson(lessonId)
+    override fun getByLessonId(lessonId: Long): Flow<List<AttendanceEntity>> =
+        attendanceDao.getByLessonId(lessonId)
 
     override suspend fun save(data: AttendanceEntity) =
-        db.attendanceDao.save(data)
+        attendanceDao.save(data)
 
-    override suspend fun getBySubjectAndGroup(
+    override suspend fun getBySubjectIdAndGroupId(
         subjectId: Long,
         groupId: Long
     ): List<AttendanceEntity> =
-        db.attendanceDao.getBySubjectAndGroup(subjectId, groupId)
+        attendanceDao.getBySubjectIdAndGroupId(subjectId, groupId)
 
-    override suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int =
-        db.attendanceDao.getCountByLessonAndGroup(lessonId, groupId)
+    override suspend fun getCountByLessonIdAndGroupId(lessonId: Long, groupId: Long): Int =
+        attendanceDao.getCountByLessonIdAndGroupId(lessonId, groupId)
 
     override suspend fun getCount(): Int =
-        db.attendanceDao.getCount()
+        attendanceDao.getCount()
 }

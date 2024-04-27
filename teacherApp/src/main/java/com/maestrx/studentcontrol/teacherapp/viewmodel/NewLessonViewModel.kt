@@ -5,14 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
-import com.maestrx.studentcontrol.teacherapp.model.LessonGroupCrossRef
+import com.maestrx.studentcontrol.teacherapp.model.LessonGroupCross
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
-import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross.LessonGroupCrossRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
+import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.viewmodel.di.NewLessonViewModelFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,14 +25,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class NewLessonViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = NewLessonViewModelFactory::class)
+class NewLessonViewModel @AssistedInject constructor(
     private val lessonRepository: LessonRepository,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
-    private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
+    private val lessonGroupCrossRepository: LessonGroupCrossRepository,
+    @Assisted val selDate: Long,
 ) : ViewModel() {
 
     private val _lessonState = MutableStateFlow(Lesson())
@@ -47,6 +51,14 @@ class NewLessonViewModel @Inject constructor(
     val message = _message.asStateFlow()
 
     init {
+        _lessonState.update {
+            val timeStart = TimeFormatter.incHalfOfDay(selDate)
+            it.copy(
+                timeStart = timeStart,
+                timeEnd = TimeFormatter.addDefaultLessonDuration(timeStart),
+            )
+        }
+
         subjectRepository.getAll().onEach { list ->
             _subjectsState.update { _ ->
                 list.map {
@@ -70,14 +82,14 @@ class NewLessonViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val lessonId = lessonRepository.save(lessonState.value.toEntity())
-                val lessonGroupCrossRefs: MutableList<LessonGroupCrossRef> = mutableListOf()
-                lessonGroupCrossRefs += selectedGroupsState.value.selectedGroups.map {
-                    LessonGroupCrossRef(
+                val lessonGroupCrosses: MutableList<LessonGroupCross> = mutableListOf()
+                lessonGroupCrosses += selectedGroupsState.value.selectedGroups.map {
+                    LessonGroupCross(
                         lessonId = lessonId,
                         groupId = it.id,
                     )
                 }
-                lessonGroupCrossRefRepository.save(lessonGroupCrossRefs)
+                lessonGroupCrossRepository.save(lessonGroupCrosses)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_LESSON)
                 Log.d(Constants.DEBUG_TAG, "Error saving lesson: $e")

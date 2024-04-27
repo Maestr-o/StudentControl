@@ -77,7 +77,7 @@ class ExcelManager @Inject constructor(
 
         var count = 0
         groups.forEach { groupEntity ->
-            if (lessonRepository.getCountBySubjectAndGroup(subject.id, groupEntity.id) >= 1) {
+            if (lessonRepository.getCountBySubjectIdAndGroupId(subject.id, groupEntity.id) >= 1) {
                 createSheet(workbook, styles, subject, Group.toData(groupEntity))
                 count++
             }
@@ -95,13 +95,13 @@ class ExcelManager @Inject constructor(
         group: Group
     ) = withContext(Dispatchers.IO) {
         val lessonsDeferred = async {
-            lessonRepository.getLessonsBySubjectAndGroup(subject.id, group.id)
+            lessonRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
         val studentsDeferred = async {
-            studentRepository.getStudentsByGroup(group.id).first()
+            studentRepository.getByGroupId(group.id).first()
         }
         val attendancesDeferred = async {
-            attendanceRepository.getBySubjectAndGroup(subject.id, group.id)
+            attendanceRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
         val (lessons, students, attendances) = awaitAll(
             lessonsDeferred, studentsDeferred, attendancesDeferred
@@ -210,7 +210,7 @@ class ExcelManager @Inject constructor(
                             createCell(y++).apply {
                                 setCellStyle(styles.headerDecimal)
                                 setCellValue(
-                                    attendanceRepository.getCountByLessonAndGroup(
+                                    attendanceRepository.getCountByLessonIdAndGroupId(
                                         lesson.id,
                                         group.id
                                     ).toDouble()

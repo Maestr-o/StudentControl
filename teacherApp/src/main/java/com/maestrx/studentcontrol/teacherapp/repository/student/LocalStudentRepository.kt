@@ -1,6 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.repository.student
 
-import com.maestrx.studentcontrol.teacherapp.db.AppDb
+import com.maestrx.studentcontrol.teacherapp.db.dao.StudentDao
 import com.maestrx.studentcontrol.teacherapp.db.entity.StudentEntity
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 import kotlinx.coroutines.flow.Flow
@@ -8,28 +8,32 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class LocalStudentRepository @Inject constructor(
-    private val db: AppDb,
+    private val studentDao: StudentDao,
 ) : StudentRepository {
 
-    override fun getStudentsByGroup(groupId: Long): Flow<List<StudentResponse>> =
-        db.studentDao.getStudentsByGroup(groupId).map { list ->
+    override fun getByGroupId(groupId: Long): Flow<List<StudentResponse>> =
+        studentDao.getByGroupId(groupId).map { list ->
             list.sortedBy {
                 it.lastName
             }
         }
 
     override suspend fun save(data: StudentEntity) =
-        db.studentDao.save(data)
+        studentDao.save(data)
 
     override suspend fun deleteById(id: Long) =
-        db.studentDao.deleteById(id)
+        studentDao.deleteById(id)
 
-    override suspend fun getStudentIdByDeviceId(deviceId: String): Long =
-        db.studentDao.getStudentIdByDeviceId(deviceId)
+    override suspend fun getIdByDeviceId(deviceId: String): Long =
+        studentDao.getIdByDeviceId(deviceId)
 
     override suspend fun saveDeviceId(studentId: Long, deviceId: String) =
-        db.studentDao.saveDeviceId(studentId, deviceId)
+        studentDao.saveDeviceId(studentId, deviceId)
 
-    override suspend fun getStudentsCountByGroup(groupId: Long): Int =
-        db.studentDao.getStudentsCountByGroup(groupId)
+    override suspend fun getCountByGroupId(groupId: Long): Int =
+        studentDao.getCountByGroupId(groupId)
+
+    override suspend fun getByLessonId(lessonId: Long): List<StudentResponse> =
+        studentDao.getByLessonId(lessonId)
+            .sortedWith(compareBy({ it.groupName }, { it.lastName }))
 }

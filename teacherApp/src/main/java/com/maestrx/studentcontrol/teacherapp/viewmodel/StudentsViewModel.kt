@@ -32,7 +32,7 @@ class StudentsViewModel @AssistedInject constructor(
     val message = _message.asStateFlow()
 
     init {
-        studentRepository.getStudentsByGroup(groupId).onEach { list ->
+        studentRepository.getByGroupId(groupId).onEach { list ->
             _state.update {
                 list.map {
                     Student.fromResponseToData(it)

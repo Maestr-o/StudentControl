@@ -174,7 +174,7 @@ class BottomNavigationFragment : Fragment() {
             .onEach { event ->
                 when (event.getContentIfNotHandled()) {
                     Constants.MESSAGE_ERROR_EXPORT -> {
-                        toast(R.string.error_creating_file)
+                        toast(R.string.error_export)
                     }
 
                     Constants.MESSAGE_END_EXPORT -> {

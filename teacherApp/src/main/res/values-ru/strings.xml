@@ -71,13 +71,13 @@
     <string name="student_count_placeholder">%d/%d чел</string>
     <string name="quit_from_control">Вы действительно хотите выйти и остановить контроль?</string>
     <string name="data_control">Управление данными</string>
-    <string name="export_excel">Экспорт в Excel-файл</string>
+    <string name="export_excel">Экспорт в Excel</string>
     <string name="clean_data">Очистить данные</string>
     <string name="sure_clean_data">Вы действительно хотите очистить все данные?</string>
     <string name="back">Назад</string>
-    <string name="error_creating_file">Ошибка создания файла</string>
+    <string name="error_export">Ошибка экспорта данных</string>
     <string name="ok_creating_file">Экспортировано в папку загрузок</string>
-    <string name="need_files_permission">Для того, чтобы экспортировать данные в Эксель-файл, нужно разрешение на доступ к внешнему хранилищу.</string>
+    <string name="need_files_permission">Для того, чтобы экспортировать данные в Excel-файлы, нужно разрешение на доступ к внешнему хранилищу.</string>
     <string name="person_name_header">ФИО</string>
     <string name="quantity">N</string>
     <string name="amount">Всего</string>

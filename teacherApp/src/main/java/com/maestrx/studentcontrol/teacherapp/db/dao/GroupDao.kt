@@ -20,4 +20,14 @@ interface GroupDao {
 
     @Query("SELECT COUNT(*) FROM `Group`")
     fun getCount(): Flow<Long>
+
+    @Query(
+        """
+        SELECT `Group`.id, `Group`.name
+        FROM LessonGroupCross, Lesson, `Group`
+        WHERE Lesson.id == :lessonId AND LessonGroupCross.lessonId == :lessonId
+            AND LessonGroupCross.groupId == `Group`.id
+        """
+    )
+    fun getByLessonId(lessonId: Long): Flow<List<GroupEntity>>
 }

@@ -8,4 +8,5 @@ interface GroupRepository {
     suspend fun save(data: GroupEntity)
     suspend fun deleteById(id: Long)
     fun getCount(): Flow<Long>
+    fun getByLessonId(lessonId: Long): Flow<List<GroupEntity>>
 }

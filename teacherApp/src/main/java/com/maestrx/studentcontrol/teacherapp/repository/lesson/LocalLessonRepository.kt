@@ -1,40 +1,35 @@
 package com.maestrx.studentcontrol.teacherapp.repository.lesson
 
-import com.maestrx.studentcontrol.teacherapp.db.AppDb
+import com.maestrx.studentcontrol.teacherapp.db.dao.LessonDao
 import com.maestrx.studentcontrol.teacherapp.db.entity.LessonEntity
 import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
-import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalLessonRepository @Inject constructor(
-    private val db: AppDb,
+    private val lessonDao: LessonDao,
 ) : LessonRepository {
 
-    override suspend fun getLessonsForPeriod(startTime: Long, endTime: Long): List<LessonResponse> =
-        db.lessonDao.getLessonsForPeriod(startTime, endTime)
+    override suspend fun getForPeriod(startTime: Long, endTime: Long): List<LessonResponse> =
+        lessonDao.getForPeriod(startTime, endTime)
             .sortedBy { it.timeStart }
 
-    override suspend fun getStudentsByLessonId(lessonId: Long): List<StudentResponse> =
-        db.lessonDao.getStudentsByLessonId(lessonId)
-            .sortedWith(compareBy({ it.groupName }, { it.lastName }))
-
     override suspend fun save(data: LessonEntity): Long =
-        db.lessonDao.save(data)
+        lessonDao.save(data)
 
     override suspend fun deleteById(id: Long) =
-        db.lessonDao.deleteById(id)
+        lessonDao.deleteById(id)
 
-    override suspend fun getLessonsBySubjectAndGroup(
+    override suspend fun getBySubjectIdAndGroupId(
         subjectId: Long,
         groupId: Long
     ): List<LessonResponse> =
-        db.lessonDao.getLessonsBySubjectAndGroup(subjectId, groupId)
+        lessonDao.getBySubjectIdAndGroupId(subjectId, groupId)
             .sortedBy { it.timeStart }
 
-    override suspend fun getCountBySubjectAndGroup(subjectId: Long, groupId: Long): Int =
-        db.lessonDao.getCountBySubjectAndGroup(subjectId, groupId)
+    override suspend fun getCountBySubjectIdAndGroupId(subjectId: Long, groupId: Long): Int =
+        lessonDao.getCountBySubjectIdAndGroupId(subjectId, groupId)
 
     override fun getCount(): Flow<Long> =
-        db.lessonDao.getCount()
+        lessonDao.getCount()
 }

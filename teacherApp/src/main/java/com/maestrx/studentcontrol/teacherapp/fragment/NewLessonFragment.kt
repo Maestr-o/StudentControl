@@ -25,7 +25,9 @@ import com.maestrx.studentcontrol.teacherapp.utils.showTimeStartPicker
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.NewLessonViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.di.NewLessonViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -35,13 +37,19 @@ class NewLessonFragment : Fragment() {
     private var _binding: FragmentEditLessonBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel by viewModels<NewLessonViewModel>()
+    private val viewModel by viewModels<NewLessonViewModel>(
+        extrasProducer = {
+            defaultViewModelCreationExtras.withCreationCallback<NewLessonViewModelFactory> { factory ->
+                factory.create(
+                    arguments?.getLong(Constants.NEW_LESSON_DATE)
+                        ?: TimeFormatter.getCurrentDateZeroTime()
+                )
+            }
+        }
+    )
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
     private lateinit var groupsAdapter: GroupSelectAdapter
-
-    private val selDate =
-        arguments?.getLong(Constants.NEW_LESSON_DATE) ?: TimeFormatter.getCurrentDateZeroTime()
 
     override fun onStart() {
         super.onStart()
@@ -119,15 +127,9 @@ class NewLessonFragment : Fragment() {
 
         val lessonState = viewModel.lessonState.value
         binding.apply {
-            if (lessonState.timeStart == 0L) {
-                date.setText(
-                    TimeFormatter.unixTimeToDateString(selDate)
-                )
-            } else {
-                date.setText(TimeFormatter.unixTimeToDateString(lessonState.timeStart))
-                timeStart.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeStart))
-                timeEnd.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeEnd))
-            }
+            date.setText(TimeFormatter.unixTimeToDateString(lessonState.timeStart))
+            timeStart.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeStart))
+            timeEnd.setText(TimeFormatter.unixTimeToTimeString(lessonState.timeEnd))
             title.setText(lessonState.title)
             when (lessonState.type) {
                 LessonType.LECTURE -> {

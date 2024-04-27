@@ -5,10 +5,11 @@ import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
-    fun getStudentsByGroup(groupId: Long): Flow<List<StudentResponse>>
+    fun getByGroupId(groupId: Long): Flow<List<StudentResponse>>
     suspend fun save(data: StudentEntity)
     suspend fun deleteById(id: Long)
-    suspend fun getStudentIdByDeviceId(deviceId: String): Long
+    suspend fun getIdByDeviceId(deviceId: String): Long
     suspend fun saveDeviceId(studentId: Long, deviceId: String)
-    suspend fun getStudentsCountByGroup(groupId: Long): Int
+    suspend fun getCountByGroupId(groupId: Long): Int
+    suspend fun getByLessonId(lessonId: Long): List<StudentResponse>
 }

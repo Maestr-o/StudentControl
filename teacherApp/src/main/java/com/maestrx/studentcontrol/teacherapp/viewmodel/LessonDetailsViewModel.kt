@@ -10,8 +10,8 @@ import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
+import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
-import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
@@ -33,8 +33,8 @@ import kotlinx.coroutines.launch
 class LessonDetailsViewModel @AssistedInject constructor(
     private val attendanceRepository: AttendanceRepository,
     private val lessonRepository: LessonRepository,
-    private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
     private val studentRepository: StudentRepository,
+    private val groupRepository: GroupRepository,
     private val serverInteractor: ServerInteractor,
     @Assisted private val lesson: Lesson,
 ) : ViewModel() {
@@ -55,7 +55,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
         setLesson(lesson)
 
         viewModelScope.launch(Dispatchers.IO) {
-            attendanceRepository.getByLesson(lesson.id)
+            attendanceRepository.getByLessonId(lesson.id)
                 .onEach { list ->
                     _studentsWithGroupsState.update {
                         it.copy(
@@ -71,7 +71,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     private fun setLesson(lesson: Lesson) {
-        lessonGroupCrossRefRepository.getGroupsByLesson(lesson.id)
+        groupRepository.getByLessonId(lesson.id)
             .onEach { groups ->
                 val lessonWithGroups =
                     lesson.copy(
@@ -129,7 +129,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private suspend fun getStudentsWithGroups(): List<Any> =
         viewModelScope.async(Dispatchers.Default) {
             val listOfStudents = async {
-                lessonRepository.getStudentsByLessonId(lessonState.value.id).map {
+                studentRepository.getByLessonId(lessonState.value.id).map {
                     Student.fromResponseToData(it)
                 }
             }
@@ -142,7 +142,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
                         AttendedInGroup(
                             name = group.name,
                             count = groupStudents.size,
-                            max = studentRepository.getStudentsCountByGroup(group.id),
+                            max = studentRepository.getCountByGroupId(group.id),
                         )
                     }
             }
@@ -161,7 +161,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
         viewModelScope.async(Dispatchers.IO) {
             var count = 0
             groups.forEach { group ->
-                count += studentRepository.getStudentsCountByGroup(group.id)
+                count += studentRepository.getCountByGroupId(group.id)
             }
             count
         }

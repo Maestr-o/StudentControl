@@ -7,7 +7,7 @@
     <string name="connect_to_network">Connect to teacher\'s network</string>
     <string name="connected">Connected to Wi-Fi network</string>
     <string name="sending_data">Sending data…</string>
-    <string name="error_sending_data">Error sending data. Please retry</string>
+    <string name="error_exchanging_data">Error exchanging data. Please retry</string>
     <string name="send">Send</string>
     <string name="choose_group">Choose group</string>
     <string name="choose_student">Choose student</string>

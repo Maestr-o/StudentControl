@@ -65,7 +65,7 @@ internal fun LoadingScreen(
         }
 
         is LoadingStatus.Error -> {
-            context.Toast(res = R.string.error_sending_data)
+            context.Toast(res = R.string.error_exchanging_data)
             onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(false)))
         }
 

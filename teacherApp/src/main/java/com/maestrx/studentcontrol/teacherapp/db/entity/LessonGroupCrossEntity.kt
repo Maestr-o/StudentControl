@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "LessonGroupCrossRef",
+    tableName = "LessonGroupCross",
     foreignKeys = [
         ForeignKey(
             entity = LessonEntity::class,
@@ -26,7 +26,7 @@ import androidx.room.PrimaryKey
         Index(value = ["lessonId", "groupId"], unique = true)
     ]
 )
-data class LessonGroupCrossRefEntity(
+data class LessonGroupCrossEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0L,

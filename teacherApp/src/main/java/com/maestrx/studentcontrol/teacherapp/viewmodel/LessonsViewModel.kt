@@ -71,7 +71,7 @@ class LessonsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.update {
-                    lessonRepository.getLessonsForPeriod(startTime, endTime).map {
+                    lessonRepository.getForPeriod(startTime, endTime).map {
                         Lesson.fromResponseToData(it)
                     }
                 }

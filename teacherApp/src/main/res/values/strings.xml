@@ -70,13 +70,13 @@
     <string name="student_count_placeholder">%d/%d people</string>
     <string name="quit_from_control">Do you really want to stop control and exit?</string>
     <string name="data_control">Data control</string>
-    <string name="export_excel">Export to Excel-file</string>
+    <string name="export_excel">Export to Excel</string>
     <string name="clean_data">Clean data</string>
     <string name="sure_clean_data">Do you really want to clean all data?</string>
     <string name="back">Back</string>
-    <string name="error_creating_file">Error creating file</string>
+    <string name="error_export">Export error</string>
     <string name="ok_creating_file">Exported to downloads folder</string>
-    <string name="need_files_permission">Exporting data to an Excel-file requires permission to access external storage.</string>
+    <string name="need_files_permission">Exporting data to Excel-files requires permission to access external storage.</string>
     <string name="person_name_header">Name</string>
     <string name="quantity">N</string>
     <string name="amount">Amount</string>

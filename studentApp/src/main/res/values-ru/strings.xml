@@ -8,7 +8,7 @@
     <string name="connect_to_network">Подключитесь к сети преподавателя</string>
     <string name="connected">Подключено к Wi-Fi сети</string>
     <string name="sending_data">Отправка данных…</string>
-    <string name="error_sending_data">Ошибка отправки данных. Пожалуйста, повторите попытку</string>
+    <string name="error_exchanging_data">Ошибка обмена данными. Пожалуйста, повторите попытку</string>
     <string name="send">Отправить</string>
     <string name="choose_group">Выберите группу</string>
     <string name="choose_student">Выберите студента</string>

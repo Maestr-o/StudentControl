@@ -99,6 +99,13 @@ object TimeFormatter {
         }
             .timeInMillis
 
+    fun incHalfOfDay(time: Long) =
+        Calendar.getInstance().apply {
+            timeInMillis = time
+            add(Calendar.HOUR_OF_DAY, 12)
+        }
+            .timeInMillis
+
     fun addDefaultLessonDuration(time: Long): Long {
         val newTime = Calendar.getInstance().apply {
             timeInMillis = time

@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.studentapp.data.ServerInteractor
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
-import com.maestrx.studentcontrol.studentapp.domain.wifi.ServerInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

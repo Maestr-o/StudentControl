@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
-import com.maestrx.studentcontrol.teacherapp.model.LessonGroupCrossRef
+import com.maestrx.studentcontrol.teacherapp.model.LessonGroupCross
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
-import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross_ref.LessonGroupCrossRefRepository
+import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross.LessonGroupCrossRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
@@ -28,7 +28,7 @@ class EditLessonViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
     groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
-    private val lessonGroupCrossRefRepository: LessonGroupCrossRefRepository,
+    private val lessonGroupCrossRepository: LessonGroupCrossRepository,
 ) : ViewModel() {
 
     private val _lessonState = MutableStateFlow(Lesson())
@@ -71,16 +71,16 @@ class EditLessonViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val lessonId = lessonState.value.id
-                val lessonGroupCrossRefs: MutableList<LessonGroupCrossRef> = mutableListOf()
-                lessonGroupCrossRefs += selectedGroupsState.value.selectedGroups.map {
-                    LessonGroupCrossRef(
+                val lessonGroupCrosses: MutableList<LessonGroupCross> = mutableListOf()
+                lessonGroupCrosses += selectedGroupsState.value.selectedGroups.map {
+                    LessonGroupCross(
                         lessonId = lessonId,
                         groupId = it.id,
                     )
                 }
                 lessonRepository.save(lessonState.value.toEntity())
-                lessonGroupCrossRefRepository.clear(lessonId)
-                lessonGroupCrossRefRepository.save(lessonGroupCrossRefs)
+                lessonGroupCrossRepository.clear(lessonId)
+                lessonGroupCrossRepository.save(lessonGroupCrosses)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_LESSON)
                 Log.d(Constants.DEBUG_TAG, "Error saving lesson: $e")

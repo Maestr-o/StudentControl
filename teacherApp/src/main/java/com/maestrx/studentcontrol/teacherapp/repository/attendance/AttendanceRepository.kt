@@ -4,9 +4,9 @@ import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import kotlinx.coroutines.flow.Flow
 
 interface AttendanceRepository {
-    fun getByLesson(lessonId: Long): Flow<List<AttendanceEntity>>
+    fun getByLessonId(lessonId: Long): Flow<List<AttendanceEntity>>
     suspend fun save(data: AttendanceEntity)
-    suspend fun getBySubjectAndGroup(subjectId: Long, groupId: Long): List<AttendanceEntity>
-    suspend fun getCountByLessonAndGroup(lessonId: Long, groupId: Long): Int
+    suspend fun getBySubjectIdAndGroupId(subjectId: Long, groupId: Long): List<AttendanceEntity>
+    suspend fun getCountByLessonIdAndGroupId(lessonId: Long, groupId: Long): Int
     suspend fun getCount(): Int
 }

@@ -28,7 +28,7 @@ class StudentDataHandler(
 
     suspend fun handleStudentData(packetDeviceId: DatagramPacket) = withContext(Dispatchers.IO) {
         val deviceId = getData(packetDeviceId)
-        val studentId = studentRepository.getStudentIdByDeviceId(deviceId)
+        val studentId = studentRepository.getIdByDeviceId(deviceId)
 
         newSocket = DatagramSocket()
         Log.d(Constants.DEBUG_TAG, "Socket is open, port: ${newSocket.localPort}")
@@ -59,7 +59,7 @@ class StudentDataHandler(
         val sendData = message.toByteArray()
         val sendPacket = DatagramPacket(sendData, sendData.size, studentAddress, studentPort)
         newSocket.send(sendPacket)
-        Log.d(Constants.DEBUG_TAG, "Sent data to port $studentPort: $message")
+        Log.d(Constants.DEBUG_TAG, "Sent data to ${sendPacket.address}:$studentPort: $message")
     }
 
     private fun receive(): DatagramPacket {
@@ -97,7 +97,7 @@ class StudentDataHandler(
         }
         val students = mutableListOf<StudentResponse>()
         groupIds.forEach { groupId ->
-            students += studentRepository.getStudentsByGroup(groupId).first()
+            students += studentRepository.getByGroupId(groupId).first()
         }
         return students.map {
             Student.fromResponseToData(it)
