@@ -23,7 +23,8 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        Index(value = ["lessonId", "groupId"], unique = true)
+        Index(value = ["lessonId", "groupId"], unique = true),
+        Index(value = ["groupId"]),
     ]
 )
 data class LessonGroupCrossEntity(

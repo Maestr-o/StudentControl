@@ -84,6 +84,6 @@
     <string name="total">Total</string>
     <string name="ok_data_clear">All data has been deleted!</string>
     <string name="error_data_clear">Error deleting data</string>
-    <string name="export_path_long" translatable="false">%s/Student control - %s</string>
-    <string name="export_path_short" translatable="false">/Student control - %s</string>
+    <string name="export_path_long" translatable="false">%s/Student control/%s</string>
+    <string name="export_path_short" translatable="false">/Student control/%s</string>
 </resources>

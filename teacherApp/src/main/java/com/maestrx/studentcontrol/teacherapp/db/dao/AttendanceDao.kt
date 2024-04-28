@@ -24,8 +24,10 @@ interface AttendanceDao {
     @Query(
         """
         SELECT Attendance.id, Attendance.lessonId, Attendance.studentId
-        FROM Attendance, `Group`, Student, Subject
+        FROM Attendance, `Group`, Student, Subject, LessonGroupCross, Lesson
         WHERE Subject.id == :subjectId AND `Group`.id == :groupId
+            AND Attendance.lessonId == Lesson.id AND Lesson.subjectId == Subject.id
+            AND Lesson.id == LessonGroupCross.lessonId AND `Group`.id == LessonGroupCross.groupId
             AND Student.groupId == `Group`.id AND Student.id == Attendance.studentId
         """
     )

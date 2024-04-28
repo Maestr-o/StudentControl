@@ -17,7 +17,8 @@ import androidx.room.PrimaryKey
         ),
     ],
     indices = [
-        Index(value = ["firstName", "midName", "lastName"], unique = true)
+        Index(value = ["firstName", "midName", "lastName"], unique = true),
+        Index(value = ["groupId"]),
     ]
 )
 data class StudentEntity(

@@ -23,7 +23,8 @@ import androidx.room.PrimaryKey
         ),
     ],
     indices = [
-        Index(value = ["lessonId", "studentId"], unique = true)
+        Index(value = ["lessonId", "studentId"], unique = true),
+        Index(value = ["studentId"]),
     ]
 )
 data class AttendanceEntity(

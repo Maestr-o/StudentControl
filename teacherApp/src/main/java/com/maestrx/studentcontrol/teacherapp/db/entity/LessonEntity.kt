@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
 
@@ -16,6 +17,9 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonType
             onDelete = ForeignKey.CASCADE,
         )
     ],
+    indices = [
+        Index(value = ["subjectId"]),
+    ]
 )
 data class LessonEntity(
     @PrimaryKey(autoGenerate = true)

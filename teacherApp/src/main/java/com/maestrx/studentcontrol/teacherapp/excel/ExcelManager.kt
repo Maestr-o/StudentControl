@@ -77,8 +77,9 @@ class ExcelManager @Inject constructor(
 
         var count = 0
         groups.forEach { groupEntity ->
-            if (lessonRepository.getCountBySubjectIdAndGroupId(subject.id, groupEntity.id) >= 1) {
-                createSheet(workbook, styles, subject, Group.toData(groupEntity))
+            if (lessonRepository.getCountBySubjectIdAndGroupId(subject.id, groupEntity.id) >= 1
+                && createSheet(workbook, styles, subject, Group.toData(groupEntity))
+            ) {
                 count++
             }
         }
@@ -93,7 +94,7 @@ class ExcelManager @Inject constructor(
         styles: ExcelStyles,
         subject: Subject,
         group: Group
-    ) = withContext(Dispatchers.Default) {
+    ): Boolean = withContext(Dispatchers.Default) {
         val lessonsDeferred = async(Dispatchers.IO) {
             lessonRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
@@ -107,12 +108,14 @@ class ExcelManager @Inject constructor(
             lessonsDeferred, studentsDeferred, attendancesDeferred
         )
 
-        if (attendances.isEmpty() || students.isEmpty() || lessons.isEmpty()) return@withContext
+        if (attendances.isEmpty() || students.isEmpty() || lessons.isEmpty()) {
+            return@withContext false
+        }
 
         try {
             workbook.createSheet(group.name).apply {
-                setColumnWidth(0, 1200)
-                setColumnWidth(1, 9000)
+                setColumnWidth(0, Constants.EXCEL_N_COLUMN_SIZE)
+                setColumnWidth(1, Constants.EXCEL_NAME_COLUMN_SIZE)
 
                 var x = 0
                 createRow(x++).apply {
@@ -234,7 +237,9 @@ class ExcelManager @Inject constructor(
             }
         } catch (e: Exception) {
             Log.d(Constants.DEBUG_TAG, "Exporting error: $e")
+            return@withContext false
         }
+        return@withContext true
     }
 
     private fun writeFile(fileName: String, workbook: XSSFWorkbook): Boolean =
