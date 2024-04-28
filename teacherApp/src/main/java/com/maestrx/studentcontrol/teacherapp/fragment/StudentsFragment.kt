@@ -47,7 +47,8 @@ class StudentsFragment : Fragment() {
 
         val adapter = StudentsAdapter(
             object : StudentsAdapter.StudentsListener {
-                override fun onEditClickListener(student: Student) {
+                override fun onEditClickListener(view: View, student: Student) {
+                    view.isEnabled = false
                     val dialogBinding = DialogEditStudentBinding.inflate(inflater)
                     dialogBinding.apply {
                         firstName.setText(student.firstName)
@@ -80,10 +81,14 @@ class StudentsFragment : Fragment() {
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
+                        .setOnDismissListener {
+                            view.isEnabled = true
+                        }
                         .show()
                 }
 
-                override fun onDeleteClickListener(student: Student) {
+                override fun onDeleteClickListener(view: View, student: Student) {
+                    view.isEnabled = false
                     val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
                         line.text = getString(R.string.delete_student, student.fullName)
                     }
@@ -95,6 +100,9 @@ class StudentsFragment : Fragment() {
                         }
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
+                        }
+                        .setOnDismissListener {
+                            view.isEnabled = true
                         }
                         .show()
                 }

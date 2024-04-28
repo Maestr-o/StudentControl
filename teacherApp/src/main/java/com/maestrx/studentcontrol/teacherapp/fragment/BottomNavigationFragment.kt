@@ -83,6 +83,7 @@ class BottomNavigationFragment : Fragment() {
         }
 
         val newSubjectListener = View.OnClickListener {
+            binding.add.isEnabled = false
             val dialogBinding = DialogEditLineBinding.inflate(inflater)
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_subject))
@@ -101,10 +102,14 @@ class BottomNavigationFragment : Fragment() {
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
+                .setOnDismissListener {
+                    binding.add.isEnabled = true
+                }
                 .show()
         }
 
         val newGroupListener = View.OnClickListener {
+            binding.add.isEnabled = false
             val dialogBinding = DialogEditLineBinding.inflate(inflater)
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_group))
@@ -122,6 +127,9 @@ class BottomNavigationFragment : Fragment() {
                 }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
+                }
+                .setOnDismissListener {
+                    binding.add.isEnabled = true
                 }
                 .show()
         }
@@ -164,8 +172,10 @@ class BottomNavigationFragment : Fragment() {
                         .setNegativeButton(getString(R.string.back)) { dialog, _ ->
                             dialog.dismiss()
                         }
+                        .setOnDismissListener {
+                            toolbarViewModel.dataControlClicked(false)
+                        }
                         .show()
-                    toolbarViewModel.dataControlClicked(false)
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

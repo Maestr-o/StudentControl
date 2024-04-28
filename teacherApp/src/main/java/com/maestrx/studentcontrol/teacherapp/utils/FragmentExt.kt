@@ -35,7 +35,7 @@ fun Fragment.showDatePicker(view: TextInputEditText) {
     val month = calendar.get(Calendar.MONTH)
     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
-    val datePickerDialog = DatePickerDialog(requireContext(), { _, y, m, dOfM ->
+    DatePickerDialog(requireContext(), { _, y, m, dOfM ->
         val selectedCalendar = Calendar.getInstance().apply {
             set(Calendar.YEAR, y)
             set(Calendar.MONTH, m)
@@ -43,9 +43,13 @@ fun Fragment.showDatePicker(view: TextInputEditText) {
         }
         val selectedDateInMillis = selectedCalendar.timeInMillis
         view.setText(TimeFormatter.unixTimeToDateString(selectedDateInMillis))
-    }, year, month, dayOfMonth)
-
-    datePickerDialog.show()
+    }, year, month, dayOfMonth).apply {
+        view.isEnabled = false
+        setOnDismissListener {
+            view.isEnabled = true
+        }
+        show()
+    }
 }
 
 fun Fragment.showTimeStartPicker(startView: TextInputEditText, endView: TextInputEditText) {
@@ -53,7 +57,7 @@ fun Fragment.showTimeStartPicker(startView: TextInputEditText, endView: TextInpu
     val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
     val minute = calendar.get(Calendar.MINUTE)
 
-    val timePickerDialog = TimePickerDialog(
+    TimePickerDialog(
         requireContext(),
         { _, h, m ->
             val selectedTime = String.format("%02d:%02d", h, m)
@@ -71,9 +75,13 @@ fun Fragment.showTimeStartPicker(startView: TextInputEditText, endView: TextInpu
         hourOfDay,
         minute,
         true
-    )
-
-    timePickerDialog.show()
+    ).apply {
+        startView.isEnabled = false
+        setOnDismissListener {
+            startView.isEnabled = true
+        }
+        show()
+    }
 }
 
 fun Fragment.showTimeEndPicker(view: TextInputEditText, startTime: String) {
@@ -81,7 +89,7 @@ fun Fragment.showTimeEndPicker(view: TextInputEditText, startTime: String) {
     val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
     val minute = calendar.get(Calendar.MINUTE)
 
-    val timePickerDialog = TimePickerDialog(
+    TimePickerDialog(
         requireContext(),
         { _, h, m ->
             val selectedTime = String.format("%02d:%02d", h, m)
@@ -94,7 +102,11 @@ fun Fragment.showTimeEndPicker(view: TextInputEditText, startTime: String) {
         hourOfDay,
         minute,
         true
-    )
-
-    timePickerDialog.show()
+    ).apply {
+        view.isEnabled = false
+        setOnDismissListener {
+            view.isEnabled = true
+        }
+        show()
+    }
 }

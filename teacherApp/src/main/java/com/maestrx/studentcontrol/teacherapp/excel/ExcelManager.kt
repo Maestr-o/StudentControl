@@ -93,14 +93,14 @@ class ExcelManager @Inject constructor(
         styles: ExcelStyles,
         subject: Subject,
         group: Group
-    ) = withContext(Dispatchers.IO) {
-        val lessonsDeferred = async {
+    ) = withContext(Dispatchers.Default) {
+        val lessonsDeferred = async(Dispatchers.IO) {
             lessonRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
-        val studentsDeferred = async {
+        val studentsDeferred = async(Dispatchers.IO) {
             studentRepository.getByGroupId(group.id).first()
         }
-        val attendancesDeferred = async {
+        val attendancesDeferred = async(Dispatchers.IO) {
             attendanceRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
         val (lessons, students, attendances) = awaitAll(
@@ -109,134 +109,131 @@ class ExcelManager @Inject constructor(
 
         if (attendances.isEmpty() || students.isEmpty() || lessons.isEmpty()) return@withContext
 
-        withContext(Dispatchers.Default) {
-            try {
-                workbook.createSheet(group.name).apply {
-                    setColumnWidth(0, 1200)
-                    setColumnWidth(1, 9000)
+        try {
+            workbook.createSheet(group.name).apply {
+                setColumnWidth(0, 1200)
+                setColumnWidth(1, 9000)
 
-                    var x = 0
+                var x = 0
+                createRow(x++).apply {
+                    var y = 0
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerText)
+                        setCellValue(context.getString(R.string.quantity))
+                    }
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerText)
+                        setCellValue(context.getString(R.string.person_name_header))
+                    }
+                    lessons.forEach { lessonResponse ->
+                        val lesson =
+                            Lesson.fromResponseToData(lessonResponse as LessonResponse)
+                        createCell(y++).apply {
+                            setCellStyle(styles.headerDate)
+                            setCellValue(
+                                LocalDateTime.ofInstant(
+                                    Instant.ofEpochMilli(lesson.timeStart),
+                                    ZoneId.systemDefault()
+                                )
+                            )
+                        }
+                    }
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerText)
+                        setCellValue(context.getString(R.string.amount))
+                    }
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerText)
+                        setCellValue(context.getString(R.string.percent))
+                    }
+                }
+
+                val listOfPercentAttendance: MutableList<Double> = mutableListOf()
+                students.forEachIndexed { index, studentResponse ->
+                    val student =
+                        Student.fromResponseToData(studentResponse as StudentResponse)
                     createRow(x++).apply {
                         var y = 0
+                        var attendedCount = 0
                         createCell(y++).apply {
-                            setCellStyle(styles.headerText)
-                            setCellValue(context.getString(R.string.quantity))
+                            setCellStyle(styles.number)
+                            setCellValue((index + 1).toDouble())
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.headerText)
-                            setCellValue(context.getString(R.string.person_name_header))
+                            setCellStyle(styles.textLeft)
+                            setCellValue(student.fullName)
                         }
                         lessons.forEach { lessonResponse ->
                             val lesson =
                                 Lesson.fromResponseToData(lessonResponse as LessonResponse)
-                            createCell(y++).apply {
-                                setCellStyle(styles.headerDate)
-                                setCellValue(
-                                    LocalDateTime.ofInstant(
-                                        Instant.ofEpochMilli(lesson.timeStart),
-                                        ZoneId.systemDefault()
-                                    )
-                                )
+                            val isAttended = attendances.any { attendance ->
+                                (attendance as AttendanceEntity).lessonId == lesson.id &&
+                                        student.id == attendance.studentId
                             }
-                        }
-                        createCell(y++).apply {
-                            setCellStyle(styles.headerText)
-                            setCellValue(context.getString(R.string.amount))
-                        }
-                        createCell(y++).apply {
-                            setCellStyle(styles.headerText)
-                            setCellValue(context.getString(R.string.percent))
-                        }
-                    }
-
-                    val listOfPercentAttendance: MutableList<Double> = mutableListOf()
-                    students.forEachIndexed { index, studentResponse ->
-                        val student =
-                            Student.fromResponseToData(studentResponse as StudentResponse)
-                        createRow(x++).apply {
-                            var y = 0
-                            var attendedCount = 0
-                            createCell(y++).apply {
-                                setCellStyle(styles.number)
-                                setCellValue((index + 1).toDouble())
-                            }
-                            createCell(y++).apply {
-                                setCellStyle(styles.textLeft)
-                                setCellValue(student.fullName)
-                            }
-                            lessons.forEach { lessonResponse ->
-                                val lesson =
-                                    Lesson.fromResponseToData(lessonResponse as LessonResponse)
-                                val isAttended = attendances.any { attendance ->
-                                    (attendance as AttendanceEntity).lessonId == lesson.id &&
-                                            student.id == attendance.studentId
+                            if (isAttended) {
+                                createCell(y++).apply {
+                                    setCellStyle(styles.textCenter)
+                                    setCellValue("+")
                                 }
-                                if (isAttended) {
-                                    createCell(y++).apply {
-                                        setCellStyle(styles.textCenter)
-                                        setCellValue("+")
-                                    }
-                                    attendedCount++
-                                } else {
-                                    createCell(y++).apply {
-                                        setCellStyle(styles.textCenter)
-                                        setCellValue("")
-                                    }
+                                attendedCount++
+                            } else {
+                                createCell(y++).apply {
+                                    setCellStyle(styles.textCenter)
+                                    setCellValue("")
                                 }
                             }
-                            createCell(y++).apply {
-                                setCellStyle(styles.decimal)
-                                setCellValue(attendedCount.toDouble())
-                            }
-
-                            val percent = attendedCount.toDouble() / lessons.count()
-                            listOfPercentAttendance += percent
-                            createCell(y++).apply {
-                                setCellStyle(styles.percent)
-                                setCellValue(percent)
-                            }
-                        }
-                    }
-
-                    createRow(x++).apply {
-                        var y = 1
-                        createCell(y++).apply {
-                            setCellStyle(styles.headerText)
-                            setCellValue(context.getString(R.string.total))
-                        }
-                        lessons.forEach { lessonResponse ->
-                            val lesson =
-                                Lesson.fromResponseToData(lessonResponse as LessonResponse)
-                            createCell(y++).apply {
-                                setCellStyle(styles.headerDecimal)
-                                setCellValue(
-                                    attendanceRepository.getCountByLessonIdAndGroupId(
-                                        lesson.id,
-                                        group.id
-                                    ).toDouble()
-                                )
-                            }
-
                         }
                         createCell(y++).apply {
-                            setCellStyle(styles.headerDecimal)
-                            setCellValue(lessons.count().toDouble())
+                            setCellStyle(styles.decimal)
+                            setCellValue(attendedCount.toDouble())
                         }
 
-                        var avgPercentAttendance = 0.0
-                        listOfPercentAttendance.forEach {
-                            avgPercentAttendance += it
-                        }
-                        avgPercentAttendance /= students.count()
+                        val percent = attendedCount.toDouble() / lessons.count()
+                        listOfPercentAttendance += percent
                         createCell(y++).apply {
-                            setCellStyle(styles.headerPercent)
-                            setCellValue(avgPercentAttendance)
+                            setCellStyle(styles.percent)
+                            setCellValue(percent)
                         }
                     }
                 }
-            } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Exporting error: $e")
+
+                createRow(x++).apply {
+                    var y = 1
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerText)
+                        setCellValue(context.getString(R.string.total))
+                    }
+                    lessons.forEach { lessonResponse ->
+                        val lesson =
+                            Lesson.fromResponseToData(lessonResponse as LessonResponse)
+                        createCell(y++).apply {
+                            setCellStyle(styles.headerDecimal)
+                            setCellValue(
+                                attendanceRepository.getCountByLessonIdAndGroupId(
+                                    lesson.id,
+                                    group.id
+                                ).toDouble()
+                            )
+                        }
+                    }
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerDecimal)
+                        setCellValue(lessons.count().toDouble())
+                    }
+
+                    var avgPercentAttendance = 0.0
+                    listOfPercentAttendance.forEach {
+                        avgPercentAttendance += it
+                    }
+                    avgPercentAttendance /= students.count()
+                    createCell(y++).apply {
+                        setCellStyle(styles.headerPercent)
+                        setCellValue(avgPercentAttendance)
+                    }
+                }
             }
+        } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "Exporting error: $e")
         }
     }
 

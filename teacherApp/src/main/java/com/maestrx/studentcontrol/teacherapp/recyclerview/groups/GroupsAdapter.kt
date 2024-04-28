@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.teacherapp.recyclerview.groups
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.maestrx.studentcontrol.teacherapp.databinding.CardGroupBinding
@@ -12,8 +13,8 @@ class GroupsAdapter(
 
     interface GroupsListener {
         fun onClickListener(group: Group)
-        fun onEditClickListener(group: Group)
-        fun onDeleteClickListener(group: Group)
+        fun onEditClickListener(view: View, group: Group)
+        fun onDeleteClickListener(view: View, group: Group)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder {
@@ -26,11 +27,11 @@ class GroupsAdapter(
         }
 
         binding.edit.setOnClickListener {
-            listener.onEditClickListener(getItem(viewHolder.adapterPosition))
+            listener.onEditClickListener(it, getItem(viewHolder.adapterPosition))
         }
 
         binding.delete.setOnClickListener {
-            listener.onDeleteClickListener(getItem(viewHolder.adapterPosition))
+            listener.onDeleteClickListener(it, getItem(viewHolder.adapterPosition))
         }
 
         return viewHolder

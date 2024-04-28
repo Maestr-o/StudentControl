@@ -134,8 +134,10 @@ class LessonDetailsFragment : Fragment() {
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
+                        .setOnDismissListener {
+                            toolbarViewModel.deleteClicked(false)
+                        }
                         .show()
-                    toolbarViewModel.deleteClicked(false)
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

@@ -49,7 +49,8 @@ class GroupsFragment : Fragment() {
                         .navigate(R.id.action_bottomNavigationFragment_to_studentsFragment, bundle)
                 }
 
-                override fun onEditClickListener(group: Group) {
+                override fun onEditClickListener(view: View, group: Group) {
+                    view.isEnabled = false
                     val dialogBinding = DialogEditLineBinding.inflate(inflater)
                     dialogBinding.line.setText(group.name)
                     AlertDialog.Builder(context)
@@ -69,10 +70,14 @@ class GroupsFragment : Fragment() {
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
+                        .setOnDismissListener {
+                            view.isEnabled = true
+                        }
                         .show()
                 }
 
-                override fun onDeleteClickListener(group: Group) {
+                override fun onDeleteClickListener(view: View, group: Group) {
+                    view.isEnabled = false
                     val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
                         line.text = getString(R.string.delete_group, group.name)
                     }
@@ -84,6 +89,9 @@ class GroupsFragment : Fragment() {
                         }
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
+                        }
+                        .setOnDismissListener {
+                            view.isEnabled = true
                         }
                         .show()
                 }

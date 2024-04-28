@@ -62,8 +62,8 @@ class LessonsFragment : Fragment() {
             viewModel.incDate()
         }
 
-        binding.dateSelect.setOnClickListener {
-            showDatePicker()
+        binding.dateSelect.setOnClickListener { view ->
+            showDatePicker(view)
         }
 
         viewModel.date
@@ -116,13 +116,13 @@ class LessonsFragment : Fragment() {
         }
     }
 
-    private fun showDatePicker() {
+    private fun showDatePicker(view: View) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, y, m, dOfM ->
+        DatePickerDialog(requireContext(), { _, y, m, dOfM ->
             val selectedCalendar = Calendar.getInstance().apply {
                 set(Calendar.YEAR, y)
                 set(Calendar.MONTH, m)
@@ -130,9 +130,14 @@ class LessonsFragment : Fragment() {
             }
             val selectedDateInMillis = TimeFormatter.getDateZeroTime(selectedCalendar.timeInMillis)
             viewModel.setDate(selectedDateInMillis)
-        }, year, month, dayOfMonth)
-
-        datePickerDialog.show()
+            view.isEnabled = true
+        }, year, month, dayOfMonth).apply {
+            setOnDismissListener {
+                view.isEnabled = true
+            }
+            view.isEnabled = false
+            show()
+        }
     }
 
     private fun updateList() {

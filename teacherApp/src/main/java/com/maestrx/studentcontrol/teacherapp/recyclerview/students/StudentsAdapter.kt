@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.teacherapp.recyclerview.students
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.maestrx.studentcontrol.teacherapp.databinding.CardStudentBinding
@@ -11,8 +12,8 @@ class StudentsAdapter(
 ) : ListAdapter<Student, StudentsViewHolder>(StudentsDiffCallback()) {
 
     interface StudentsListener {
-        fun onEditClickListener(student: Student)
-        fun onDeleteClickListener(student: Student)
+        fun onEditClickListener(view: View, student: Student)
+        fun onDeleteClickListener(view: View, student: Student)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentsViewHolder {
@@ -21,11 +22,11 @@ class StudentsAdapter(
         val viewHolder = StudentsViewHolder(binding)
 
         binding.edit.setOnClickListener {
-            listener.onEditClickListener(getItem(viewHolder.adapterPosition))
+            listener.onEditClickListener(it, getItem(viewHolder.adapterPosition))
         }
 
         binding.delete.setOnClickListener {
-            listener.onDeleteClickListener(getItem(viewHolder.adapterPosition))
+            listener.onDeleteClickListener(it, getItem(viewHolder.adapterPosition))
         }
 
         return viewHolder

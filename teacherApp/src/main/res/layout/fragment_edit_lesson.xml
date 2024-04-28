@@ -72,7 +72,6 @@
                 android:layout_marginEnd="@dimen/tiny_spacing"
                 android:layout_marginBottom="@dimen/small_spacing"
                 android:layout_weight="1"
-                android:backgroundTint="@color/BW"
                 android:hint="@string/date_hint"
                 android:inputType="text">
 
@@ -94,7 +93,6 @@
                 android:layout_marginEnd="@dimen/tiny_spacing"
                 android:layout_marginBottom="@dimen/small_spacing"
                 android:layout_weight="0.6"
-                android:backgroundTint="@color/BW"
                 android:hint="@string/time_start_hint"
                 android:inputType="text">
 
@@ -115,7 +113,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/small_spacing"
                 android:layout_weight="0.6"
-                android:backgroundTint="@color/BW"
                 android:hint="@string/time_end_hint"
                 android:inputType="text">
 
@@ -137,7 +134,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_spacing"
-            android:backgroundTint="@color/BW"
             android:hint="@string/auditory_hint"
             android:inputType="text">
 
@@ -216,7 +212,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/common_spacing"
-            android:backgroundTint="@color/BW"
             android:hint="@string/notes_hint"
             android:inputType="textMultiLine">
 

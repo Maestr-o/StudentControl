@@ -14,9 +14,15 @@ class SubjectsSpinnerAdapter(
 ) : ArrayAdapter<Subject>(context, R.layout.spinner_subject, subjects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val maxLength = 12
         val view = super.getView(position, convertView, parent)
-        val subject = getItem(position)
-        view.findViewById<TextView>(R.id.subjectText).text = subject?.name
+        val name = getItem(position)?.name ?: ""
+        val viewName = if (name.length > maxLength) {
+            name.substring(0..maxLength) + "..."
+        } else {
+            name
+        }
+        view.findViewById<TextView>(R.id.subjectText).text = viewName
         return view
     }
 

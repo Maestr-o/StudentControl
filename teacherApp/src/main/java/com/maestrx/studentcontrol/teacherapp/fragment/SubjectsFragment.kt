@@ -38,7 +38,8 @@ class SubjectsFragment : Fragment() {
 
         val adapter = SubjectsAdapter(
             object : SubjectsAdapter.SubjectsListener {
-                override fun onEditClickListener(subject: Subject) {
+                override fun onEditClickListener(view: View, subject: Subject) {
+                    view.isEnabled = false
                     val dialogBinding = DialogEditLineBinding.inflate(inflater)
                     dialogBinding.line.setText(subject.name)
                     AlertDialog.Builder(context)
@@ -61,10 +62,14 @@ class SubjectsFragment : Fragment() {
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
+                        .setOnDismissListener {
+                            view.isEnabled = true
+                        }
                         .show()
                 }
 
-                override fun onDeleteClickListener(subject: Subject) {
+                override fun onDeleteClickListener(view: View, subject: Subject) {
+                    view.isEnabled = false
                     val dialogBinding = DialogMultilineTextBinding.inflate(inflater).apply {
                         line.text = getString(R.string.delete_subject, subject.name)
                     }
@@ -76,6 +81,9 @@ class SubjectsFragment : Fragment() {
                         }
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
+                        }
+                        .setOnDismissListener {
+                            view.isEnabled = true
                         }
                         .show()
                 }
