@@ -11,9 +11,11 @@ class ManualMarkStudentViewHolder(
     fun bind(item: StudentMark) {
         binding.apply {
             name.text = item.fullName
+            mark.isChecked = item.isAttended
 
-            mark.setOnCheckedChangeListener { _, isChecked ->
-                item.isAttended = isChecked
+            layout.setOnClickListener {
+                mark.isChecked = !mark.isChecked
+                item.isAttended = !item.isAttended
             }
         }
     }

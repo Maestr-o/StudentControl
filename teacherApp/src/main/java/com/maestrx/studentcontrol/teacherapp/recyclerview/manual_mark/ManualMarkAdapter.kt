@@ -10,7 +10,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 
 class ManualMarkAdapter(
-    private val items: List<Any>,
+    val items: List<Any>,
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     companion object {

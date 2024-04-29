@@ -87,4 +87,5 @@
     <string name="export_path_long" translatable="false">%s/Student control/%s</string>
     <string name="export_path_short" translatable="false">/Student control/%s</string>
     <string name="manual_mark">Mark manually</string>
+    <string name="error_saving_marks">Error saving marks</string>
 </resources>

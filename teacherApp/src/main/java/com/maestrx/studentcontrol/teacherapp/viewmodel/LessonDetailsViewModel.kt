@@ -3,12 +3,14 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import com.maestrx.studentcontrol.teacherapp.model.Attendance
 import com.maestrx.studentcontrol.teacherapp.model.AttendedInGroup
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
+import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
@@ -94,6 +96,23 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 setControlStatus(controlStatus.value)
             }
             .launchIn(viewModelScope)
+    }
+
+    fun addMarks(list: List<Any>) {
+        viewModelScope.launch {
+            try {
+                list.filterIsInstance<StudentMark>()
+                    .filter { it.isAttended }
+                    .forEach { student ->
+                        attendanceRepository.save(
+                            AttendanceEntity(lessonId = lesson.id, studentId = student.id)
+                        )
+                    }
+            } catch (e: Exception) {
+                _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
+                Log.d(Constants.DEBUG_TAG, "Error saving marks: $e")
+            }
+        }
     }
 
     fun deleteLesson() {

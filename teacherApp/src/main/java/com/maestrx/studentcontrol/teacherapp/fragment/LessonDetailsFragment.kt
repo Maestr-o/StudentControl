@@ -110,6 +110,7 @@ class LessonDetailsFragment : Fragment() {
 
         binding.markManually.setOnClickListener { view ->
             view.isEnabled = false
+            var adapter: ManualMarkAdapter
             val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
                 val items =
                     viewModel.studentsWithGroupsState.value.notMarkedStudentsWithGroups.map { item ->
@@ -119,15 +120,14 @@ class LessonDetailsFragment : Fragment() {
                             else -> throw IllegalStateException("Type error")
                         }
                     }
-                val adapter = ManualMarkAdapter(items)
+                adapter = ManualMarkAdapter(items)
                 students.adapter = adapter
             }
 
             AlertDialog.Builder(context)
                 .setView(dialogBinding.root)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-
-
+                    viewModel.addMarks(adapter.items)
                     dialog.dismiss()
                 }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -295,6 +295,10 @@ class LessonDetailsFragment : Fragment() {
                     when (message) {
                         Constants.MESSAGE_ERROR_DELETING_LESSON -> {
                             toast(R.string.error_deleting_lesson)
+                        }
+
+                        Constants.MESSAGE_ERROR_SAVING_MARKS -> {
+                            toast(R.string.error_saving_marks)
                         }
                     }
                 }
