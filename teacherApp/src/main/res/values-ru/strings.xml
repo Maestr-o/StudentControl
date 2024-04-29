@@ -85,4 +85,5 @@
     <string name="total">Итого</string>
     <string name="ok_data_clear">Все данные удалены!</string>
     <string name="error_data_clear">Ошибка удаления данных</string>
+    <string name="manual_mark">Отметить вручную</string>
 </resources>

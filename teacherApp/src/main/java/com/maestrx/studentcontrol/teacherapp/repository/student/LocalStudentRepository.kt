@@ -33,7 +33,11 @@ class LocalStudentRepository @Inject constructor(
     override suspend fun getCountByGroupId(groupId: Long): Int =
         studentDao.getCountByGroupId(groupId)
 
-    override suspend fun getByLessonId(lessonId: Long): List<StudentResponse> =
-        studentDao.getByLessonId(lessonId)
+    override suspend fun getAttendedByLessonId(lessonId: Long): List<StudentResponse> =
+        studentDao.getMarkedByLessonId(lessonId)
+            .sortedWith(compareBy({ it.groupName }, { it.lastName }))
+
+    override suspend fun getNotAttendedByLessonId(lessonId: Long): List<StudentResponse> =
+        studentDao.getNotMarkedByLessonId(lessonId)
             .sortedWith(compareBy({ it.groupName }, { it.lastName }))
 }

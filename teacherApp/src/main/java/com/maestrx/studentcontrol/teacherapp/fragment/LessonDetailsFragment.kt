@@ -14,13 +14,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogMarkManuallyBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonDetailsBinding
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
+import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
+import com.maestrx.studentcontrol.teacherapp.model.Student
+import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students.AttendedStudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected.GroupSelectedAdapter
+import com.maestrx.studentcontrol.teacherapp.recyclerview.manual_mark.ManualMarkAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.utils.toast
@@ -101,6 +106,37 @@ class LessonDetailsFragment : Fragment() {
             } else if (viewModel.controlStatus.value is ControlStatus.Running) {
                 WifiHelper.goToAPSettings(requireContext())
             }
+        }
+
+        binding.markManually.setOnClickListener { view ->
+            view.isEnabled = false
+            val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
+                val items =
+                    viewModel.studentsWithGroupsState.value.notMarkedStudentsWithGroups.map { item ->
+                        when (item) {
+                            is Student -> StudentMark(item.id, item.fullName)
+                            is Group -> item
+                            else -> throw IllegalStateException("Type error")
+                        }
+                    }
+                val adapter = ManualMarkAdapter(items)
+                students.adapter = adapter
+            }
+
+            AlertDialog.Builder(context)
+                .setView(dialogBinding.root)
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+
+
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setOnDismissListener {
+                    view.isEnabled = true
+                }
+                .show()
         }
 
         toolbarViewModel.editClicked
@@ -197,6 +233,7 @@ class LessonDetailsFragment : Fragment() {
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.early_control)
+                            markManually.isGone = true
                             registeredCount.isGone = true
                             attended.isGone = true
                         }
@@ -207,6 +244,7 @@ class LessonDetailsFragment : Fragment() {
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.start_control)
+                            markManually.isVisible = true
                             registeredCount.isVisible = true
                             attended.isVisible = true
                         }
@@ -217,6 +255,7 @@ class LessonDetailsFragment : Fragment() {
                         binding.apply {
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
+                            markManually.isVisible = true
                             registeredCount.isVisible = true
                             attended.isVisible = true
                         }
@@ -227,6 +266,7 @@ class LessonDetailsFragment : Fragment() {
                         binding.apply {
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.end_control)
+                            markManually.isVisible = true
                             registeredCount.isVisible = true
                             attended.isVisible = true
                         }
@@ -237,7 +277,7 @@ class LessonDetailsFragment : Fragment() {
 
         viewModel.studentsWithGroupsState
             .onEach { state ->
-                val attendedAdapter = AttendedStudentsAdapter(state.studentsWithGroups)
+                val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
                 binding.registeredCount.text =
                     getString(
                         R.string.registered_students,

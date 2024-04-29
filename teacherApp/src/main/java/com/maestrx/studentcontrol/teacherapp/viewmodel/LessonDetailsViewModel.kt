@@ -62,7 +62,8 @@ class LessonDetailsViewModel @AssistedInject constructor(
                             attendance = list.map { attendance ->
                                 Attendance.toData(attendance)
                             },
-                            studentsWithGroups = getStudentsWithGroups(),
+                            markedStudentsWithGroups = getMarkedStudentsWithGroups(),
+                            notMarkedStudentsWithGroups = getNotMarkedStudentsWithGroups(),
                         )
                     }
                 }
@@ -126,10 +127,10 @@ class LessonDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun getStudentsWithGroups(): List<Any> =
+    private suspend fun getMarkedStudentsWithGroups(): List<Any> =
         viewModelScope.async(Dispatchers.Default) {
             val listOfStudents = async {
-                studentRepository.getByLessonId(lessonState.value.id).map {
+                studentRepository.getAttendedByLessonId(lessonState.value.id).map {
                     Student.fromResponseToData(it)
                 }
             }
@@ -151,6 +152,32 @@ class LessonDetailsViewModel @AssistedInject constructor(
             val groupedStudents = listOfStudents.groupBy { it.group }
             for ((group, groupStudents) in groupedStudents) {
                 result.addAll(attendedList.await().filter { it.name == group.name })
+                result.addAll(groupStudents)
+            }
+            result
+        }
+            .await()
+
+    private suspend fun getNotMarkedStudentsWithGroups(): List<Any> =
+        viewModelScope.async(Dispatchers.Default) {
+            val listOfStudents =
+                studentRepository.getNotAttendedByLessonId(lessonState.value.id).map {
+                    Student.fromResponseToData(it)
+                }
+
+            val attendedList = listOfStudents
+                .groupBy { it.group }
+                .map { (group) ->
+                    Group(
+                        id = group.id,
+                        name = group.name,
+                    )
+                }
+
+            val result = mutableListOf<Any>()
+            val groupedStudents = listOfStudents.groupBy { it.group }
+            for ((group, groupStudents) in groupedStudents) {
+                result.addAll(attendedList.filter { it.name == group.name })
                 result.addAll(groupStudents)
             }
             result

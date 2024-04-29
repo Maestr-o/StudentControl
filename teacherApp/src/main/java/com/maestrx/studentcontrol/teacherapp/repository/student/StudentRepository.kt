@@ -11,5 +11,6 @@ interface StudentRepository {
     suspend fun getIdByDeviceId(deviceId: String): Long
     suspend fun saveDeviceId(studentId: Long, deviceId: String)
     suspend fun getCountByGroupId(groupId: Long): Int
-    suspend fun getByLessonId(lessonId: Long): List<StudentResponse>
+    suspend fun getAttendedByLessonId(lessonId: Long): List<StudentResponse>
+    suspend fun getNotAttendedByLessonId(lessonId: Long): List<StudentResponse>
 }

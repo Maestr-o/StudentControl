@@ -20,7 +20,7 @@ data class Student(
     val deviceId: String = "",
 ) {
     companion object {
-        fun fromResponseToData(entity: StudentResponse) = with(entity) {
+        fun fromResponseToData(response: StudentResponse) = with(response) {
             Student(id, Group(groupId, groupName), firstName, midName, lastName, deviceId)
         }
     }

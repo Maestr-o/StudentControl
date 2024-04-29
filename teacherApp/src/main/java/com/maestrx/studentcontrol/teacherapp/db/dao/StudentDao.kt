@@ -41,10 +41,25 @@ interface StudentDao {
 
     @Query(
         """
-        SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, Attendance, `Group`
+        SELECT `Group`.name as groupName, Student.*
+        FROM Student, Lesson, Attendance, `Group`, LessonGroupCross
         WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id
             AND Attendance.studentId == Student.id AND `Group`.id == Student.groupId
+            AND LessonGroupCross.lessonId == Lesson.id AND LessonGroupCross.groupId == `Group`.id
         """
     )
-    suspend fun getByLessonId(lessonId: Long): List<StudentResponse>
+    suspend fun getMarkedByLessonId(lessonId: Long): List<StudentResponse>
+
+    @Query(
+        """
+        SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, `Group`, LessonGroupCross
+        WHERE Lesson.id == :lessonId AND `Group`.id == Student.groupId
+            AND LessonGroupCross.lessonId == Lesson.id AND LessonGroupCross.groupId == `Group`.id
+        AND NOT EXISTS (
+            SELECT 1 FROM Attendance 
+            WHERE Attendance.lessonId == Lesson.id AND Attendance.studentId == Student.id
+        )
+        """
+    )
+    suspend fun getNotMarkedByLessonId(lessonId: Long): List<StudentResponse>
 }
