@@ -19,7 +19,10 @@ interface AttendanceDao {
     fun getByLessonId(lessonId: Long): Flow<List<AttendanceEntity>>
 
     @Upsert
-    suspend fun save(data: AttendanceEntity)
+    suspend fun save(attendance: AttendanceEntity)
+
+    @Upsert
+    suspend fun saveList(list: List<AttendanceEntity>)
 
     @Query(
         """

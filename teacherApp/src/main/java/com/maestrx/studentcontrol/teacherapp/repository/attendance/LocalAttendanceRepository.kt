@@ -25,4 +25,7 @@ class LocalAttendanceRepository @Inject constructor(
 
     override suspend fun getCount(): Int =
         attendanceDao.getCount()
+
+    override suspend fun saveList(list: List<AttendanceEntity>) =
+        attendanceDao.saveList(list)
 }

@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel(assistedFactory = LessonDetailsViewModelFactory::class)
 class LessonDetailsViewModel @AssistedInject constructor(
@@ -53,6 +54,9 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _studentsWithGroupsState = MutableStateFlow(LessonDetailsUiState())
     val studentsWithGroupsState = _studentsWithGroupsState.asStateFlow()
 
+    private val _isManualMarkDialogShowed = MutableStateFlow(false)
+    val isManualMarkDialogShowed = _isManualMarkDialogShowed.asStateFlow()
+
     init {
         setLesson(lesson)
 
@@ -65,12 +69,25 @@ class LessonDetailsViewModel @AssistedInject constructor(
                                 Attendance.toData(attendance)
                             },
                             markedStudentsWithGroups = getMarkedStudentsWithGroups(),
-                            notMarkedStudentsWithGroups = getNotMarkedStudentsWithGroups(),
+                            notMarkedStudentsWithGroups = if (!isManualMarkDialogShowed.value) {
+                                getNotMarkedStudentsWithGroups()
+                            } else {
+                                it.notMarkedStudentsWithGroups
+                            },
                         )
                     }
                 }
                 .launchIn(viewModelScope)
         }
+
+        isManualMarkDialogShowed.onEach { state ->
+            if (!state) {
+                _studentsWithGroupsState.update {
+                    it.copy(notMarkedStudentsWithGroups = getNotMarkedStudentsWithGroups())
+                }
+            }
+        }
+            .launchIn(viewModelScope)
     }
 
     private fun setLesson(lesson: Lesson) {
@@ -99,15 +116,15 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     fun addMarks(list: List<Any>) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             try {
-                list.filterIsInstance<StudentMark>()
-                    .filter { it.isAttended }
-                    .forEach { student ->
-                        attendanceRepository.save(
-                            AttendanceEntity(lessonId = lesson.id, studentId = student.id)
-                        )
-                    }
+                val marks = list.filterIsInstance<StudentMark>().filter { it.isAttended }
+                val entities = marks.map { mark ->
+                    AttendanceEntity(lessonId = lesson.id, studentId = mark.id)
+                }
+                withContext(Dispatchers.IO) {
+                    attendanceRepository.saveList(entities)
+                }
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
                 Log.d(Constants.DEBUG_TAG, "Error saving marks: $e")
@@ -212,6 +229,16 @@ class LessonDetailsViewModel @AssistedInject constructor(
             count
         }
             .await()
+
+    fun setMarkDialogShow(state: Boolean) {
+        _isManualMarkDialogShowed.update { state }
+    }
+
+    fun setNotMarkedStudentsWithGroups(list: List<Any>) {
+        _studentsWithGroupsState.update { state ->
+            state.copy(notMarkedStudentsWithGroups = list)
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

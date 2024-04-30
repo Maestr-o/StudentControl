@@ -49,6 +49,11 @@ class LessonDetailsFragment : Fragment() {
     private lateinit var _viewModel: Lazy<LessonDetailsViewModel>
     private val viewModel get() = _viewModel.value
 
+    private var _binding: FragmentLessonDetailsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var markAdapter: ManualMarkAdapter
+
     private lateinit var lessonArg: Lesson
 
     override fun onStart() {
@@ -68,7 +73,7 @@ class LessonDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentLessonDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentLessonDetailsBinding.inflate(inflater, container, false)
 
         lessonArg = arguments?.let {
             Json.decodeFromString<Lesson>(
@@ -108,35 +113,12 @@ class LessonDetailsFragment : Fragment() {
             }
         }
 
-        binding.markManually.setOnClickListener { view ->
-            view.isEnabled = false
-            var adapter: ManualMarkAdapter
-            val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
-                val items =
-                    viewModel.studentsWithGroupsState.value.notMarkedStudentsWithGroups.map { item ->
-                        when (item) {
-                            is Student -> StudentMark(item.id, item.fullName)
-                            is Group -> item
-                            else -> throw IllegalStateException("Type error")
-                        }
-                    }
-                adapter = ManualMarkAdapter(items)
-                students.adapter = adapter
-            }
+        if (viewModel.isManualMarkDialogShowed.value) {
+            manualMarkDialog(inflater)
+        }
 
-            AlertDialog.Builder(context)
-                .setView(dialogBinding.root)
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    viewModel.addMarks(adapter.items)
-                    dialog.dismiss()
-                }
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setOnDismissListener {
-                    view.isEnabled = true
-                }
-                .show()
+        binding.markManually.setOnClickListener { _ ->
+            manualMarkDialog(inflater)
         }
 
         toolbarViewModel.editClicked
@@ -360,5 +342,52 @@ class LessonDetailsFragment : Fragment() {
                 viewModel.setControlStatus(ControlStatus.Finished)
             }
         }
+    }
+
+    private fun manualMarkDialog(inflater: LayoutInflater) {
+        binding.markManually.isEnabled = false
+
+        val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
+            val items =
+                viewModel.studentsWithGroupsState.value.notMarkedStudentsWithGroups.map { item ->
+                    when (item) {
+                        is Student -> StudentMark(item.id, item.fullName)
+                        is StudentMark -> item
+                        is Group -> item
+                        else -> throw IllegalStateException("Type error")
+                    }
+                }
+            markAdapter = ManualMarkAdapter(items)
+            students.adapter = markAdapter
+        }
+
+        viewModel.setMarkDialogShow(true)
+
+        AlertDialog.Builder(context)
+            .setView(dialogBinding.root)
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                viewModel.addMarks(markAdapter.items)
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setOnDismissListener {
+                binding.markManually.isEnabled = true
+                viewModel.setMarkDialogShow(false)
+            }
+            .show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (viewModel.isManualMarkDialogShowed.value) {
+            viewModel.setNotMarkedStudentsWithGroups(markAdapter.items)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
