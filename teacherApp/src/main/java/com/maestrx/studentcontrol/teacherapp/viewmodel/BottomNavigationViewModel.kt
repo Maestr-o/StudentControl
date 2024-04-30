@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BottomNavigationViewModel @Inject constructor(
     private val db: AppDb,
-    private val sm: ExcelManager,
+    private val excelManager: ExcelManager,
 ) : ViewModel() {
 
     private val _message = MutableStateFlow(Event(""))
@@ -23,7 +23,7 @@ class BottomNavigationViewModel @Inject constructor(
 
     fun exportToExcel() {
         viewModelScope.launch {
-            _message.value = if (sm.export()) {
+            _message.value = if (excelManager.export()) {
                 Event(Constants.MESSAGE_END_EXPORT)
             } else {
                 Event(Constants.MESSAGE_ERROR_EXPORT)

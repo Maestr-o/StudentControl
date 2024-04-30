@@ -57,6 +57,8 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _isManualMarkDialogShowed = MutableStateFlow(false)
     val isManualMarkDialogShowed = _isManualMarkDialogShowed.asStateFlow()
 
+    private val _notMarkedStudentsWithGroups = MutableStateFlow<List<Any>>(mutableListOf())
+
     init {
         setLesson(lesson)
 
@@ -65,15 +67,10 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 .onEach { list ->
                     _studentsWithGroupsState.update {
                         it.copy(
-                            attendance = list.map { attendance ->
+                            attendances = list.map { attendance ->
                                 Attendance.toData(attendance)
                             },
                             markedStudentsWithGroups = getMarkedStudentsWithGroups(),
-                            notMarkedStudentsWithGroups = if (!isManualMarkDialogShowed.value) {
-                                getNotMarkedStudentsWithGroups()
-                            } else {
-                                it.notMarkedStudentsWithGroups
-                            },
                         )
                     }
                 }
@@ -82,9 +79,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
 
         isManualMarkDialogShowed.onEach { state ->
             if (!state) {
-                _studentsWithGroupsState.update {
-                    it.copy(notMarkedStudentsWithGroups = getNotMarkedStudentsWithGroups())
-                }
+                setNotMarkedStudentsWithGroups(getNotMarkedStudentsWithGroups())
             }
         }
             .launchIn(viewModelScope)
@@ -163,62 +158,52 @@ class LessonDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun getMarkedStudentsWithGroups(): List<Any> =
-        viewModelScope.async(Dispatchers.Default) {
-            val listOfStudents = async {
-                studentRepository.getAttendedByLessonId(lessonState.value.id).map {
-                    Student.fromResponseToData(it)
-                }
-            }
-                .await()
-
-            val attendedList = async {
-                listOfStudents
-                    .groupBy { it.group }
-                    .map { (group, groupStudents) ->
-                        AttendedInGroup(
-                            name = group.name,
-                            count = groupStudents.size,
-                            max = studentRepository.getCountByGroupId(group.id),
-                        )
-                    }
-            }
-
-            val result = mutableListOf<Any>()
-            val groupedStudents = listOfStudents.groupBy { it.group }
-            for ((group, groupStudents) in groupedStudents) {
-                result.addAll(attendedList.await().filter { it.name == group.name })
-                result.addAll(groupStudents)
-            }
-            result
+    private suspend fun getMarkedStudentsWithGroups(): List<Any> = withContext(Dispatchers.IO) {
+        val listOfStudents = studentRepository.getAttendedByLessonId(lesson.id).map {
+            Student.fromResponseToData(it)
         }
-            .await()
 
-    private suspend fun getNotMarkedStudentsWithGroups(): List<Any> =
-        viewModelScope.async(Dispatchers.Default) {
-            val listOfStudents =
-                studentRepository.getNotAttendedByLessonId(lessonState.value.id).map {
-                    Student.fromResponseToData(it)
-                }
-
-            val attendedList = listOfStudents
+        val groupList = async(Dispatchers.Default) {
+            listOfStudents
                 .groupBy { it.group }
-                .map { (group) ->
-                    Group(
-                        id = group.id,
+                .map { (group, groupStudents) ->
+                    AttendedInGroup(
                         name = group.name,
+                        count = groupStudents.size,
+                        max = studentRepository.getCountByGroupId(group.id),
                     )
                 }
-
-            val result = mutableListOf<Any>()
-            val groupedStudents = listOfStudents.groupBy { it.group }
-            for ((group, groupStudents) in groupedStudents) {
-                result.addAll(attendedList.filter { it.name == group.name })
-                result.addAll(groupStudents)
-            }
-            result
         }
-            .await()
+
+        val result = mutableListOf<Any>()
+        val groupedStudents = listOfStudents.groupBy { it.group }
+        for ((group, groupStudents) in groupedStudents) {
+            result.addAll(groupList.await().filter { it.name == group.name })
+            result.addAll(groupStudents)
+        }
+        result
+    }
+
+    private suspend fun getNotMarkedStudentsWithGroups(): List<Any> = withContext(Dispatchers.IO) {
+        val listOfStudents =
+            studentRepository.getNotAttendedByLessonId(lesson.id).map {
+                Student.fromResponseToData(it)
+            }
+
+        val groupList = async(Dispatchers.Default) {
+            listOfStudents
+                .groupBy { it.group }
+                .map { (group) -> group }
+        }
+
+        val result = mutableListOf<Any>()
+        val groupedStudents = listOfStudents.groupBy { it.group }
+        for ((group, groupStudents) in groupedStudents) {
+            result.addAll(groupList.await().filter { it.name == group.name })
+            result.addAll(groupStudents)
+        }
+        result
+    }
 
     private suspend fun getTotalStudentsCount(groups: List<Group>): Int =
         viewModelScope.async(Dispatchers.IO) {
@@ -235,10 +220,18 @@ class LessonDetailsViewModel @AssistedInject constructor(
     }
 
     fun setNotMarkedStudentsWithGroups(list: List<Any>) {
-        _studentsWithGroupsState.update { state ->
-            state.copy(notMarkedStudentsWithGroups = list)
-        }
+        _notMarkedStudentsWithGroups.update { list }
     }
+
+    fun getMarkList(): List<Any> =
+        _notMarkedStudentsWithGroups.value.map { item ->
+            when (item) {
+                is Student -> StudentMark(item.id, item.fullName)
+                is StudentMark -> item
+                is Group -> item
+                else -> throw IllegalStateException("Type error")
+            }
+        }
 
     override fun onCleared() {
         super.onCleared()

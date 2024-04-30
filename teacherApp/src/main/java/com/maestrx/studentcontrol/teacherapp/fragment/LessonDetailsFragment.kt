@@ -18,11 +18,8 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogMarkManuallyBindi
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonDetailsBinding
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
-import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
-import com.maestrx.studentcontrol.teacherapp.model.Student
-import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students.AttendedStudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected.GroupSelectedAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.manual_mark.ManualMarkAdapter
@@ -260,13 +257,22 @@ class LessonDetailsFragment : Fragment() {
         viewModel.studentsWithGroupsState
             .onEach { state ->
                 val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
-                binding.registeredCount.text =
-                    getString(
-                        R.string.registered_students,
-                        state.attendance.count(),
-                        state.totalStudentsCount
-                    )
-                binding.attended.adapter = attendedAdapter
+                binding.apply {
+                    if (state.attendances.count() >= state.totalStudentsCount) {
+                        markManually.isGone = true
+                        startControl.isGone = true
+                    } else {
+                        markManually.isVisible = true
+                        startControl.isVisible = true
+                    }
+                    registeredCount.text =
+                        getString(
+                            R.string.registered_students,
+                            state.attendances.count(),
+                            state.totalStudentsCount
+                        )
+                    attended.adapter = attendedAdapter
+                }
 
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -348,15 +354,12 @@ class LessonDetailsFragment : Fragment() {
         binding.markManually.isEnabled = false
 
         val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
-            val items =
-                viewModel.studentsWithGroupsState.value.notMarkedStudentsWithGroups.map { item ->
-                    when (item) {
-                        is Student -> StudentMark(item.id, item.fullName)
-                        is StudentMark -> item
-                        is Group -> item
-                        else -> throw IllegalStateException("Type error")
-                    }
-                }
+            val items = viewModel.getMarkList()
+            if (items.isEmpty()) {
+                toast(R.string.no_unmarked_students)
+                binding.markManually.isEnabled = true
+                return
+            }
             markAdapter = ManualMarkAdapter(items)
             students.adapter = markAdapter
         }
