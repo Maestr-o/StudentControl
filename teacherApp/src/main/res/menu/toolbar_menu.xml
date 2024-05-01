@@ -30,4 +30,11 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/importStudents"
+        android:icon="@drawable/baseline_download_24"
+        android:title="@string/import_students"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
 </menu>

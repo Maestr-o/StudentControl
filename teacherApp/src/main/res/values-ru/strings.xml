@@ -88,4 +88,11 @@
     <string name="manual_mark">Отметить вручную</string>
     <string name="error_saving_marks">Ошибка сохранения отметок</string>
     <string name="no_unmarked_students">Неотмеченных студентов нет!</string>
+    <string name="import_students">Импортировать студентов из Excel-файла</string>
+    <string name="sheet_name">Название таблицы</string>
+    <string name="column">Колонка</string>
+    <string name="start_row">X нач.</string>
+    <string name="end_row">X кон.</string>
+    <string name="choose_file_path">Файл: %s</string>
+    <string name="choose_file">Выбрать файл</string>
 </resources>

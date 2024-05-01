@@ -6,6 +6,12 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class ToolbarViewModel : ViewModel() {
 
+    private val _title = MutableStateFlow("")
+    val title = _title.asStateFlow()
+
+    private val _isControlRunning = MutableStateFlow(false)
+    val isControlRunning = _isControlRunning.asStateFlow()
+
     private val _showSave = MutableStateFlow(false)
     val showSave = _showSave.asStateFlow()
 
@@ -30,11 +36,19 @@ class ToolbarViewModel : ViewModel() {
     private val _dataControlClicked = MutableStateFlow(false)
     val dataControlClicked = _dataControlClicked.asStateFlow()
 
-    private val _title = MutableStateFlow("")
-    val title = _title.asStateFlow()
+    private val _showImport = MutableStateFlow(false)
+    val showImport = _showImport.asStateFlow()
 
-    private val _isControlRunning = MutableStateFlow(false)
-    val isControlRunning = _isControlRunning.asStateFlow()
+    private val _importClicked = MutableStateFlow(false)
+    val importClicked = _importClicked.asStateFlow()
+
+    fun setTitle(title: String) {
+        _title.value = title
+    }
+
+    fun setControlRunning(status: Boolean) {
+        _isControlRunning.value = status
+    }
 
     fun showSave(show: Boolean) {
         _showSave.value = show
@@ -50,6 +64,10 @@ class ToolbarViewModel : ViewModel() {
 
     fun showDataControl(show: Boolean) {
         _showDataControl.value = show
+    }
+
+    fun showImport(show: Boolean) {
+        _showImport.value = show
     }
 
     fun saveClicked(pending: Boolean) {
@@ -68,11 +86,7 @@ class ToolbarViewModel : ViewModel() {
         _dataControlClicked.value = pending
     }
 
-    fun setTitle(title: String) {
-        _title.value = title
-    }
-
-    fun setControlRunning(status: Boolean) {
-        _isControlRunning.value = status
+    fun importClicked(pending: Boolean) {
+        _importClicked.value = pending
     }
 }

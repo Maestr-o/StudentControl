@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="18dp"
+    android:paddingVertical="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/fileStr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/tiny_spacing"
+            android:layout_weight="0.55"
+            android:paddingStart="@dimen/tiny_spacing"
+            android:textSize="18sp"
+            android:visibility="gone"
+            tools:ignore="RtlSymmetry"
+            tools:text="@string/choose_file_path"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/chooseFile"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:text="@string/choose_file" />
+
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/sheetName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/sheet_name"
+        android:inputType="textPersonName" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/column"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_spacing"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="@string/column"
+            android:inputType="textCapWords" />
+
+        <EditText
+            android:id="@+id/startX"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_spacing"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="@string/start_row"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/endX"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="@string/end_row"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+</LinearLayout>

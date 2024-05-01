@@ -9,6 +9,7 @@ import android.util.Log
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import com.maestrx.studentcontrol.teacherapp.db.entity.GroupEntity
+import com.maestrx.studentcontrol.teacherapp.db.entity.StudentEntity
 import com.maestrx.studentcontrol.teacherapp.db.entity.SubjectEntity
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.time.Instant
 import java.time.LocalDateTime
@@ -296,4 +298,62 @@ class ExcelManager @Inject constructor(
             Log.d(Constants.DEBUG_TAG, "Error write to file: $e")
             false
         }
+
+    suspend fun importStudents(
+        path: String,
+        sheetName: String,
+        groupId: Long,
+        column: Int,
+        startX: Int,
+        endX: Int
+    ): List<StudentEntity>? = withContext(Dispatchers.IO) {
+        val file = File(path)
+        if (!file.exists()) {
+            return@withContext null
+        }
+        val students: MutableList<StudentEntity> = mutableListOf()
+        try {
+            val inputStream = FileInputStream(file)
+            val workbook = XSSFWorkbook(inputStream)
+            val sheet = workbook.getSheet(sheetName)
+
+            withContext(Dispatchers.Default) {
+                for (i in startX..endX) {
+                    try {
+                        val fullName = sheet.getRow(i).getCell(column).stringCellValue
+                        val names = fullName.split(" ")
+
+                        val lastName = if (names.isNotEmpty()) {
+                            names[0]
+                        } else {
+                            throw IllegalArgumentException("Empty string")
+                        }
+                        val firstName = if (names.size > 1) {
+                            names[1]
+                        } else {
+                            throw IllegalArgumentException("Incorrect string")
+                        }
+                        val midName = if (names.size > 2) {
+                            names[2]
+                        } else {
+                            ""
+                        }
+
+                        students += StudentEntity(
+                            groupId = groupId,
+                            lastName = lastName,
+                            firstName = firstName,
+                            midName = midName,
+                        )
+                    } catch (e: Exception) {
+                        Log.d(Constants.DEBUG_TAG, e.message.toString())
+                    }
+                }
+            }
+            return@withContext students
+        } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "Import error: $e")
+            return@withContext null
+        }
+    }
 }

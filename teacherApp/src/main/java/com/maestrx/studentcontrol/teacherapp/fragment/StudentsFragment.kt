@@ -5,13 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogImportStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
+import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
@@ -19,14 +24,31 @@ import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StudentsFragment : Fragment() {
+
+    private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+
+    @Inject
+    lateinit var excelManager: ExcelManager
+
+    override fun onStart() {
+        super.onStart()
+        toolbarViewModel.showImport(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        toolbarViewModel.showImport(false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -142,6 +164,54 @@ class StudentsFragment : Fragment() {
         viewModel.state.onEach { state ->
             adapter.submitList(state)
         }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        toolbarViewModel.importClicked
+            .onEach { state ->
+                if (state) {
+                    var filePath = ""
+                    var sheetName = ""
+                    var column = ""
+                    var startX = 0
+                    var endX = 0
+                    val dialogBinding = DialogImportStudentsBinding.inflate(inflater).apply {
+                        chooseFile.setOnClickListener {
+                            // File chooser
+                            if (filePath.isNotBlank()) {
+                                fileStr.apply {
+                                    text = filePath.split("/").last()
+                                    isVisible = true
+                                }
+                            } else {
+                                fileStr.isGone = true
+                            }
+                        }
+                    }
+                    AlertDialog.Builder(context)
+                        .setView(dialogBinding.root)
+                        .setTitle(R.string.import_students)
+                        .setPositiveButton(R.string.ok) { dialog, _ ->
+                            // checks
+                            // column letter to number
+//                            excelManager.importStudents( - ViewModel
+//                                path = filePath,
+//                                sheetName = sheetName,
+//                                groupId = groupId,
+//                                column = 0,
+//                                startX = startX,
+//                                endX = endX
+//                            )
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton(R.string.cancel) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .setOnDismissListener {
+                            toolbarViewModel.importClicked(false)
+                        }
+                        .show()
+                }
+            }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.message

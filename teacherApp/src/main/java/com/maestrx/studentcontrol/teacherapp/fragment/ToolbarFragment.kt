@@ -47,6 +47,7 @@ class ToolbarFragment : Fragment() {
         val save = binding.toolbar.menu.findItem(R.id.save)
         val edit = binding.toolbar.menu.findItem(R.id.edit)
         val dataControl = binding.toolbar.menu.findItem(R.id.dataControl)
+        val import = binding.toolbar.menu.findItem(R.id.importStudents)
 
         save.setOnMenuItemClickListener {
             viewModel.saveClicked(true)
@@ -65,6 +66,11 @@ class ToolbarFragment : Fragment() {
 
         dataControl.setOnMenuItemClickListener {
             viewModel.dataControlClicked(true)
+            true
+        }
+
+        import.setOnMenuItemClickListener {
+            viewModel.importClicked(true)
             true
         }
 
@@ -89,6 +95,12 @@ class ToolbarFragment : Fragment() {
         viewModel.showDataControl
             .onEach {
                 dataControl.isVisible = it
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.showImport
+            .onEach {
+                import.isVisible = it
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
