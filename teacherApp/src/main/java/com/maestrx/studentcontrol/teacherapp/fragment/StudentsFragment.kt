@@ -16,7 +16,6 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBindin
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogImportStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
-import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
@@ -30,15 +29,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class StudentsFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-
-    @Inject
-    lateinit var excelManager: ExcelManager
 
     override fun onStart() {
         super.onStart()

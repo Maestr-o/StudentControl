@@ -64,11 +64,6 @@ internal fun LoadingScreen(
             }
         }
 
-        is LoadingStatus.Error -> {
-            context.Toast(res = R.string.error_exchanging_data)
-            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(false)))
-        }
-
         is LoadingStatus.Input -> {
             val savedData = prefs.getPersonalData()
             if (savedData != null && savedData.group.isNotBlank() && savedData.fullName.isNotBlank()) {
@@ -222,10 +217,15 @@ internal fun LoadingScreen(
                     Text(text = stringResource(id = R.string.send))
                 }
             }
+        }
 
+        is LoadingStatus.Error -> {
+            context.Toast(res = R.string.error_exchanging_data)
+            onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(false)))
         }
 
         is LoadingStatus.Success -> {
+            context.Toast(res = R.string.checked_in_toast)
             onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(true)))
         }
 

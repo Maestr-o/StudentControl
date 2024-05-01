@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = StudentsViewModelFactory::class)
 class StudentsViewModel @AssistedInject constructor(
     private val studentRepository: StudentRepository,
+    private val excelManager: ExcelManager,
     @Assisted private val groupId: Long,
 ) : ViewModel() {
 

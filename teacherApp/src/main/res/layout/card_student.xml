@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:icon="@drawable/baseline_edit_24"
+            app:icon="@drawable/ic_edit"
             app:iconTint="@color/BW" />
 
         <com.google.android.material.button.MaterialButton
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:icon="@drawable/baseline_delete_forever_24"
+            app:icon="@drawable/ic_delete"
             app:iconTint="@color/BW" />
 
     </LinearLayout>
