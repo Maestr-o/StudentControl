@@ -48,8 +48,8 @@ dependencies {
     val navigationVer = "2.7.7"
     val daggerVer = "2.50"
     val roomVer = "2.6.1"
-    val apachePoiVer = "5.2.2"
-    implementation("androidx.core:core-ktx:1.13.0")
+    val apachePoiVer = "5.2.3"
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

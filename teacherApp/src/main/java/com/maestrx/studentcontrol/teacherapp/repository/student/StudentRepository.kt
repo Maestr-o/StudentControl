@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface StudentRepository {
     fun getByGroupId(groupId: Long): Flow<List<StudentResponse>>
     suspend fun save(data: StudentEntity)
+    suspend fun saveList(list: List<StudentEntity>)
     suspend fun deleteById(id: Long)
     suspend fun getIdByDeviceId(deviceId: String): Long
     suspend fun saveDeviceId(studentId: Long, deviceId: String)

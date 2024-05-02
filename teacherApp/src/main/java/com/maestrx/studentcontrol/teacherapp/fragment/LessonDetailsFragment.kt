@@ -368,6 +368,7 @@ class LessonDetailsFragment : Fragment() {
 
         AlertDialog.Builder(context)
             .setView(dialogBinding.root)
+            .setCancelable(false)
             .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 viewModel.addMarks(markAdapter.items)
                 dialog.dismiss()

@@ -1,12 +1,14 @@
 package com.maestrx.studentcontrol.teacherapp.fragment
 
 import android.app.AlertDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBindin
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogImportStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
+import com.maestrx.studentcontrol.teacherapp.excel.ExcelFilePicker
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
@@ -75,6 +78,7 @@ class StudentsFragment : Fragment() {
                     AlertDialog.Builder(context)
                         .setTitle(getString(R.string.edit_student_data))
                         .setView(dialogBinding.root)
+                        .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             val newFirstName =
                                 dialogBinding.firstName.text.toString().trim().capitalize()
@@ -132,6 +136,7 @@ class StudentsFragment : Fragment() {
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_student))
                 .setView(dialogBinding.root)
+                .setCancelable(false)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                     val newFirstName = dialogBinding.firstName.text.toString().trim().capitalize()
                     val newMidName = dialogBinding.midName.text.toString().trim().capitalize()
@@ -164,39 +169,70 @@ class StudentsFragment : Fragment() {
         toolbarViewModel.importClicked
             .onEach { state ->
                 if (state) {
-                    var filePath = ""
-                    var sheetName = ""
-                    var column = ""
-                    var startX = 0
-                    var endX = 0
+                    var fileUri: Uri? = null
+                    var fileName = ""
                     val dialogBinding = DialogImportStudentsBinding.inflate(inflater).apply {
                         chooseFile.setOnClickListener {
-                            // File chooser
-                            if (filePath.isNotBlank()) {
-                                fileStr.apply {
-                                    text = filePath.split("/").last()
-                                    isVisible = true
+                            ExcelFilePicker(requireActivity().activityResultRegistry) { uri ->
+                                uri?.let {
+                                    fileUri = it
+                                    val documentFile =
+                                        DocumentFile.fromSingleUri(requireContext(), it)
+                                    fileName = documentFile?.name ?: ""
                                 }
-                            } else {
-                                fileStr.isGone = true
+                                if (fileName.isNotBlank()) {
+                                    fileStr.apply {
+                                        text = getString(R.string.choose_file_path, fileName)
+                                        isVisible = true
+                                    }
+                                } else {
+                                    fileStr.isGone = true
+                                }
+                            }.apply {
+                                pickFile()
                             }
                         }
                     }
                     AlertDialog.Builder(context)
                         .setView(dialogBinding.root)
                         .setTitle(R.string.import_students)
+                        .setCancelable(false)
                         .setPositiveButton(R.string.ok) { dialog, _ ->
-                            // checks
-                            // column letter to number
-//                            excelManager.importStudents( - ViewModel
-//                                path = filePath,
-//                                sheetName = sheetName,
-//                                groupId = groupId,
-//                                column = 0,
-//                                startX = startX,
-//                                endX = endX
-//                            )
-                            dialog.dismiss()
+                            try {
+                                if (fileUri == null) {
+                                    throw IllegalArgumentException(getString(R.string.choose_file_error))
+                                }
+                                val sheetName = dialogBinding.sheetName.text.toString()
+                                val column = dialogBinding.column.text.toString().trim()
+                                val startX = dialogBinding.startX.text.toString().trim().toInt()
+                                val endX = dialogBinding.endX.text.toString().trim().toInt()
+
+                                if (sheetName.isBlank()) {
+                                    throw IllegalArgumentException(getString(R.string.sheet_name_error))
+                                }
+                                if (column.isBlank()) {
+                                    throw IllegalArgumentException(getString(R.string.column_error))
+                                }
+                                if (startX < 1 || endX < 1 || startX > endX) {
+                                    throw IllegalArgumentException(getString(R.string.row_numbers_error))
+                                }
+
+                                viewModel.importStudents(
+                                    uri = fileUri,
+                                    sheetName = sheetName,
+                                    groupId = groupId,
+                                    column = column,
+                                    startX = startX,
+                                    endX = endX
+                                )
+                                dialog.dismiss()
+                            } catch (e: NumberFormatException) {
+                                toast(R.string.row_numbers_error)
+                            } catch (e: IllegalArgumentException) {
+                                toast(e.message ?: getString(R.string.check_input_data))
+                            } catch (e: Exception) {
+                                toast(R.string.import_error)
+                            }
                         }
                         .setNegativeButton(R.string.cancel) { dialog, _ ->
                             dialog.dismiss()
@@ -218,6 +254,14 @@ class StudentsFragment : Fragment() {
 
                     Constants.MESSAGE_ERROR_DELETING_STUDENT -> {
                         toast(R.string.error_deleting_student)
+                    }
+
+                    Constants.MESSAGE_OK_IMPORT -> {
+                        toast(R.string.import_ok)
+                    }
+
+                    Constants.MESSAGE_ERROR_IMPORT -> {
+                        toast(R.string.import_error)
                     }
                 }
             }

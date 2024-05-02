@@ -88,6 +88,7 @@ class BottomNavigationFragment : Fragment() {
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_subject))
                 .setView(dialogBinding.root)
+                .setCancelable(false)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                     val newSubjectName = dialogBinding.line.text.toString().trim().capitalize()
                     if (newSubjectName.isNotBlank()) {
@@ -114,6 +115,7 @@ class BottomNavigationFragment : Fragment() {
             AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_group))
                 .setView(dialogBinding.root)
+                .setCancelable(false)
                 .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                     val newGroupName = dialogBinding.line.text.toString().trim()
                     if (newGroupName.isNotBlank()) {

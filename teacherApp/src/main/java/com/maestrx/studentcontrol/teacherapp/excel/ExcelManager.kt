@@ -2,6 +2,7 @@ package com.maestrx.studentcontrol.teacherapp.excel
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -34,7 +35,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.time.Instant
 import java.time.LocalDateTime
@@ -300,60 +300,61 @@ class ExcelManager @Inject constructor(
         }
 
     suspend fun importStudents(
-        path: String,
+        uri: Uri,
         sheetName: String,
         groupId: Long,
-        column: Int,
+        column: String,
         startX: Int,
         endX: Int
     ): List<StudentEntity>? = withContext(Dispatchers.IO) {
-        val file = File(path)
-        if (!file.exists()) {
-            return@withContext null
-        }
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
+        val workbook = XSSFWorkbook(inputStream)
+        val sheet = workbook.getSheet(sheetName)
         val students: MutableList<StudentEntity> = mutableListOf()
-        try {
-            val inputStream = FileInputStream(file)
-            val workbook = XSSFWorkbook(inputStream)
-            val sheet = workbook.getSheet(sheetName)
 
-            withContext(Dispatchers.Default) {
-                for (i in startX..endX) {
-                    try {
-                        val fullName = sheet.getRow(i).getCell(column).stringCellValue
-                        val names = fullName.split(" ")
+        withContext(Dispatchers.Default) {
+            for (i in startX..endX) {
+                try {
+                    val fullName = sheet.getRow(i).getCell(columnToIndex(column)).stringCellValue
+                    val names = fullName.split(" ")
 
-                        val lastName = if (names.isNotEmpty()) {
-                            names[0]
-                        } else {
-                            throw IllegalArgumentException("Empty string")
-                        }
-                        val firstName = if (names.size > 1) {
-                            names[1]
-                        } else {
-                            throw IllegalArgumentException("Incorrect string")
-                        }
-                        val midName = if (names.size > 2) {
-                            names[2]
-                        } else {
-                            ""
-                        }
-
-                        students += StudentEntity(
-                            groupId = groupId,
-                            lastName = lastName,
-                            firstName = firstName,
-                            midName = midName,
-                        )
-                    } catch (e: Exception) {
-                        Log.d(Constants.DEBUG_TAG, e.message.toString())
+                    val lastName = if (names.isNotEmpty()) {
+                        names[0]
+                    } else {
+                        throw IllegalArgumentException("Empty string")
                     }
+                    val firstName = if (names.size > 1) {
+                        names[1]
+                    } else {
+                        throw IllegalArgumentException("Incorrect string")
+                    }
+                    val midName = if (names.size > 2) {
+                        names[2]
+                    } else {
+                        ""
+                    }
+
+                    students += StudentEntity(
+                        groupId = groupId,
+                        lastName = lastName,
+                        firstName = firstName,
+                        midName = midName,
+                    )
+                } catch (e: Exception) {
+                    Log.d(Constants.DEBUG_TAG, e.message.toString())
                 }
             }
-            return@withContext students
-        } catch (e: Exception) {
-            Log.d(Constants.DEBUG_TAG, "Import error: $e")
-            return@withContext null
         }
+        inputStream.close()
+        return@withContext students
+    }
+
+    private fun columnToIndex(columnName: String): Int {
+        var columnIndex = 0
+        for (i in columnName.indices) {
+            val c = columnName[i]
+            columnIndex = columnIndex * 26 + (c - 'A' + 1)
+        }
+        return columnIndex - 1
     }
 }

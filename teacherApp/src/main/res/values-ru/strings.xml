@@ -95,4 +95,11 @@
     <string name="end_row">X кон.</string>
     <string name="choose_file_path">Файл: %s</string>
     <string name="choose_file">Выбрать файл</string>
+    <string name="check_input_data">Пожалуйста, проверьте правильность введенных данных</string>
+    <string name="import_ok">Импорт данных успешно завершен</string>
+    <string name="import_error">Ошибка импорта. Пожалуйста, проверьте правильность введенных данных.</string>
+    <string name="choose_file_error">Пожалуйста, выберите файл в формате .xlsx</string>
+    <string name="row_numbers_error">Номер начальной строки должен быть меньше номера конечной и больше 1.</string>
+    <string name="sheet_name_error">Название таблицы не может быть пустым</string>
+    <string name="column_error">Пожалуйста, укажите колонку (пример: D)</string>
 </resources>

@@ -96,4 +96,11 @@
     <string name="end_row">End row</string>
     <string name="choose_file_path">File: %s</string>
     <string name="choose_file">Choose file</string>
+    <string name="check_input_data">Please check that the entered data is correct</string>
+    <string name="import_ok">Data import completed successfully</string>
+    <string name="import_error">Import error. Please check that the entered data is correct.</string>
+    <string name="choose_file_error">Please select a file in .xlsx format</string>
+    <string name="row_numbers_error">The starting row number must be less than the ending row number and greater than 1.</string>
+    <string name="sheet_name_error">Sheet name cannot be blank</string>
+    <string name="column_error">Please input column (example: D)</string>
 </resources>

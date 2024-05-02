@@ -22,6 +22,9 @@ interface StudentDao {
     @Upsert
     suspend fun save(data: StudentEntity)
 
+    @Upsert
+    suspend fun saveList(list: List<StudentEntity>)
+
     @Query("DELETE FROM Student WHERE id=:id")
     suspend fun deleteById(id: Long)
 

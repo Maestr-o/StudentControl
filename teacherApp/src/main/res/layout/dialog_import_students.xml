@@ -14,12 +14,15 @@
 
         <TextView
             android:id="@+id/fileStr"
+            android:layout_gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/tiny_spacing"
-            android:layout_weight="0.55"
+            android:layout_marginTop="@dimen/tiny_spacing"
             android:paddingStart="@dimen/tiny_spacing"
-            android:textSize="18sp"
+            android:layout_marginEnd="@dimen/tiny_spacing"
+            android:layout_weight="0.6"
+            android:textSize="16sp"
             android:visibility="gone"
             tools:ignore="RtlSymmetry"
             tools:text="@string/choose_file_path"
@@ -29,8 +32,9 @@
             android:id="@+id/chooseFile"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
+            android:layout_weight="0.4"
             android:layout_height="wrap_content"
-            android:layout_weight="0.45"
+            android:textSize="12sp"
             android:text="@string/choose_file" />
 
     </LinearLayout>

@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,6 +63,35 @@ class StudentsViewModel @AssistedInject constructor(
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_STUDENT)
                 Log.e(Constants.DEBUG_TAG, "Error deleting student: $e")
+            }
+        }
+    }
+
+    fun importStudents(
+        uri: Uri?,
+        sheetName: String,
+        groupId: Long,
+        column: String,
+        startX: Int,
+        endX: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                val students = requireNotNull(
+                    excelManager.importStudents(
+                        requireNotNull(uri),
+                        sheetName,
+                        groupId,
+                        column,
+                        startX,
+                        endX
+                    )
+                )
+                studentRepository.saveList(students)
+                _message.value = Event(Constants.MESSAGE_OK_IMPORT)
+            } catch (e: Exception) {
+                Log.d(Constants.DEBUG_TAG, "Import error: ${e.printStackTrace()}")
+                _message.value = Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
     }

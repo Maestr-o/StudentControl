@@ -29,6 +29,18 @@ fun Fragment.toast(resId: Int) {
     }
 }
 
+fun Fragment.toast(str: String) {
+    val binding = CustomToastLayoutBinding.inflate(layoutInflater)
+
+    binding.toastText.text = str
+
+    with(Toast(requireContext())) {
+        duration = Toast.LENGTH_LONG
+        view = binding.root
+        show()
+    }
+}
+
 fun Fragment.showDatePicker(view: TextInputEditText) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)

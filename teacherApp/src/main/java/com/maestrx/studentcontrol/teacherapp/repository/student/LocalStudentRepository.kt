@@ -21,6 +21,9 @@ class LocalStudentRepository @Inject constructor(
     override suspend fun save(data: StudentEntity) =
         studentDao.save(data)
 
+    override suspend fun saveList(list: List<StudentEntity>) =
+        studentDao.saveList(list)
+
     override suspend fun deleteById(id: Long) =
         studentDao.deleteById(id)
 

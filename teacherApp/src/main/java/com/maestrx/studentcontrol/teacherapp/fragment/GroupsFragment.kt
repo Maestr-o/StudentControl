@@ -56,6 +56,7 @@ class GroupsFragment : Fragment() {
                     AlertDialog.Builder(context)
                         .setTitle(getString(R.string.change_group_s_name))
                         .setView(dialogBinding.root)
+                        .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             val newSubjectName = dialogBinding.line.text.toString().trim()
                             if (newSubjectName.isNotBlank()) {

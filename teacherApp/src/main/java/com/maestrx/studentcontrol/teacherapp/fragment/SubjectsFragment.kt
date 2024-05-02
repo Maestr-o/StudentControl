@@ -45,6 +45,7 @@ class SubjectsFragment : Fragment() {
                     AlertDialog.Builder(context)
                         .setTitle(getString(R.string.change_subject_name))
                         .setView(dialogBinding.root)
+                        .setCancelable(false)
                         .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                             val newSubjectName =
                                 dialogBinding.line.text.toString().trim().capitalize()
