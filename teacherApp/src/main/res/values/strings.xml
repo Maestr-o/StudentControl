@@ -76,7 +76,7 @@
     <string name="back">Back</string>
     <string name="error_export">Export error</string>
     <string name="ok_creating_file">Exported to downloads folder</string>
-    <string name="need_files_permission">Exporting data to Excel-files requires permission to access external storage.</string>
+    <string name="need_files_permission">Exporting data to Excel-files requires permission to access external storage</string>
     <string name="person_name_header">Name</string>
     <string name="quantity">N</string>
     <string name="amount">Amount</string>
@@ -98,9 +98,9 @@
     <string name="choose_file">Choose file</string>
     <string name="check_input_data">Please check that the entered data is correct</string>
     <string name="import_ok">Data import completed successfully</string>
-    <string name="import_error">Import error. Please check that the entered data is correct.</string>
+    <string name="import_error">Import error. Check that the entered data is correct</string>
     <string name="choose_file_error">Please select a file in .xlsx format</string>
-    <string name="row_numbers_error">The starting row number must be less than the ending row number and greater than 1.</string>
+    <string name="row_numbers_error">Invalid row numbers entered</string>
     <string name="sheet_name_error">Sheet name cannot be blank</string>
-    <string name="column_error">Please input column (example: D)</string>
+    <string name="column_error">Please input column</string>
 </resources>

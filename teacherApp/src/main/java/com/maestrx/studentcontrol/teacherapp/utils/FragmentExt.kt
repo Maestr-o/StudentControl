@@ -7,38 +7,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.databinding.CustomToastLayoutBinding
 
 fun Fragment.toastBlankData() {
-    Toast.makeText(
-        requireContext(),
-        getString(R.string.blank_content),
-        Toast.LENGTH_SHORT
-    ).show()
+    Toast.makeText(requireContext(), R.string.blank_content, Toast.LENGTH_LONG).show()
 }
 
 fun Fragment.toast(resId: Int) {
-    val binding = CustomToastLayoutBinding.inflate(layoutInflater)
-
-    binding.toastText.text = getString(resId)
-
-    with(Toast(requireContext())) {
-        duration = Toast.LENGTH_LONG
-        view = binding.root
-        show()
-    }
+    Toast.makeText(requireContext(), resId, Toast.LENGTH_LONG).show()
 }
 
 fun Fragment.toast(str: String) {
-    val binding = CustomToastLayoutBinding.inflate(layoutInflater)
-
-    binding.toastText.text = str
-
-    with(Toast(requireContext())) {
-        duration = Toast.LENGTH_LONG
-        view = binding.root
-        show()
-    }
+    Toast.makeText(requireContext(), str, Toast.LENGTH_LONG).show()
 }
 
 fun Fragment.showDatePicker(view: TextInputEditText) {

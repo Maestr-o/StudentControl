@@ -28,15 +28,15 @@ class StudentsViewModel @AssistedInject constructor(
     @Assisted private val groupId: Long,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<Student>())
-    val state = _state.asStateFlow()
+    private val _studentsState = MutableStateFlow(emptyList<Student>())
+    val studentsState = _studentsState.asStateFlow()
 
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
 
     init {
         studentRepository.getByGroupId(groupId).onEach { list ->
-            _state.update {
+            _studentsState.update {
                 list.map {
                     Student.fromResponseToData(it)
                 }
@@ -87,6 +87,7 @@ class StudentsViewModel @AssistedInject constructor(
                         endX
                     )
                 )
+                require(students.isNotEmpty())
                 studentRepository.saveList(students)
                 _message.value = Event(Constants.MESSAGE_OK_IMPORT)
             } catch (e: Exception) {

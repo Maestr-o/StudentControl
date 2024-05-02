@@ -42,24 +42,11 @@ class SubjectsFragment : Fragment() {
                     view.isEnabled = false
                     val dialogBinding = DialogEditLineBinding.inflate(inflater)
                     dialogBinding.line.setText(subject.name)
-                    AlertDialog.Builder(context)
+                    val alertDialog = AlertDialog.Builder(context)
                         .setTitle(getString(R.string.change_subject_name))
                         .setView(dialogBinding.root)
                         .setCancelable(false)
-                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                            val newSubjectName =
-                                dialogBinding.line.text.toString().trim().capitalize()
-                            if (newSubjectName.isNotBlank()) {
-                                viewModel.save(Subject(subject.id, newSubjectName))
-                                requireActivity().supportFragmentManager.setFragmentResult(
-                                    Constants.LESSON_UPDATED,
-                                    bundleOf()
-                                )
-                            } else {
-                                toastBlankData()
-                            }
-                            dialog.dismiss()
-                        }
+                        .setPositiveButton(getString(R.string.ok), null)
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -67,6 +54,21 @@ class SubjectsFragment : Fragment() {
                             view.isEnabled = true
                         }
                         .show()
+
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val newSubjectName =
+                            dialogBinding.line.text.toString().trim().capitalize()
+                        if (newSubjectName.isNotBlank()) {
+                            viewModel.save(Subject(subject.id, newSubjectName))
+                            requireActivity().supportFragmentManager.setFragmentResult(
+                                Constants.LESSON_UPDATED,
+                                bundleOf()
+                            )
+                            alertDialog.dismiss()
+                        } else {
+                            toastBlankData()
+                        }
+                    }
                 }
 
                 override fun onDeleteClickListener(view: View, subject: Subject) {

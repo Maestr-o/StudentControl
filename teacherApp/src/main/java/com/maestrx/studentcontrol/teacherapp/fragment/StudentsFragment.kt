@@ -75,30 +75,11 @@ class StudentsFragment : Fragment() {
                         midName.setText(student.midName)
                         lastName.setText(student.lastName)
                     }
-                    AlertDialog.Builder(context)
+                    val alertDialog = AlertDialog.Builder(context)
                         .setTitle(getString(R.string.edit_student_data))
                         .setView(dialogBinding.root)
                         .setCancelable(false)
-                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                            val newFirstName =
-                                dialogBinding.firstName.text.toString().trim().capitalize()
-                            val newMidName =
-                                dialogBinding.midName.text.toString().trim().capitalize()
-                            val newLastName =
-                                dialogBinding.lastName.text.toString().trim().capitalize()
-                            if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
-                                viewModel.save(
-                                    student.copy(
-                                        firstName = newFirstName,
-                                        midName = newMidName,
-                                        lastName = newLastName,
-                                    )
-                                )
-                            } else {
-                                toast(R.string.blank_name)
-                            }
-                            dialog.dismiss()
-                        }
+                        .setPositiveButton(getString(R.string.ok), null)
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -106,6 +87,27 @@ class StudentsFragment : Fragment() {
                             view.isEnabled = true
                         }
                         .show()
+
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val newFirstName =
+                            dialogBinding.firstName.text.toString().trim().capitalize()
+                        val newMidName =
+                            dialogBinding.midName.text.toString().trim().capitalize()
+                        val newLastName =
+                            dialogBinding.lastName.text.toString().trim().capitalize()
+                        if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
+                            viewModel.save(
+                                student.copy(
+                                    firstName = newFirstName,
+                                    midName = newMidName,
+                                    lastName = newLastName,
+                                )
+                            )
+                            alertDialog.dismiss()
+                        } else {
+                            toast(R.string.blank_name)
+                        }
+                    }
                 }
 
                 override fun onDeleteClickListener(view: View, student: Student) {
@@ -133,39 +135,42 @@ class StudentsFragment : Fragment() {
 
         binding.add.setOnClickListener {
             val dialogBinding = DialogEditStudentBinding.inflate(inflater)
-            AlertDialog.Builder(context)
+            val alertDialog = AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_student))
                 .setView(dialogBinding.root)
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newFirstName = dialogBinding.firstName.text.toString().trim().capitalize()
-                    val newMidName = dialogBinding.midName.text.toString().trim().capitalize()
-                    val newLastName = dialogBinding.lastName.text.toString().trim().capitalize()
-                    if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
-                        viewModel.save(
-                            Student(
-                                firstName = newFirstName,
-                                midName = newMidName,
-                                lastName = newLastName,
-                                group = Group(groupId),
-                            )
-                        )
-                    } else {
-                        toast(R.string.blank_name)
-                    }
-                    dialog.dismiss()
-                }
+                .setPositiveButton(getString(R.string.ok), null)
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
+
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val newFirstName = dialogBinding.firstName.text.toString().trim().capitalize()
+                val newMidName = dialogBinding.midName.text.toString().trim().capitalize()
+                val newLastName = dialogBinding.lastName.text.toString().trim().capitalize()
+                if (newFirstName.isNotBlank() && newLastName.isNotBlank()) {
+                    viewModel.save(
+                        Student(
+                            firstName = newFirstName,
+                            midName = newMidName,
+                            lastName = newLastName,
+                            group = Group(groupId),
+                        )
+                    )
+                    alertDialog.dismiss()
+                } else {
+                    toast(R.string.blank_name)
+                }
+            }
         }
 
-        viewModel.state.onEach { state ->
+        viewModel.studentsState.onEach { state ->
             adapter.submitList(state)
         }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        var importDialog: AlertDialog? = null
         toolbarViewModel.importClicked
             .onEach { state ->
                 if (state) {
@@ -193,47 +198,11 @@ class StudentsFragment : Fragment() {
                             }
                         }
                     }
-                    AlertDialog.Builder(context)
+                    importDialog = AlertDialog.Builder(context)
                         .setView(dialogBinding.root)
                         .setTitle(R.string.import_students)
                         .setCancelable(false)
-                        .setPositiveButton(R.string.ok) { dialog, _ ->
-                            try {
-                                if (fileUri == null) {
-                                    throw IllegalArgumentException(getString(R.string.choose_file_error))
-                                }
-                                val sheetName = dialogBinding.sheetName.text.toString()
-                                val column = dialogBinding.column.text.toString().trim()
-                                val startX = dialogBinding.startX.text.toString().trim().toInt()
-                                val endX = dialogBinding.endX.text.toString().trim().toInt()
-
-                                if (sheetName.isBlank()) {
-                                    throw IllegalArgumentException(getString(R.string.sheet_name_error))
-                                }
-                                if (column.isBlank()) {
-                                    throw IllegalArgumentException(getString(R.string.column_error))
-                                }
-                                if (startX < 1 || endX < 1 || startX > endX) {
-                                    throw IllegalArgumentException(getString(R.string.row_numbers_error))
-                                }
-
-                                viewModel.importStudents(
-                                    uri = fileUri,
-                                    sheetName = sheetName,
-                                    groupId = groupId,
-                                    column = column,
-                                    startX = startX,
-                                    endX = endX
-                                )
-                                dialog.dismiss()
-                            } catch (e: NumberFormatException) {
-                                toast(R.string.row_numbers_error)
-                            } catch (e: IllegalArgumentException) {
-                                toast(e.message ?: getString(R.string.check_input_data))
-                            } catch (e: Exception) {
-                                toast(R.string.import_error)
-                            }
-                        }
+                        .setPositiveButton(R.string.ok, null)
                         .setNegativeButton(R.string.cancel) { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -241,6 +210,51 @@ class StudentsFragment : Fragment() {
                             toolbarViewModel.importClicked(false)
                         }
                         .show()
+
+                    importDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+                        try {
+                            if (fileUri == null) {
+                                throw IllegalArgumentException(getString(R.string.choose_file_error))
+                            }
+                            val sheetName = dialogBinding.sheetName.text.toString()
+                            val column = dialogBinding.column.text.toString().trim()
+                            val startX = dialogBinding.startX.text.toString().trim().toInt()
+                            val endX = dialogBinding.endX.text.toString().trim().toInt()
+
+                            if (sheetName.isBlank()) {
+                                throw IllegalArgumentException(getString(R.string.sheet_name_error))
+                            }
+                            if (column.isBlank()) {
+                                throw IllegalArgumentException(getString(R.string.column_error))
+                            }
+                            if (startX < 1 || endX < 1 || startX > endX) {
+                                throw IllegalArgumentException(getString(R.string.row_numbers_error))
+                            }
+
+                            dialogBinding.apply {
+                                progressBar.isVisible = true
+                                fileContainer.isGone = true
+                                this.sheetName.isGone = true
+                                sheetContainer.isGone = true
+                            }
+                            importDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.isGone = true
+
+                            viewModel.importStudents(
+                                uri = fileUri,
+                                sheetName = sheetName,
+                                groupId = groupId,
+                                column = column,
+                                startX = startX,
+                                endX = endX
+                            )
+                        } catch (e: NumberFormatException) {
+                            toast(R.string.row_numbers_error)
+                        } catch (e: IllegalArgumentException) {
+                            toast(e.message ?: getString(R.string.check_input_data))
+                        } catch (e: Exception) {
+                            toast(R.string.import_error)
+                        }
+                    }
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -258,10 +272,12 @@ class StudentsFragment : Fragment() {
 
                     Constants.MESSAGE_OK_IMPORT -> {
                         toast(R.string.import_ok)
+                        importDialog?.dismiss()
                     }
 
                     Constants.MESSAGE_ERROR_IMPORT -> {
                         toast(R.string.import_error)
+                        importDialog?.dismiss()
                     }
                 }
             }

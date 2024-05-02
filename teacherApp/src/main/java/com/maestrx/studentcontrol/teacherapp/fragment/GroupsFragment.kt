@@ -53,21 +53,11 @@ class GroupsFragment : Fragment() {
                     view.isEnabled = false
                     val dialogBinding = DialogEditLineBinding.inflate(inflater)
                     dialogBinding.line.setText(group.name)
-                    AlertDialog.Builder(context)
+                    val alertDialog = AlertDialog.Builder(context)
                         .setTitle(getString(R.string.change_group_s_name))
                         .setView(dialogBinding.root)
                         .setCancelable(false)
-                        .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                            val newSubjectName = dialogBinding.line.text.toString().trim()
-                            if (newSubjectName.isNotBlank()) {
-                                viewModel.save(
-                                    group.copy(name = newSubjectName)
-                                )
-                            } else {
-                                toastBlankData()
-                            }
-                            dialog.dismiss()
-                        }
+                        .setPositiveButton(getString(R.string.ok), null)
                         .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
@@ -75,6 +65,16 @@ class GroupsFragment : Fragment() {
                             view.isEnabled = true
                         }
                         .show()
+
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val newSubjectName = dialogBinding.line.text.toString().trim()
+                        if (newSubjectName.isNotBlank()) {
+                            viewModel.save(group.copy(name = newSubjectName))
+                            alertDialog.dismiss()
+                        } else {
+                            toastBlankData()
+                        }
+                    }
                 }
 
                 override fun onDeleteClickListener(view: View, group: Group) {

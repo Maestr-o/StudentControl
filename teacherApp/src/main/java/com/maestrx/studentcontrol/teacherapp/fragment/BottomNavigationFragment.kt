@@ -85,21 +85,11 @@ class BottomNavigationFragment : Fragment() {
         val newSubjectListener = View.OnClickListener {
             binding.add.isEnabled = false
             val dialogBinding = DialogEditLineBinding.inflate(inflater)
-            AlertDialog.Builder(context)
+            val alertDialog = AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_subject))
                 .setView(dialogBinding.root)
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newSubjectName = dialogBinding.line.text.toString().trim().capitalize()
-                    if (newSubjectName.isNotBlank()) {
-                        subjectsViewModel.save(
-                            Subject(name = newSubjectName)
-                        )
-                    } else {
-                        toastBlankData()
-                    }
-                    dialog.dismiss()
-                }
+                .setPositiveButton(getString(R.string.ok), null)
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -107,26 +97,26 @@ class BottomNavigationFragment : Fragment() {
                     binding.add.isEnabled = true
                 }
                 .show()
+
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val newSubjectName = dialogBinding.line.text.toString().trim().capitalize()
+                if (newSubjectName.isNotBlank()) {
+                    subjectsViewModel.save(Subject(name = newSubjectName))
+                    alertDialog.dismiss()
+                } else {
+                    toastBlankData()
+                }
+            }
         }
 
         val newGroupListener = View.OnClickListener {
             binding.add.isEnabled = false
             val dialogBinding = DialogEditLineBinding.inflate(inflater)
-            AlertDialog.Builder(context)
+            val alertDialog = AlertDialog.Builder(context)
                 .setTitle(getString(R.string.add_new_group))
                 .setView(dialogBinding.root)
                 .setCancelable(false)
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-                    val newGroupName = dialogBinding.line.text.toString().trim()
-                    if (newGroupName.isNotBlank()) {
-                        groupsViewModel.save(
-                            Group(name = newGroupName)
-                        )
-                    } else {
-                        toastBlankData()
-                    }
-                    dialog.dismiss()
-                }
+                .setPositiveButton(getString(R.string.ok), null)
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -134,6 +124,16 @@ class BottomNavigationFragment : Fragment() {
                     binding.add.isEnabled = true
                 }
                 .show()
+
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val newGroupName = dialogBinding.line.text.toString().trim()
+                if (newGroupName.isNotBlank()) {
+                    groupsViewModel.save(Group(name = newGroupName))
+                    alertDialog.dismiss()
+                } else {
+                    toastBlankData()
+                }
+            }
         }
 
         var dataControlDialog: AlertDialog? = null
