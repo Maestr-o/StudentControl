@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -161,11 +162,24 @@ class BottomNavigationFragment : Fragment() {
 
                         exportExcel.setOnClickListener {
                             if (checkPermission()) {
-                                clean.isVisible = false
-                                exportExcel.isVisible = false
                                 progressBar.isVisible = true
+                                controlContainer.isGone = true
                                 viewModel.exportToExcel()
                             }
+                        }
+
+                        exportDb.setOnClickListener {
+                            if (checkPermission()) {
+                                progressBar.isVisible = true
+                                controlContainer.isGone = true
+                                viewModel.exportDb()
+                            }
+                        }
+
+                        importDb.setOnClickListener {
+                            progressBar.isVisible = true
+                            controlContainer.isGone = true
+                            viewModel.importDb()
                         }
                     }
                     dataControlDialog = AlertDialog.Builder(context)
@@ -199,6 +213,10 @@ class BottomNavigationFragment : Fragment() {
 
                     Constants.MESSAGE_ERROR_DELETING_ALL_DATA -> {
                         toast(R.string.error_data_clear)
+                    }
+
+                    Constants.MESSAGE_ERROR_IMPORT -> {
+                        toast(R.string.import_error)
                     }
                 }
                 dataControlDialog?.dismiss()

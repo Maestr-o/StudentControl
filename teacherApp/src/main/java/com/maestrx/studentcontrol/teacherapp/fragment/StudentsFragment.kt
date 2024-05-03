@@ -18,11 +18,11 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBindin
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogImportStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
-import com.maestrx.studentcontrol.teacherapp.excel.ExcelFilePicker
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.FilePicker
 import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsViewModel
@@ -178,7 +178,7 @@ class StudentsFragment : Fragment() {
                     var fileName = ""
                     val dialogBinding = DialogImportStudentsBinding.inflate(inflater).apply {
                         chooseFile.setOnClickListener {
-                            ExcelFilePicker(requireActivity().activityResultRegistry) { uri ->
+                            FilePicker(requireActivity().activityResultRegistry) { uri ->
                                 uri?.let {
                                     fileUri = it
                                     val documentFile =
@@ -194,7 +194,7 @@ class StudentsFragment : Fragment() {
                                     fileStr.isGone = true
                                 }
                             }.apply {
-                                pickFile()
+                                pickExcelFile()
                             }
                         }
                     }

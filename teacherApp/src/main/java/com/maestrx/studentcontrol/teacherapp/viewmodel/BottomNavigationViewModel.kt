@@ -3,10 +3,12 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.db.AppDb
+import com.maestrx.studentcontrol.teacherapp.db.DbFileManager
 import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,6 +18,7 @@ import javax.inject.Inject
 class BottomNavigationViewModel @Inject constructor(
     private val db: AppDb,
     private val excelManager: ExcelManager,
+    private val dbFileManager: DbFileManager,
 ) : ViewModel() {
 
     private val _message = MutableStateFlow(Event(""))
@@ -28,6 +31,23 @@ class BottomNavigationViewModel @Inject constructor(
             } else {
                 Event(Constants.MESSAGE_ERROR_EXPORT)
             }
+        }
+    }
+
+    fun exportDb() {
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                dbFileManager.export()
+                _message.value = Event(Constants.MESSAGE_END_EXPORT)
+            } catch (e: Exception) {
+                _message.value = Event(Constants.MESSAGE_ERROR_EXPORT)
+            }
+        }
+    }
+
+    fun importDb() {
+        viewModelScope.launch {
+
         }
     }
 

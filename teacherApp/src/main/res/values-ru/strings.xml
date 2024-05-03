@@ -102,4 +102,6 @@
     <string name="row_numbers_error">Неверный ввод номеров строк таблицы</string>
     <string name="sheet_name_error">Название таблицы не может быть пустым</string>
     <string name="column_error">Пожалуйста, укажите колонку</string>
+    <string name="export_db">Экспорт БД</string>
+    <string name="import_db">Импорт БД</string>
 </resources>

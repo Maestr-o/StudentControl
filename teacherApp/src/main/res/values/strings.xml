@@ -86,6 +86,7 @@
     <string name="error_data_clear">Error deleting data</string>
     <string name="export_path_long" translatable="false">%s/Student control/%s</string>
     <string name="export_path_short" translatable="false">/Student control/%s</string>
+    <string name="export_path_db_short" translatable="false">/Student control/</string>
     <string name="manual_mark">Mark manually</string>
     <string name="error_saving_marks">Error saving marks</string>
     <string name="no_unmarked_students">There are no unmarked students!</string>
@@ -103,4 +104,7 @@
     <string name="row_numbers_error">Invalid row numbers entered</string>
     <string name="sheet_name_error">Sheet name cannot be blank</string>
     <string name="column_error">Please input column</string>
+    <string name="export_db">Export to DB-file</string>
+    <string name="import_db">Import from DB-file</string>
+    <string name="export_db_filename" translatable="false">controldb_%s.db</string>
 </resources>

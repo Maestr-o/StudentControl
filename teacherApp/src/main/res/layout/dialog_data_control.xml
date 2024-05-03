@@ -12,18 +12,41 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/exportExcel"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="250dp"
+    <LinearLayout
+        android:id="@+id/controlContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/export_excel" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/clean"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:text="@string/clean_data" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/exportExcel"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/export_excel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/exportDb"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/export_db" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/importDb"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/import_db" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clean"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/clean_data" />
+
+    </LinearLayout>
 
 </LinearLayout>
