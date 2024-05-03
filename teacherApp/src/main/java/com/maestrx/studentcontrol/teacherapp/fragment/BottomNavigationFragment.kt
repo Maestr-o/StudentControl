@@ -2,6 +2,7 @@ package com.maestrx.studentcontrol.teacherapp.fragment
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +28,7 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentBottomNavigatio
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.FilePicker
 import com.maestrx.studentcontrol.teacherapp.utils.capitalize
 import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
@@ -37,6 +39,7 @@ import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class BottomNavigationFragment : Fragment() {
@@ -76,11 +79,10 @@ class BottomNavigationFragment : Fragment() {
         binding.bottomNavigation.setupWithNavController(navController)
 
         val newLessonListener = View.OnClickListener {
-            (
-                    requireNotNull(
-                        childFragmentManager.findFragmentById(R.id.container)?.childFragmentManager
-                            ?.findFragmentById(R.id.container)
-                    ) as LessonsFragment).addLesson()
+            (requireNotNull(
+                childFragmentManager.findFragmentById(R.id.container)?.childFragmentManager
+                    ?.findFragmentById(R.id.container)
+            ) as LessonsFragment).addLesson()
         }
 
         val newSubjectListener = View.OnClickListener {
@@ -177,9 +179,11 @@ class BottomNavigationFragment : Fragment() {
                         }
 
                         importDb.setOnClickListener {
-                            progressBar.isVisible = true
-                            controlContainer.isGone = true
-                            viewModel.importDb()
+                            FilePicker(requireActivity().activityResultRegistry) { uri ->
+                                viewModel.importDb(uri)
+                            }.apply {
+                                pickDbFile()
+                            }
                         }
                     }
                     dataControlDialog = AlertDialog.Builder(context)
@@ -203,12 +207,13 @@ class BottomNavigationFragment : Fragment() {
                         toast(R.string.error_export)
                     }
 
-                    Constants.MESSAGE_END_EXPORT -> {
+                    Constants.MESSAGE_OK_EXPORT -> {
                         toast(R.string.ok_creating_file)
                     }
 
                     Constants.MESSAGE_OK_DELETING_ALL_DATA -> {
                         toast(R.string.ok_data_clear)
+                        restartApp()
                     }
 
                     Constants.MESSAGE_ERROR_DELETING_ALL_DATA -> {
@@ -216,7 +221,12 @@ class BottomNavigationFragment : Fragment() {
                     }
 
                     Constants.MESSAGE_ERROR_IMPORT -> {
-                        toast(R.string.import_error)
+                        toast(R.string.import_db_error)
+                    }
+
+                    Constants.MESSAGE_OK_IMPORT -> {
+                        toast(R.string.import_ok)
+                        restartApp()
                     }
                 }
                 dataControlDialog?.dismiss()
@@ -287,5 +297,17 @@ class BottomNavigationFragment : Fragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun restartApp() {
+        try {
+            val i =
+                requireContext().packageManager.getLaunchIntentForPackage(requireContext().packageName)
+            i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            requireContext().startActivity(i)
+            exitProcess(0)
+        } catch (e: Exception) {
+            toast(R.string.restart_error)
+        }
     }
 }

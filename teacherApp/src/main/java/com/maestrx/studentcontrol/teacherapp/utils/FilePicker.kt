@@ -13,9 +13,9 @@ class FilePicker(
         const val REGISTRY_KEY_GET_DB = "REGISTRY_KEY_GET_DB"
         const val REGISTRY_KEY_GET_EXCEL = "REGISTRY_KEY_GET_EXCEL"
 
-        const val ALL_MIME_TYPE = "*/*"
         const val EXCEL_MIME_TYPE =
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        const val DB_MIME_TYPE = "application/octet-stream"
     }
 
     private val getExcel = activityResultRegistry.register(
@@ -35,6 +35,6 @@ class FilePicker(
     }
 
     fun pickDbFile() {
-        getDb.launch(ALL_MIME_TYPE)
+        getDb.launch(DB_MIME_TYPE)
     }
 }

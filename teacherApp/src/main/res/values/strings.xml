@@ -107,4 +107,6 @@
     <string name="export_db">Export to DB-file</string>
     <string name="import_db">Import from DB-file</string>
     <string name="export_db_filename" translatable="false">controldb_%s.db</string>
+    <string name="restart_error">Restart error. Please do it yourself</string>
+    <string name="import_db_error">Import error. You haven\'t selected a DB-file</string>
 </resources>

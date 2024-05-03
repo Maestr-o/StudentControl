@@ -104,4 +104,6 @@
     <string name="column_error">Пожалуйста, укажите колонку</string>
     <string name="export_db">Экспорт БД</string>
     <string name="import_db">Импорт БД</string>
+    <string name="restart_error">Ошибка перезапуска. Пожалуйста, сделайте это сами</string>
+    <string name="import_db_error">Ошибка импорта. Вы не выбрали файл БД</string>
 </resources>

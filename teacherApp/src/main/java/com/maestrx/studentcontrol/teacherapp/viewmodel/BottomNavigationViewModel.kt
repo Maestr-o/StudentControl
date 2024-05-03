@@ -1,8 +1,9 @@
 package com.maestrx.studentcontrol.teacherapp.viewmodel
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrx.studentcontrol.teacherapp.db.AppDb
 import com.maestrx.studentcontrol.teacherapp.db.DbFileManager
 import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
@@ -16,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomNavigationViewModel @Inject constructor(
-    private val db: AppDb,
     private val excelManager: ExcelManager,
     private val dbFileManager: DbFileManager,
 ) : ViewModel() {
@@ -27,7 +27,7 @@ class BottomNavigationViewModel @Inject constructor(
     fun exportToExcel() {
         viewModelScope.launch {
             _message.value = if (excelManager.export()) {
-                Event(Constants.MESSAGE_END_EXPORT)
+                Event(Constants.MESSAGE_OK_EXPORT)
             } else {
                 Event(Constants.MESSAGE_ERROR_EXPORT)
             }
@@ -36,26 +36,34 @@ class BottomNavigationViewModel @Inject constructor(
 
     fun exportDb() {
         viewModelScope.launch(Dispatchers.Default) {
-            try {
+            _message.value = try {
                 dbFileManager.export()
-                _message.value = Event(Constants.MESSAGE_END_EXPORT)
+                Event(Constants.MESSAGE_OK_EXPORT)
             } catch (e: Exception) {
-                _message.value = Event(Constants.MESSAGE_ERROR_EXPORT)
+                Log.d(Constants.DEBUG_TAG, "Export error: $e")
+                Event(Constants.MESSAGE_ERROR_EXPORT)
             }
         }
     }
 
-    fun importDb() {
+    fun importDb(uri: Uri?) {
         viewModelScope.launch {
-
+            _message.value = try {
+                dbFileManager.import(requireNotNull(uri))
+                Event(Constants.MESSAGE_OK_IMPORT)
+            } catch (e: Exception) {
+                Log.d(Constants.DEBUG_TAG, "Import error: $e")
+                Event(Constants.MESSAGE_ERROR_IMPORT)
+            }
         }
     }
 
     fun cleanDatabase() {
         _message.value = try {
-            db.clearAllTables()
+            dbFileManager.clean()
             Event(Constants.MESSAGE_OK_DELETING_ALL_DATA)
         } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "DB clean error: $e")
             Event(Constants.MESSAGE_ERROR_DELETING_ALL_DATA)
         }
     }

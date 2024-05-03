@@ -2,6 +2,7 @@ package com.maestrx.studentcontrol.teacherapp.db
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,6 +14,7 @@ import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.OutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,25 +25,37 @@ class DbFileManager @Inject constructor(
     private val db: AppDb,
 ) {
 
+    companion object {
+        const val DB_INT_NAME = "data.db"
+        const val SQLITE_WAL_SUFFIX = "-wal"
+        const val SQLITE_SHM_SUFFIX = "-shm"
+    }
+
     fun export() {
-        val dbFile = context.getDatabasePath(Constants.DB_INT_NAME)
+        val dbFile = context.getDatabasePath(DB_INT_NAME)
         checkpoint()
         if (Build.VERSION.SDK_INT <= 28) {
             getBckFile().run {
                 dbFile.copyTo(this, true)
             }
         } else {
-            getOutputStream()?.let { outs ->
+            requireNotNull(getOutputStream()).use { outs ->
                 FileInputStream(dbFile).use { ins ->
                     ins.copyTo(outs)
                 }
-                outs.close()
             }
         }
     }
 
-    fun import() {
+    fun import(uri: Uri) {
+        clean()
+        val dbFile = context.getDatabasePath(DB_INT_NAME)
 
+        requireNotNull(context.contentResolver.openInputStream(uri)).use { ins ->
+            FileOutputStream(dbFile).use { outs ->
+                ins.copyTo(outs)
+            }
+        }
     }
 
     private fun getBckFile(): File {
@@ -92,7 +106,26 @@ class DbFileManager @Inject constructor(
     }
 
     private fun checkpoint() {
-        db.query("PRAGMA wal_checkpoint(FULL);", null)
-        db.query("PRAGMA wal_checkpoint(TRUNCATE);", null)
+        db.query("PRAGMA wal_checkpoint", arrayOf()).use {
+            it.moveToFirst()
+        }
+    }
+
+    fun clean() {
+        val dbFile = context.getDatabasePath(DB_INT_NAME).apply {
+            if (exists()) {
+                delete()
+            }
+        }
+        File(dbFile.path + SQLITE_WAL_SUFFIX).apply {
+            if (exists()) {
+                delete()
+            }
+        }
+        File(dbFile.path + SQLITE_SHM_SUFFIX).apply {
+            if (exists()) {
+                delete()
+            }
+        }
     }
 }
