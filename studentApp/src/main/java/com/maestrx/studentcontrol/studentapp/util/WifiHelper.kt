@@ -19,7 +19,8 @@ object WifiHelper {
     }
 
     fun getServerAddress(context: Context): InetAddress {
-        val wm: WifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wm: WifiManager =
+            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val address = InetAddress.getByAddress(intToByteArray(wm.dhcpInfo.gateway))
         Log.d(Constants.DEBUG_TAG, "Server address: $address")
         return address

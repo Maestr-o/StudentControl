@@ -64,12 +64,14 @@ class MainActivity : ComponentActivity() {
                             val personalData = prefs.getPersonalData()
                             val viewModel = hiltViewModel<ControlViewModel>()
                             val state = viewModel.state
-                            WifiStateReceiverCompose(viewModel::onEvent)
-                            state.value = if (isWifiConnected(applicationContext)) {
-                                ControlStatus.Connected
-                            } else {
-                                ControlStatus.NotConnected
+                            if (state.value is ControlStatus.Default) {
+                                state.value = if (isWifiConnected(applicationContext)) {
+                                    ControlStatus.Connected
+                                } else {
+                                    ControlStatus.NotConnected
+                                }
                             }
+                            WifiStateReceiverCompose(viewModel::onEvent)
                             ControlScreen(
                                 state = state.value,
                                 personalData = personalData,

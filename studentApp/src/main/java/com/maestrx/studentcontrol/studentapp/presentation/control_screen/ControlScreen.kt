@@ -2,6 +2,8 @@ package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +37,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
 import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
+import com.maestrx.studentcontrol.studentapp.util.Constants
 
 @Composable
 internal fun ControlScreen(
@@ -80,13 +83,26 @@ internal fun ControlScreen(
                             is ControlStatus.Connected -> {
                                 stringResource(id = R.string.connected)
                             }
+
+                            is ControlStatus.Default -> {
+                                stringResource(id = R.string.no_connection)
+                            }
                         },
                         fontSize = 17.sp,
                     )
 
                     IconButton(
                         onClick = {
-                            startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+                            try {
+                                startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+                            } catch (e: Exception) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.error_go_to_settings,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                Log.d(Constants.DEBUG_TAG, "Error opening settings: $e")
+                            }
                         },
                     ) {
                         Icon(
@@ -136,6 +152,10 @@ internal fun ControlScreen(
                 is ControlStatus.Connected -> {
                     ConnectedGroup(navClick, isDataExchanged)
                 }
+
+                is ControlStatus.Default -> {
+                    DisconnectedGroup()
+                }
             }
         }
     }
@@ -160,7 +180,16 @@ fun DisconnectedGroup() {
         )
         Button(
             onClick = {
-                startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+                try {
+                    startActivity(context, Intent(Settings.ACTION_WIFI_SETTINGS), null)
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context,
+                        R.string.error_go_to_settings,
+                        Toast.LENGTH_LONG
+                    ).show()
+                    Log.d(Constants.DEBUG_TAG, "Error opening settings: $e")
+                }
             },
             shape = RoundedCornerShape(10.dp)
         ) {

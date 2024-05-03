@@ -15,4 +15,5 @@
     <string name="checked_in">Вы отмечены!</string>
     <string name="choose_student_hint">Введенные данные сохранятся в памяти для последующих подключений.\nЕсли вас нет в списке - обратитесь к преподавателю.</string>
     <string name="checked_in_toast">Вы успешно отмечены!</string>
+    <string name="error_go_to_settings">Ошибка перехода к настройкам</string>
 </resources>

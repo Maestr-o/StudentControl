@@ -8,7 +8,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ControlViewModel @Inject constructor() : ViewModel() {
 
-    var state = mutableStateOf<ControlStatus>(ControlStatus.NotConnected)
+    var state = mutableStateOf<ControlStatus>(ControlStatus.Default)
         private set
 
     fun onEvent(event: ControlEvent) {
