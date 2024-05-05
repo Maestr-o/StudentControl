@@ -51,7 +51,7 @@ class StudentsViewModel @AssistedInject constructor(
                 studentRepository.save(student.toEntity())
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_STUDENT)
-                Log.e(Constants.DEBUG_TAG, "Error saving student: $e")
+                Log.e(Constants.DEBUG_TAG, "Error saving student: ${e.printStackTrace()}")
             }
         }
     }
@@ -62,7 +62,7 @@ class StudentsViewModel @AssistedInject constructor(
                 studentRepository.deleteById(id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_STUDENT)
-                Log.e(Constants.DEBUG_TAG, "Error deleting student: $e")
+                Log.e(Constants.DEBUG_TAG, "Error deleting student: ${e.printStackTrace()}")
             }
         }
     }

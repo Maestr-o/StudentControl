@@ -12,12 +12,11 @@ import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
-import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
-import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
+import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ControlViewModelFactory
 import com.maestrx.studentcontrol.teacherapp.wifi.ServerInteractor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -32,26 +31,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@HiltViewModel(assistedFactory = LessonDetailsViewModelFactory::class)
-class LessonDetailsViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = ControlViewModelFactory::class)
+class ControlViewModel @AssistedInject constructor(
     private val attendanceRepository: AttendanceRepository,
     private val lessonRepository: LessonRepository,
     private val studentRepository: StudentRepository,
-    private val groupRepository: GroupRepository,
     private val serverInteractor: ServerInteractor,
-    @Assisted private val lesson: Lesson,
+    @Assisted val lesson: Lesson,
 ) : ViewModel() {
 
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
 
-    private val _lessonState = MutableStateFlow(Lesson())
-    val lessonState = _lessonState.asStateFlow()
-
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
     val controlStatus = _controlStatus.asStateFlow()
 
-    private val _studentsWithGroupsState = MutableStateFlow(LessonDetailsUiState())
+    private val _studentsWithGroupsState = MutableStateFlow(ControlUiState())
     val studentsWithGroupsState = _studentsWithGroupsState.asStateFlow()
 
     private val _isManualMarkDialogShowed = MutableStateFlow(false)
@@ -60,9 +55,10 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private val _notMarkedStudentsWithGroups = MutableStateFlow<List<Any>>(mutableListOf())
 
     init {
-        setLesson(lesson)
-
         viewModelScope.launch(Dispatchers.IO) {
+            _studentsWithGroupsState.update {
+                it.copy(totalStudentsCount = getTotalStudentsCount(lesson.groups))
+            }
             attendanceRepository.getByLessonId(lesson.id)
                 .onEach { list ->
                     _studentsWithGroupsState.update {
@@ -85,31 +81,6 @@ class LessonDetailsViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun setLesson(lesson: Lesson) {
-        groupRepository.getByLessonId(lesson.id)
-            .onEach { groups ->
-                val lessonWithGroups =
-                    lesson.copy(
-                        groups = groups.map {
-                            Group.toData(it)
-                        }
-                            .sortedBy {
-                                it.name
-                            }
-                    )
-                _lessonState.update {
-                    lessonWithGroups
-                }
-                if (studentsWithGroupsState.value.totalStudentsCount == 0) {
-                    _studentsWithGroupsState.update {
-                        it.copy(totalStudentsCount = getTotalStudentsCount(lessonWithGroups.groups))
-                    }
-                }
-                setControlStatus(controlStatus.value)
-            }
-            .launchIn(viewModelScope)
-    }
-
     fun addMarks(list: List<Any>) {
         viewModelScope.launch(Dispatchers.Default) {
             try {
@@ -122,7 +93,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
-                Log.d(Constants.DEBUG_TAG, "Error saving marks: $e")
+                Log.d(Constants.DEBUG_TAG, "Error saving marks: ${e.printStackTrace()}")
             }
         }
     }
@@ -133,7 +104,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
                 lessonRepository.deleteById(lesson.id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
-                Log.d(Constants.DEBUG_TAG, "Error deleting lesson: $e")
+                Log.d(Constants.DEBUG_TAG, "Error deleting lesson: ${e.printStackTrace()}")
             }
         }
     }
@@ -141,7 +112,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     fun setControlStatus(status: ControlStatus) {
         val lastStatus = controlStatus.value
         _controlStatus.update { status }
-        if (status is ControlStatus.Running && _lessonState.value.groups.isNotEmpty()) {
+        if (status is ControlStatus.Running && lesson.groups.isNotEmpty()) {
             startDataExchange()
         } else if (lastStatus is ControlStatus.Running && status !is ControlStatus.Running) {
             serverInteractor.closeSocket()
@@ -151,7 +122,7 @@ class LessonDetailsViewModel @AssistedInject constructor(
     private fun startDataExchange() {
         viewModelScope.launch {
             try {
-                serverInteractor.dataExchange(lessonState.value)
+                serverInteractor.dataExchange(lesson)
             } catch (e: Exception) {
                 _controlStatus.update { ControlStatus.ReadyToStart }
             }

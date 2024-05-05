@@ -45,7 +45,7 @@ class GroupsViewModel @Inject constructor(
                 groupRepository.save(group.toEntity())
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_GROUP)
-                Log.e(Constants.DEBUG_TAG, "Error saving group: $e")
+                Log.e(Constants.DEBUG_TAG, "Error saving group: ${e.printStackTrace()}")
             }
         }
     }
@@ -56,7 +56,7 @@ class GroupsViewModel @Inject constructor(
                 groupRepository.deleteById(id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_GROUP)
-                Log.e(Constants.DEBUG_TAG, "Error deleting group: $e")
+                Log.e(Constants.DEBUG_TAG, "Error deleting group: ${e.printStackTrace()}")
             }
         }
     }

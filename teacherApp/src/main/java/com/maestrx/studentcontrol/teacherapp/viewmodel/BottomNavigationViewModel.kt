@@ -40,7 +40,7 @@ class BottomNavigationViewModel @Inject constructor(
                 dbFileManager.export()
                 Event(Constants.MESSAGE_OK_EXPORT)
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Export error: $e")
+                Log.d(Constants.DEBUG_TAG, "Export error: ${e.printStackTrace()}")
                 Event(Constants.MESSAGE_ERROR_EXPORT)
             }
         }
@@ -52,7 +52,7 @@ class BottomNavigationViewModel @Inject constructor(
                 dbFileManager.import(requireNotNull(uri))
                 Event(Constants.MESSAGE_OK_IMPORT)
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Import error: $e")
+                Log.d(Constants.DEBUG_TAG, "Import error: ${e.printStackTrace()}")
                 Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
@@ -63,7 +63,7 @@ class BottomNavigationViewModel @Inject constructor(
             dbFileManager.clean()
             Event(Constants.MESSAGE_OK_DELETING_ALL_DATA)
         } catch (e: Exception) {
-            Log.d(Constants.DEBUG_TAG, "DB clean error: $e")
+            Log.d(Constants.DEBUG_TAG, "DB clean error: ${e.printStackTrace()}")
             Event(Constants.MESSAGE_ERROR_DELETING_ALL_DATA)
         }
     }

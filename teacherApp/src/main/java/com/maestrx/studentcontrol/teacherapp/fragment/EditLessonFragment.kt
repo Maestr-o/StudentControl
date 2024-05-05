@@ -184,7 +184,7 @@ class EditLessonFragment : Fragment() {
                     val bundle = Bundle().apply {
                         putString(
                             Constants.LESSON_DATA,
-                            Json.encodeToString(viewModel.lessonState.value)
+                            Json.encodeToString(newLesson)
                         )
                     }
                     requireActivity().supportFragmentManager.setFragmentResult(
@@ -192,7 +192,7 @@ class EditLessonFragment : Fragment() {
                         bundleOf()
                     )
                     findNavController().navigate(
-                        R.id.action_editLessonFragment_to_lessonDetailsFragment,
+                        R.id.action_editLessonFragment_to_controlFragment,
                         bundle
                     )
                 }
@@ -272,6 +272,7 @@ class EditLessonFragment : Fragment() {
             },
             auditory = binding.auditory.text.toString().trim(),
             description = binding.notes.text.toString().trim(),
+            groups = viewModel.selectedGroupsState.value.selectedGroups,
         )
     }
 }

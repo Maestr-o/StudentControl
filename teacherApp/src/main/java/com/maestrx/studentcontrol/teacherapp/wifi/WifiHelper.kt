@@ -16,7 +16,7 @@ object WifiHelper {
             method.isAccessible = true
             return method.invoke(wifiManager) as Boolean
         } catch (e: Exception) {
-            Log.e("AP", "Error: $e")
+            Log.e("AP", "Error: ${e.printStackTrace()}")
         }
         return false
     }

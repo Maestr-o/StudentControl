@@ -83,7 +83,7 @@ class EditLessonViewModel @Inject constructor(
                 lessonGroupCrossRepository.save(lessonGroupCrosses)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_LESSON)
-                Log.d(Constants.DEBUG_TAG, "Error saving lesson: $e")
+                Log.d(Constants.DEBUG_TAG, "Error saving lesson: ${e.printStackTrace()}")
             }
         }
     }
@@ -131,7 +131,7 @@ class EditLessonViewModel @Inject constructor(
                 lessonRepository.deleteById(lessonState.value.id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_LESSON)
-                Log.d(Constants.DEBUG_TAG, "Error deleting lesson: $e")
+                Log.d(Constants.DEBUG_TAG, "Error deleting lesson: ${e.printStackTrace()}")
             }
         }
     }

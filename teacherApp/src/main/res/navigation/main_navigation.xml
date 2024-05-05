@@ -15,8 +15,8 @@
             app:destination="@id/studentsFragment"
             app:enterAnim="@anim/transition_in" />
         <action
-            android:id="@+id/action_bottomNavigationFragment_to_lessonDetailsFragment"
-            app:destination="@id/lessonDetailsFragment"
+            android:id="@+id/action_bottomNavigationFragment_to_controlFragment"
+            app:destination="@id/controlFragment"
             app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_newLessonFragment"
@@ -37,8 +37,8 @@
             app:destination="@id/bottomNavigationFragment"
             app:enterAnim="@anim/transition_in" />
         <action
-            android:id="@+id/action_editLessonFragment_to_lessonDetailsFragment"
-            app:destination="@id/lessonDetailsFragment"
+            android:id="@+id/action_editLessonFragment_to_controlFragment"
+            app:destination="@id/controlFragment"
             app:enterAnim="@anim/transition_in"
             app:popUpTo="@id/bottomNavigationFragment" />
     </fragment>
@@ -47,12 +47,12 @@
         android:name="com.maestrx.studentcontrol.teacherapp.fragment.StudentsFragment"
         tools:layout="@layout/fragment_students" />
     <fragment
-        android:id="@+id/lessonDetailsFragment"
-        android:name="com.maestrx.studentcontrol.teacherapp.fragment.LessonDetailsFragment"
+        android:id="@+id/controlFragment"
+        android:name="com.maestrx.studentcontrol.teacherapp.fragment.ControlFragment"
         android:label="@string/lesson"
-        tools:layout="@layout/fragment_lesson_details">
+        tools:layout="@layout/fragment_control">
         <action
-            android:id="@+id/action_lessonDetailsFragment_to_editLessonFragment"
+            android:id="@+id/action_controlFragment_to_editLessonFragment"
             app:destination="@id/editLessonFragment"
             app:enterAnim="@anim/transition_in" />
     </fragment>

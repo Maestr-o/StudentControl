@@ -131,7 +131,7 @@ class ToolbarFragment : Fragment() {
 
         binding.toolbar.setNavigationOnClickListener {
             val currentFragment = navController.currentBackStackEntry?.destination?.id
-            if (currentFragment == R.id.lessonDetailsFragment && viewModel.isControlRunning.value) {
+            if (currentFragment == R.id.controlFragment && viewModel.isControlRunning.value) {
                 val dialogBinding = DialogMultilineTextBinding.inflate(inflater)
                 dialogBinding.line.text = getString(R.string.quit_from_control)
                 AlertDialog.Builder(context)

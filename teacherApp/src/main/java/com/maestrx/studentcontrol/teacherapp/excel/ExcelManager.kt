@@ -238,7 +238,7 @@ class ExcelManager @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.d(Constants.DEBUG_TAG, "Exporting error: $e")
+            Log.d(Constants.DEBUG_TAG, "Exporting error: ${e.printStackTrace()}")
             return@withContext false
         }
         return@withContext true
@@ -295,7 +295,7 @@ class ExcelManager @Inject constructor(
             }
             true
         } catch (e: Exception) {
-            Log.d(Constants.DEBUG_TAG, "Error write to file: $e")
+            Log.d(Constants.DEBUG_TAG, "Error write to file: ${e.printStackTrace()}")
             false
         }
 

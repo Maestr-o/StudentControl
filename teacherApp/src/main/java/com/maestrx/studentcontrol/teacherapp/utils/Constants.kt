@@ -12,7 +12,7 @@ object Constants {
     const val EXCEL_N_COLUMN_SIZE = 1200
     const val EXCEL_NAME_COLUMN_SIZE = 9000
 
-    const val TIMEOUT = 45_000
+    const val TIMEOUT = 1_500
     const val TIME_CHECK_DELAY = 2_000L
     const val TIME_RECESS = 15
 

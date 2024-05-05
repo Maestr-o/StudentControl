@@ -45,7 +45,7 @@ class SubjectsViewModel @Inject constructor(
                 subjectRepository.save(subject.toEntity())
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_SUBJECT)
-                Log.e(Constants.DEBUG_TAG, "Error saving subject: $e")
+                Log.e(Constants.DEBUG_TAG, "Error saving subject: ${e.printStackTrace()}")
             }
         }
     }
@@ -56,7 +56,7 @@ class SubjectsViewModel @Inject constructor(
                 subjectRepository.deleteById(id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_SUBJECT)
-                Log.e(Constants.DEBUG_TAG, "Error deleting subject: $e")
+                Log.e(Constants.DEBUG_TAG, "Error deleting subject: ${e.printStackTrace()}")
             }
         }
     }

@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_spacing"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -41,19 +42,14 @@
                 android:text="@string/subject_hint"
                 android:textSize="18sp" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <Spinner
-                    android:id="@+id/subjects"
-                    style="@style/Widget.AppCompat.Spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    tools:listitem="@layout/spinner_subject" />
-
-            </com.google.android.material.card.MaterialCardView>
+            <Spinner
+                android:id="@+id/subjects"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingTop="1dp"
+                tools:listitem="@layout/spinner_subject" />
 
         </LinearLayout>
 

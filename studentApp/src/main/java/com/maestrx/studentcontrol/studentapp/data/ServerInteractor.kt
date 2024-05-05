@@ -96,7 +96,10 @@ class ServerInteractor @Inject constructor(
                 socket.soTimeout = Constants.TIMEOUT
                 socket.receive(receivePacket)
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Attempt exchanging data #$attempt - error: $e")
+                Log.d(
+                    Constants.DEBUG_TAG,
+                    "Attempt exchanging data #$attempt - error: ${e.printStackTrace()}"
+                )
             } finally {
                 attempt++
             }

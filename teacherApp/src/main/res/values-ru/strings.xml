@@ -51,7 +51,7 @@
     <string name="notes_hint">Заметки</string>
     <string name="notes_hint_double">Заметки:</string>
     <string name="start_control">Начать контроль</string>
-    <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
+    <string name="control_datetime">%1$s | %2$s - %3$s</string>
     <string name="ask_delete_lesson">Вы действительно хотите удалить это занятие?</string>
     <string name="invalid_times">Время начала занятия должно быть больше времени окончания!</string>
     <string name="registered_students">Отметившиеся студенты: %d/%d</string>

@@ -46,7 +46,7 @@ class LessonsFragment : Fragment() {
                     }
                     requireParentFragment().requireParentFragment().findNavController()
                         .navigate(
-                            R.id.action_bottomNavigationFragment_to_lessonDetailsFragment,
+                            R.id.action_bottomNavigationFragment_to_controlFragment,
                             bundle
                         )
                 }

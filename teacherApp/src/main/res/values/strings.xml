@@ -50,7 +50,7 @@
     <string name="notes_hint">Notes</string>
     <string name="notes_hint_double">Notes:</string>
     <string name="start_control">Start control</string>
-    <string name="lesson_details_datetime">%1$s | %2$s - %3$s</string>
+    <string name="control_datetime">%1$s | %2$s - %3$s</string>
     <string name="ask_delete_lesson">"Do you really want to delete this lesson?"</string>
     <string name="invalid_times">The start time of the lesson must be greater than the end time!</string>
     <string name="registered_students">Registered students: %d/%d</string>

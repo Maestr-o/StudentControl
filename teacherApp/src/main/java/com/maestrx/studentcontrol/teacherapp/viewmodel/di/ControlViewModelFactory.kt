@@ -1,10 +1,10 @@
 package com.maestrx.studentcontrol.teacherapp.viewmodel.di
 
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
-import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonDetailsViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.ControlViewModel
 import dagger.assisted.AssistedFactory
 
 @AssistedFactory
-interface LessonDetailsViewModelFactory {
-    fun create(lesson: Lesson): LessonDetailsViewModel
+interface ControlViewModelFactory {
+    fun create(lesson: Lesson): ControlViewModel
 }

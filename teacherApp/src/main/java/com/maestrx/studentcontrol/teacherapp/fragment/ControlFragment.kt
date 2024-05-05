@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMarkManuallyBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
-import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonDetailsBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.FragmentControlBinding
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
@@ -26,9 +26,9 @@ import com.maestrx.studentcontrol.teacherapp.recyclerview.manual_mark.ManualMark
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.utils.toast
-import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonDetailsViewModel
+import com.maestrx.studentcontrol.teacherapp.viewmodel.ControlViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
-import com.maestrx.studentcontrol.teacherapp.viewmodel.di.LessonDetailsViewModelFactory
+import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ControlViewModelFactory
 import com.maestrx.studentcontrol.teacherapp.wifi.WifiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
@@ -40,18 +40,16 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
-class LessonDetailsFragment : Fragment() {
+class ControlFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
-    private lateinit var _viewModel: Lazy<LessonDetailsViewModel>
+    private lateinit var _viewModel: Lazy<ControlViewModel>
     private val viewModel get() = _viewModel.value
 
-    private var _binding: FragmentLessonDetailsBinding? = null
+    private var _binding: FragmentControlBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var markAdapter: ManualMarkAdapter
-
-    private lateinit var lessonArg: Lesson
 
     override fun onStart() {
         super.onStart()
@@ -70,24 +68,60 @@ class LessonDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLessonDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentControlBinding.inflate(inflater, container, false)
 
-        lessonArg = arguments?.let {
+        val lesson = arguments?.let {
             Json.decodeFromString<Lesson>(
                 it.getString(Constants.LESSON_DATA)!!
             )
         } ?: Lesson()
 
-        _viewModel = viewModels<LessonDetailsViewModel>(
+        _viewModel = viewModels<ControlViewModel>(
             extrasProducer = {
-                defaultViewModelCreationExtras.withCreationCallback<LessonDetailsViewModelFactory> { factory ->
-                    factory.create(lessonArg)
+                defaultViewModelCreationExtras.withCreationCallback<ControlViewModelFactory> { factory ->
+                    factory.create(lesson)
                 }
             }
         )
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
+
+        groupsAdapter.submitList(lesson.groups)
+        binding.apply {
+            subject.text = lesson.subject.name
+            datetime.text = getString(
+                R.string.control_datetime,
+                TimeFormatter.unixTimeToDateString(lesson.timeStart),
+                TimeFormatter.unixTimeToTimeString(lesson.timeStart),
+                TimeFormatter.unixTimeToTimeString(lesson.timeEnd)
+            )
+            auditory.text = lesson.auditory
+            type.text = when (lesson.type.name) {
+                LessonType.LECTURE.toString() -> {
+                    root.context.getString(R.string.lecture)
+                }
+
+                LessonType.PRACTICE.toString() -> {
+                    root.context.getString(R.string.practice)
+                }
+
+                LessonType.LAB.toString() -> {
+                    root.context.getString(R.string.laboratory_work)
+                }
+
+                else -> {
+                    root.context.getString(R.string.lesson)
+                }
+            }
+            title.text = lesson.title
+            if (lesson.description.isNotBlank()) {
+                notesLayout.isVisible = true
+                notes.text = lesson.description
+            } else {
+                notesLayout.isGone = true
+            }
+        }
 
         binding.startControl.setOnClickListener {
             if (viewModel.controlStatus.value is ControlStatus.ReadyToStart) {
@@ -124,11 +158,11 @@ class LessonDetailsFragment : Fragment() {
                     val bundle = Bundle().apply {
                         putString(
                             Constants.LESSON_DATA,
-                            Json.encodeToString(viewModel.lessonState.value)
+                            Json.encodeToString(viewModel.lesson)
                         )
                     }
                     findNavController().navigate(
-                        R.id.action_lessonDetailsFragment_to_editLessonFragment,
+                        R.id.action_controlFragment_to_editLessonFragment,
                         bundle
                     )
                     toolbarViewModel.editClicked(false)
@@ -153,46 +187,6 @@ class LessonDetailsFragment : Fragment() {
                             toolbarViewModel.deleteClicked(false)
                         }
                         .show()
-                }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.lessonState
-            .onEach { state ->
-                groupsAdapter.submitList(state.groups)
-                binding.apply {
-                    subject.text = state.subject.name
-                    datetime.text = getString(
-                        R.string.lesson_details_datetime,
-                        TimeFormatter.unixTimeToDateString(state.timeStart),
-                        TimeFormatter.unixTimeToTimeString(state.timeStart),
-                        TimeFormatter.unixTimeToTimeString(state.timeEnd)
-                    )
-                    auditory.text = state.auditory
-                    type.text = when (state.type.name) {
-                        LessonType.LECTURE.toString() -> {
-                            root.context.getString(R.string.lecture)
-                        }
-
-                        LessonType.PRACTICE.toString() -> {
-                            root.context.getString(R.string.practice)
-                        }
-
-                        LessonType.LAB.toString() -> {
-                            root.context.getString(R.string.laboratory_work)
-                        }
-
-                        else -> {
-                            root.context.getString(R.string.lesson)
-                        }
-                    }
-                    title.text = state.title
-                    if (state.description.isNotBlank()) {
-                        notesLayout.isVisible = true
-                        notes.text = state.description
-                    } else {
-                        notesLayout.isGone = true
-                    }
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -324,12 +318,7 @@ class LessonDetailsFragment : Fragment() {
         if (status is ControlStatus.ReadyToStart || status is ControlStatus.NotReadyToStart
             || status is ControlStatus.Running
         ) {
-            val lessonVM = viewModel.lessonState.value
-            val lesson = if (lessonVM.timeStart == 0L) {
-                lessonArg
-            } else {
-                lessonVM
-            }
+            val lesson = viewModel.lesson
             val startTime = TimeFormatter.decRecess(lesson.timeStart)
             val endTime = lesson.timeEnd
             val time = System.currentTimeMillis()

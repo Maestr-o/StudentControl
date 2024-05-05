@@ -101,7 +101,10 @@ internal fun ControlScreen(
                                     R.string.error_go_to_settings,
                                     Toast.LENGTH_LONG
                                 ).show()
-                                Log.d(Constants.DEBUG_TAG, "Error opening settings: $e")
+                                Log.d(
+                                    Constants.DEBUG_TAG,
+                                    "Error opening settings: ${e.printStackTrace()}"
+                                )
                             }
                         },
                     ) {
@@ -188,7 +191,7 @@ fun DisconnectedGroup() {
                         R.string.error_go_to_settings,
                         Toast.LENGTH_LONG
                     ).show()
-                    Log.d(Constants.DEBUG_TAG, "Error opening settings: $e")
+                    Log.d(Constants.DEBUG_TAG, "Error opening settings: ${e.printStackTrace()}")
                 }
             },
             shape = RoundedCornerShape(10.dp)

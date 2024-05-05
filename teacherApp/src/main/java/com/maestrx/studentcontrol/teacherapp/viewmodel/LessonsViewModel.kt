@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -22,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LessonsViewModel @Inject constructor(
     private val lessonRepository: LessonRepository,
-    groupRepository: GroupRepository,
+    private val groupRepository: GroupRepository,
     subjectRepository: SubjectRepository,
 ) : ViewModel() {
 
@@ -71,12 +73,20 @@ class LessonsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _state.update {
-                    lessonRepository.getForPeriod(startTime, endTime).map {
-                        Lesson.fromResponseToData(it)
+                    lessonRepository.getForPeriod(startTime, endTime).map { lessonRes ->
+                        Lesson.fromResponseToData(lessonRes).copy(
+                            groups = groupRepository.getByLessonId(lessonRes.id).first()
+                                .map { groupEnt ->
+                                    Group.toData(groupEnt)
+                                }
+                        )
                     }
                 }
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Error updating lessons for period: $e")
+                Log.d(
+                    Constants.DEBUG_TAG,
+                    "Error updating lessons for period: ${e.printStackTrace()}"
+                )
             }
         }
     }
