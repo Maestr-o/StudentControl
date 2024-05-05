@@ -34,7 +34,7 @@ object TimeFormatter {
     }
 
     private fun unixTimeToDateTimeString(milliseconds: Long?): String {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm")
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy_HH-mm")
         return unixTimeToPatternString(formatter, milliseconds)
     }
 

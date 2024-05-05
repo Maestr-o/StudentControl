@@ -21,7 +21,7 @@ def send_data(gateway_ip, start_gateway_port, message):
         
         new_gateway_port = addr[1]
 
-        random_number = random.randint(1, 280)
+        random_number = random.randint(1, 202)
         udp_socket.sendto(str(random_number).encode(), (gateway_ip, new_gateway_port))
         print(f"Sent random number to {gateway_ip}:{new_gateway_port}: {random_number}")
     except Exception as e:
