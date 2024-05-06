@@ -16,8 +16,7 @@
             app:enterAnim="@anim/transition_in" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_controlFragment"
-            app:destination="@id/controlFragment"
-            app:enterAnim="@anim/transition_in" />
+            app:destination="@id/controlFragment" />
         <action
             android:id="@+id/action_bottomNavigationFragment_to_newLessonFragment"
             app:destination="@id/newLessonFragment"

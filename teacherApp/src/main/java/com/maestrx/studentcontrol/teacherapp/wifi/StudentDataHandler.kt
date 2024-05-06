@@ -65,14 +65,19 @@ class StudentDataHandler(
     private fun receive(): DatagramPacket {
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        newSocket.soTimeout = Constants.TIMEOUT
-        try {
-            newSocket.receive(receivePacket)
-            return receivePacket
-        } catch (e: SocketTimeoutException) {
-            closeSocket()
-            throw Exception("Receive operation timed out", e)
+
+        val attempt = 1
+        while (attempt <= Constants.ATTEMPTS) {
+            try {
+                newSocket.soTimeout = Constants.SINGLE_TIMEOUT
+                newSocket.receive(receivePacket)
+                return receivePacket
+            } catch (e: SocketTimeoutException) {
+                closeSocket()
+                throw Exception("Receive operation timed out", e)
+            }
         }
+        throw Exception("Receive operation timed out")
     }
 
     private fun getData(packet: DatagramPacket): String {

@@ -43,7 +43,7 @@ class ControlViewModel @AssistedInject constructor(
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
 
-    private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.NotReadyToStart)
+    private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.Loading)
     val controlStatus = _controlStatus.asStateFlow()
 
     private val _studentsWithGroupsState = MutableStateFlow(ControlUiState())
@@ -73,10 +73,8 @@ class ControlViewModel @AssistedInject constructor(
                 .launchIn(viewModelScope)
         }
 
-        isManualMarkDialogShowed.onEach { state ->
-            if (!state) {
-                setNotMarkedStudentsWithGroups(getNotMarkedStudentsWithGroups())
-            }
+        isManualMarkDialogShowed.onEach { _ ->
+            setNotMarkedStudentsWithGroups(getNotMarkedStudentsWithGroups())
         }
             .launchIn(viewModelScope)
     }
@@ -114,7 +112,7 @@ class ControlViewModel @AssistedInject constructor(
         _controlStatus.update { status }
         if (status is ControlStatus.Running && lesson.groups.isNotEmpty()) {
             startDataExchange()
-        } else if (lastStatus is ControlStatus.Running && status !is ControlStatus.Running) {
+        } else if ((lastStatus is ControlStatus.Running && status !is ControlStatus.Running)) {
             serverInteractor.closeSocket()
         }
     }
@@ -192,6 +190,13 @@ class ControlViewModel @AssistedInject constructor(
 
     fun setNotMarkedStudentsWithGroups(list: List<Any>) {
         _notMarkedStudentsWithGroups.update { list }
+    }
+
+    fun updateNotMarkedStudentsWithGroups() {
+        viewModelScope.launch {
+            setNotMarkedStudentsWithGroups(getNotMarkedStudentsWithGroups())
+            _message.value = Event(Constants.MESSAGE_SHOW_MARK_DIALOG)
+        }
     }
 
     fun getMarkList(): List<Any> =

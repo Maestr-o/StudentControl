@@ -12,8 +12,9 @@ object Constants {
     const val EXCEL_N_COLUMN_SIZE = 1200
     const val EXCEL_NAME_COLUMN_SIZE = 9000
 
-    const val TIMEOUT = 1_500
-    const val TIME_CHECK_DELAY = 2_000L
+    const val ATTEMPTS = 5
+    const val SINGLE_TIMEOUT = 1_500
+    const val TIME_CHECK_DELAY = 1_000L
     const val TIME_RECESS = 15
 
     const val MESSAGE_ERROR_SAVING_LESSON = "MESSAGE_ERROR_SAVING_LESSON"
@@ -32,4 +33,6 @@ object Constants {
     const val MESSAGE_OK_DELETING_ALL_DATA = "MESSAGE_OK_DELETING_ALL_DATA"
     const val MESSAGE_OK_IMPORT = "MESSAGE_OK_IMPORT"
     const val MESSAGE_OK_EXPORT = "MESSAGE_END_EXPORT"
+
+    const val MESSAGE_SHOW_MARK_DIALOG = "MESSAGE_SHOW_MARK_DIALOG"
 }

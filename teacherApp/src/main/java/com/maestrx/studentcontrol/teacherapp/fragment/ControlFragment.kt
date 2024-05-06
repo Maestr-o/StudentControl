@@ -51,6 +51,8 @@ class ControlFragment : Fragment() {
 
     private lateinit var markAdapter: ManualMarkAdapter
 
+    private var lastStudentsList: List<Any> = mutableListOf()
+
     override fun onStart() {
         super.onStart()
         toolbarViewModel.showDelete(true)
@@ -148,8 +150,9 @@ class ControlFragment : Fragment() {
             manualMarkDialog(inflater)
         }
 
-        binding.markManually.setOnClickListener { _ ->
-            manualMarkDialog(inflater)
+        binding.markManually.setOnClickListener {
+            binding.markManually.isEnabled = false
+            viewModel.updateNotMarkedStudentsWithGroups()
         }
 
         toolbarViewModel.editClicked
@@ -193,81 +196,76 @@ class ControlFragment : Fragment() {
 
         lifecycleScope.launch {
             while (true) {
-                checkControlStatus()
                 delay(Constants.TIME_CHECK_DELAY)
+                checkControlStatus()
             }
         }
 
         viewModel.controlStatus
             .onEach { state ->
                 when (state) {
+                    is ControlStatus.Loading -> {
+                        binding.apply {
+                            progressBar.isVisible = true
+                            mainContainer.isGone = true
+                        }
+                    }
+
                     is ControlStatus.NotReadyToStart -> {
                         toolbarViewModel.setControlRunning(false)
                         binding.apply {
+                            progressBar.isGone = true
+                            mainContainer.isVisible = true
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.early_control)
-                            markManually.isGone = true
-                            registeredCount.isGone = true
-                            attended.isGone = true
+                            markManually.isEnabled = false
                         }
                     }
 
                     ControlStatus.ReadyToStart -> {
                         toolbarViewModel.setControlRunning(false)
                         binding.apply {
+                            progressBar.isGone = true
+                            mainContainer.isVisible = true
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.start_control)
-                            markManually.isVisible = true
-                            registeredCount.isVisible = true
-                            attended.isVisible = true
+                            markManually.isEnabled = true
                         }
                     }
 
                     ControlStatus.Running -> {
                         toolbarViewModel.setControlRunning(true)
                         binding.apply {
+                            progressBar.isGone = true
+                            mainContainer.isVisible = true
                             startControl.isEnabled = true
                             startControl.text = getString(R.string.stop_control)
-                            markManually.isVisible = true
-                            registeredCount.isVisible = true
-                            attended.isVisible = true
+                            markManually.isEnabled = true
                         }
                     }
 
                     ControlStatus.Finished -> {
                         toolbarViewModel.setControlRunning(false)
                         binding.apply {
+                            progressBar.isGone = true
+                            mainContainer.isVisible = true
                             startControl.isEnabled = false
                             startControl.text = getString(R.string.end_control)
-                            markManually.isVisible = true
-                            registeredCount.isVisible = true
-                            attended.isVisible = true
+                            markManually.isEnabled = true
+                        }
+                    }
+
+                    ControlStatus.Full -> {
+                        toolbarViewModel.setControlRunning(false)
+                        binding.apply {
+                            progressBar.isGone = true
+                            mainContainer.isVisible = true
+                            startControl.isEnabled = false
+                            startControl.text = getString(R.string.end_control)
+                            markManually.isEnabled = false
                         }
                     }
                 }
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModel.studentsWithGroupsState
-            .onEach { state ->
-                val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
-                binding.apply {
-                    if (state.attendances.count() >= state.totalStudentsCount) {
-                        markManually.isGone = true
-                        startControl.isGone = true
-                    } else {
-                        markManually.isVisible = true
-                        startControl.isVisible = true
-                    }
-                    registeredCount.text =
-                        getString(
-                            R.string.registered_students,
-                            state.attendances.count(),
-                            state.totalStudentsCount
-                        )
-                    attended.adapter = attendedAdapter
-                }
-
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -281,6 +279,10 @@ class ControlFragment : Fragment() {
 
                         Constants.MESSAGE_ERROR_SAVING_MARKS -> {
                             toast(R.string.error_saving_marks)
+                        }
+
+                        Constants.MESSAGE_SHOW_MARK_DIALOG -> {
+                            manualMarkDialog(inflater)
                         }
                     }
                 }
@@ -315,15 +317,21 @@ class ControlFragment : Fragment() {
 
     private fun checkControlStatus() {
         val status = viewModel.controlStatus.value
+        updateAttendedStudents()
         if (status is ControlStatus.ReadyToStart || status is ControlStatus.NotReadyToStart
-            || status is ControlStatus.Running
+            || status is ControlStatus.Running || status is ControlStatus.Loading
         ) {
             val lesson = viewModel.lesson
             val startTime = TimeFormatter.decRecess(lesson.timeStart)
             val endTime = lesson.timeEnd
             val time = System.currentTimeMillis()
 
-            if (time in startTime..endTime && WifiHelper.isWifiApEnabled(requireContext()) &&
+            val studentsState = viewModel.studentsWithGroupsState.value
+            if (studentsState.totalStudentsCount == studentsState.attendances.count()
+                && studentsState.totalStudentsCount > 0 && status !is ControlStatus.Full
+            ) {
+                viewModel.setControlStatus(ControlStatus.Full)
+            } else if (time in startTime..endTime && WifiHelper.isWifiApEnabled(requireContext()) &&
                 status !is ControlStatus.Running
             ) {
                 viewModel.setControlStatus(ControlStatus.Running)
@@ -340,8 +348,6 @@ class ControlFragment : Fragment() {
     }
 
     private fun manualMarkDialog(inflater: LayoutInflater) {
-        binding.markManually.isEnabled = false
-
         val dialogBinding = DialogMarkManuallyBinding.inflate(inflater).apply {
             val items = viewModel.getMarkList()
             if (items.isEmpty()) {
@@ -370,6 +376,23 @@ class ControlFragment : Fragment() {
                 viewModel.setMarkDialogShow(false)
             }
             .show()
+    }
+
+    private fun updateAttendedStudents() {
+        val state = viewModel.studentsWithGroupsState.value
+        if (state.markedStudentsWithGroups != lastStudentsList) {
+            val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
+            binding.apply {
+                registeredCount.text =
+                    getString(
+                        R.string.registered_students,
+                        state.attendances.count(),
+                        state.totalStudentsCount
+                    )
+                attended.adapter = attendedAdapter
+            }
+            lastStudentsList = state.markedStudentsWithGroups
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
