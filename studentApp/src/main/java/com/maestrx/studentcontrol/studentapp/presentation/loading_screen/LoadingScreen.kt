@@ -2,6 +2,7 @@ package com.maestrx.studentcontrol.studentapp.presentation.loading_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -48,16 +49,31 @@ internal fun LoadingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
+                Column(
                     modifier = Modifier
-                        .padding(bottom = 10.dp),
-                    text = stringResource(id = R.string.sending_data),
-                    fontSize = 20.sp,
-                )
-                CircularProgressIndicator()
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.9f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(bottom = 10.dp),
+                        text = stringResource(id = R.string.sending_data),
+                        fontSize = 20.sp,
+                    )
+                    CircularProgressIndicator()
+                }
+                Button(
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        navClick(false)
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
             }
             LaunchedEffect(Unit) {
                 onEvent(LoadingEvent.StartDataExchange)
@@ -241,7 +257,7 @@ fun LoadingPreview() {
     val context = LocalContext.current
     LoadingScreen(
         state = LoadingUiState(
-            screenState = LoadingStatus.Input,
+            screenState = LoadingStatus.Loading,
             students = listOf(
                 Student(
                     id = 1L,

@@ -32,6 +32,7 @@ import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ControlViewModelFactor
 import com.maestrx.studentcontrol.teacherapp.wifi.WifiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -48,6 +49,8 @@ class ControlFragment : Fragment() {
 
     private var _binding: FragmentControlBinding? = null
     private val binding get() = _binding!!
+
+    private var loopJob: Job? = null
 
     private lateinit var markAdapter: ManualMarkAdapter
 
@@ -194,7 +197,7 @@ class ControlFragment : Fragment() {
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
-        lifecycleScope.launch {
+        loopJob = lifecycleScope.launch {
             while (true) {
                 delay(Constants.TIME_CHECK_DELAY)
                 checkControlStatus()
@@ -380,17 +383,14 @@ class ControlFragment : Fragment() {
 
     private fun updateAttendedStudents() {
         val state = viewModel.studentsWithGroupsState.value
+        binding.registeredCount.text =
+            getString(
+                R.string.registered_students,
+                state.marks.count(),
+                state.totalStudentsCount
+            )
         if (state.markedStudentsWithGroups != lastStudentsList) {
-            val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
-            binding.apply {
-                attended.adapter = attendedAdapter
-                registeredCount.text =
-                    getString(
-                        R.string.registered_students,
-                        state.marks.count(),
-                        state.totalStudentsCount
-                    )
-            }
+            binding.attended.adapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
             lastStudentsList = state.markedStudentsWithGroups
         }
     }
@@ -404,6 +404,8 @@ class ControlFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        loopJob?.cancel()
+        lastStudentsList = mutableListOf()
         _binding = null
     }
 }

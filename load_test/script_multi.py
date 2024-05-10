@@ -13,7 +13,7 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.bind((local_ip, local_port))
 
-        timeout = 1.5
+        timeout = 2
         addr = None
 
         while addr == None:
@@ -34,7 +34,7 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
 
 def main():
     students_count = 200
-    gateway_ip = '192.168.185.47'
+    gateway_ip = '192.168.217.3'
     gateway_port = 5951
 
     start_time = time.time()

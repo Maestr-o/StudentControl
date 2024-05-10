@@ -97,23 +97,14 @@ class ServerInteractor @Inject constructor(
     private fun sendReceiveCycle(address: InetAddress, port: Int, data: String): DatagramPacket {
         val buffer = ByteArray(Constants.PACKET_BUFFER_SIZE)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        var attempt = 1
-        while (receivePacket.length == Constants.PACKET_BUFFER_SIZE && attempt <= Constants.ATTEMPTS) {
+        while (receivePacket.length == Constants.PACKET_BUFFER_SIZE) {
             try {
                 send(address, port, data)
                 socket.soTimeout = Constants.TIMEOUT
                 socket.receive(receivePacket)
             } catch (e: Exception) {
-                Log.d(
-                    Constants.DEBUG_TAG,
-                    "Attempt exchanging data #$attempt - error: ${e.printStackTrace()}"
-                )
-            } finally {
-                attempt++
+                Log.d(Constants.DEBUG_TAG, "Attempt exchanging data error: $e")
             }
-        }
-        if (attempt > Constants.ATTEMPTS) {
-            throw Exception("Error receiving data")
         }
         return receivePacket
     }

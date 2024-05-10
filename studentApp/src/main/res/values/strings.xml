@@ -15,4 +15,5 @@
     <string name="choose_student_hint">The entered data will be saved in memory for next connections.</string>
     <string name="checked_in_toast">You have been successfully checked-in!</string>
     <string name="error_go_to_settings">Error going to settings</string>
+    <string name="cancel">Cancel</string>
 </resources>
