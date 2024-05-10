@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredGroupBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredStudentBinding
-import com.maestrx.studentcontrol.teacherapp.model.AttendedInGroup
+import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 import com.maestrx.studentcontrol.teacherapp.model.Student
 
 class AttendedStudentsAdapter(
@@ -37,7 +37,7 @@ class AttendedStudentsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
-            is AttendedGroupViewHolder -> holder.bind(list[position] as AttendedInGroup)
+            is AttendedGroupViewHolder -> holder.bind(list[position] as MarkInGroup)
             is AttendedStudentViewHolder -> holder.bind(list[position] as Student)
         }
     }
@@ -46,7 +46,7 @@ class AttendedStudentsAdapter(
 
     override fun getItemViewType(position: Int): Int =
         when (list[position]) {
-            is AttendedInGroup -> VIEW_TYPE_GROUP
+            is MarkInGroup -> VIEW_TYPE_GROUP
             is Student -> VIEW_TYPE_STUDENT
             else -> throw IllegalStateException("Invalid item type")
         }

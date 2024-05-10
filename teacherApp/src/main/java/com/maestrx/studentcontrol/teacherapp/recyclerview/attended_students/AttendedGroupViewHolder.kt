@@ -3,13 +3,13 @@ package com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredGroupBinding
-import com.maestrx.studentcontrol.teacherapp.model.AttendedInGroup
+import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 
 class AttendedGroupViewHolder(
     private val binding: CardRegisteredGroupBinding
 ) : ViewHolder(binding.root) {
 
-    fun bind(item: AttendedInGroup) {
+    fun bind(item: MarkInGroup) {
         binding.apply {
             group.text = item.name
             count.text =

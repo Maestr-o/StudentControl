@@ -25,8 +25,8 @@ interface GroupDao {
         """
         SELECT `Group`.id, `Group`.name
         FROM LessonGroupCross, Lesson, `Group`
-        WHERE Lesson.id == :lessonId AND LessonGroupCross.lessonId == :lessonId
-            AND LessonGroupCross.groupId == `Group`.id
+        WHERE Lesson.id == :lessonId AND LessonGroupCross.lesson_id == :lessonId
+            AND LessonGroupCross.group_id == `Group`.id
         """
     )
     fun getByLessonId(lessonId: Long): Flow<List<GroupEntity>>

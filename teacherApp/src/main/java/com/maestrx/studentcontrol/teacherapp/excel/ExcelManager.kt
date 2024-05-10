@@ -8,8 +8,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
 import com.maestrx.studentcontrol.teacherapp.db.entity.GroupEntity
+import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
 import com.maestrx.studentcontrol.teacherapp.db.entity.StudentEntity
 import com.maestrx.studentcontrol.teacherapp.db.entity.SubjectEntity
 import com.maestrx.studentcontrol.teacherapp.model.Group
@@ -172,7 +172,7 @@ class ExcelManager @Inject constructor(
                             val lesson =
                                 Lesson.fromResponseToData(lessonResponse as LessonResponse)
                             val isAttended = attendances.any { attendance ->
-                                (attendance as AttendanceEntity).lessonId == lesson.id &&
+                                (attendance as MarkEntity).lessonId == lesson.id &&
                                         student.id == attendance.studentId
                             }
                             if (isAttended) {

@@ -36,7 +36,7 @@ class ServerInteractor @Inject constructor(
                             StudentDataHandler(studentRepository, attendanceRepository, lesson)
                         studentHandler.handleStudentData(packetDeviceId)
                     } catch (e: Exception) {
-                        Log.d(Constants.DEBUG_TAG, "Error: ${e.printStackTrace()}")
+                        Log.d(Constants.DEBUG_TAG, "Error: $e")
                     }
                 }
             }

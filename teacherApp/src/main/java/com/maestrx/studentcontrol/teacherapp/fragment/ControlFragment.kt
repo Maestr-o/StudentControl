@@ -327,7 +327,7 @@ class ControlFragment : Fragment() {
             val time = System.currentTimeMillis()
 
             val studentsState = viewModel.studentsWithGroupsState.value
-            if (studentsState.totalStudentsCount == studentsState.attendances.count()
+            if (studentsState.totalStudentsCount == studentsState.marks.count()
                 && studentsState.totalStudentsCount > 0 && status !is ControlStatus.Full
             ) {
                 viewModel.setControlStatus(ControlStatus.Full)
@@ -383,13 +383,13 @@ class ControlFragment : Fragment() {
         if (state.markedStudentsWithGroups != lastStudentsList) {
             val attendedAdapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
             binding.apply {
+                attended.adapter = attendedAdapter
                 registeredCount.text =
                     getString(
                         R.string.registered_students,
-                        state.attendances.count(),
+                        state.marks.count(),
                         state.totalStudentsCount
                     )
-                attended.adapter = attendedAdapter
             }
             lastStudentsList = state.markedStudentsWithGroups
         }

@@ -12,27 +12,27 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = GroupEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("groupId"),
+            childColumns = arrayOf("group_id"),
             onDelete = ForeignKey.CASCADE,
         ),
     ],
     indices = [
-        Index(value = ["firstName", "midName", "lastName"], unique = true),
-        Index(value = ["groupId"]),
+        Index(value = ["first_name", "mid_name", "last_name"], unique = true),
+        Index(value = ["group_id"]),
     ]
 )
 data class StudentEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0L,
-    @ColumnInfo(name = "groupId")
+    @ColumnInfo(name = "group_id")
     val groupId: Long = 0L,
-    @ColumnInfo(name = "firstName")
+    @ColumnInfo(name = "first_name")
     val firstName: String = "",
-    @ColumnInfo(name = "midName")
+    @ColumnInfo(name = "mid_name")
     val midName: String? = null,
-    @ColumnInfo(name = "lastName")
+    @ColumnInfo(name = "last_name")
     val lastName: String = "",
-    @ColumnInfo(name = "deviceId")
+    @ColumnInfo(name = "device_id")
     val deviceId: String = "",
 )

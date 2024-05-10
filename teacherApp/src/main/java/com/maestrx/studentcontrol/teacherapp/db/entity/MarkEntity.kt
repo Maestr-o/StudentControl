@@ -7,32 +7,32 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "Attendance",
+    tableName = "Mark",
     foreignKeys = [
         ForeignKey(
             entity = LessonEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("lessonId"),
+            childColumns = arrayOf("lesson_id"),
             onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = StudentEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("studentId"),
+            childColumns = arrayOf("student_id"),
             onDelete = ForeignKey.CASCADE,
         ),
     ],
     indices = [
-        Index(value = ["lessonId", "studentId"], unique = true),
-        Index(value = ["studentId"]),
+        Index(value = ["lesson_id", "student_id"], unique = true),
+        Index(value = ["student_id"]),
     ]
 )
-data class AttendanceEntity(
+data class MarkEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0L,
-    @ColumnInfo(name = "lessonId")
+    @ColumnInfo(name = "lesson_id")
     val lessonId: Long = 0L,
-    @ColumnInfo(name = "studentId")
+    @ColumnInfo(name = "student_id")
     val studentId: Long = 0L,
 )

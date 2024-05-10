@@ -11,6 +11,6 @@ interface LessonGroupCrossDao {
     @Upsert
     suspend fun save(data: LessonGroupCrossEntity)
 
-    @Query("DELETE FROM LessonGroupCross WHERE lessonId == :lessonId")
+    @Query("DELETE FROM LessonGroupCross WHERE lesson_id == :lessonId")
     suspend fun clear(lessonId: Long)
 }

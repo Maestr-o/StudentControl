@@ -11,9 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface LessonDao {
     @Query(
         """
-        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.*
+        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.id,
+            Lesson.time_start as timeStart, Lesson.time_end as timeEnd, Lesson.title,
+            Lesson.type, Lesson.auditory, Lesson.description
         FROM Lesson, Subject
-        WHERE Subject.id = Lesson.subjectId AND Lesson.timeStart BETWEEN :startTime AND :endTime
+        WHERE Subject.id = Lesson.subject_id AND Lesson.time_start BETWEEN :startTime AND :endTime
         """
     )
     suspend fun getForPeriod(startTime: Long, endTime: Long): List<LessonResponse>
@@ -26,10 +28,12 @@ interface LessonDao {
 
     @Query(
         """
-        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.*
+        SELECT Subject.id as subjectId, Subject.name as subjectName, Lesson.id,
+            Lesson.time_start as timeStart, Lesson.time_end as timeEnd, Lesson.title,
+            Lesson.type, Lesson.auditory, Lesson.description
         FROM Lesson, Subject, `Group`, LessonGroupCross
-        WHERE LessonGroupCross.groupId == `Group`.id AND LessonGroupCross.lessonId == Lesson.id
-            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subjectId == Subject.id
+        WHERE LessonGroupCross.group_id == `Group`.id AND LessonGroupCross.lesson_id == Lesson.id
+            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subject_id == Subject.id
         """
     )
     suspend fun getBySubjectIdAndGroupId(subjectId: Long, groupId: Long): List<LessonResponse>
@@ -37,8 +41,8 @@ interface LessonDao {
     @Query(
         """
         SELECT COUNT(*) FROM Lesson, Subject, `Group`, LessonGroupCross
-        WHERE LessonGroupCross.groupId == `Group`.id AND LessonGroupCross.lessonId == Lesson.id
-            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subjectId == Subject.id
+        WHERE LessonGroupCross.group_id == `Group`.id AND LessonGroupCross.lesson_id == Lesson.id
+            AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subject_id == Subject.id
         """
     )
     suspend fun getCountBySubjectIdAndGroupId(subjectId: Long, groupId: Long): Int

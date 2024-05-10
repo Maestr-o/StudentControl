@@ -12,8 +12,9 @@ object Constants {
     const val EXCEL_N_COLUMN_SIZE = 1200
     const val EXCEL_NAME_COLUMN_SIZE = 9000
 
-    const val ATTEMPTS = 5
-    const val SINGLE_TIMEOUT = 1_500
+    private const val ATTEMPTS = 5
+    private const val SINGLE_TIMEOUT = 1_500
+    const val TIMEOUT = ATTEMPTS * SINGLE_TIMEOUT
     const val TIME_CHECK_DELAY = 1_000L
     const val TIME_RECESS = 15
 

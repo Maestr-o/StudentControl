@@ -2,10 +2,10 @@ package com.maestrx.studentcontrol.teacherapp.db
 
 import android.app.Application
 import androidx.room.Room
-import com.maestrx.studentcontrol.teacherapp.db.dao.AttendanceDao
 import com.maestrx.studentcontrol.teacherapp.db.dao.GroupDao
 import com.maestrx.studentcontrol.teacherapp.db.dao.LessonDao
 import com.maestrx.studentcontrol.teacherapp.db.dao.LessonGroupCrossDao
+import com.maestrx.studentcontrol.teacherapp.db.dao.MarkDao
 import com.maestrx.studentcontrol.teacherapp.db.dao.StudentDao
 import com.maestrx.studentcontrol.teacherapp.db.dao.SubjectDao
 import dagger.Module
@@ -30,7 +30,7 @@ object DbModule {
             .build()
 
     @Provides
-    fun provideAttendanceDao(db: AppDb): AttendanceDao = db.attendanceDao
+    fun provideAttendanceDao(db: AppDb): MarkDao = db.markDao
 
     @Provides
     fun provideGroupDao(db: AppDb): GroupDao = db.groupDao

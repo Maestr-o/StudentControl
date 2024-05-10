@@ -3,12 +3,12 @@ package com.maestrx.studentcontrol.teacherapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
-import com.maestrx.studentcontrol.teacherapp.model.Attendance
-import com.maestrx.studentcontrol.teacherapp.model.AttendedInGroup
+import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
+import com.maestrx.studentcontrol.teacherapp.model.Mark
+import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
@@ -63,8 +63,8 @@ class ControlViewModel @AssistedInject constructor(
                 .onEach { list ->
                     _studentsWithGroupsState.update {
                         it.copy(
-                            attendances = list.map { attendance ->
-                                Attendance.toData(attendance)
+                            marks = list.map { attendance ->
+                                Mark.toData(attendance)
                             },
                             markedStudentsWithGroups = getMarkedStudentsWithGroups(),
                         )
@@ -84,7 +84,7 @@ class ControlViewModel @AssistedInject constructor(
             try {
                 val marks = list.filterIsInstance<StudentMark>().filter { it.isAttended }
                 val entities = marks.map { mark ->
-                    AttendanceEntity(lessonId = lesson.id, studentId = mark.id)
+                    MarkEntity(lessonId = lesson.id, studentId = mark.id)
                 }
                 withContext(Dispatchers.IO) {
                     attendanceRepository.saveList(entities)
@@ -136,7 +136,7 @@ class ControlViewModel @AssistedInject constructor(
             listOfStudents
                 .groupBy { it.group }
                 .map { (group, groupStudents) ->
-                    AttendedInGroup(
+                    MarkInGroup(
                         name = group.name,
                         count = groupStudents.size,
                         max = studentRepository.getCountByGroupId(group.id),

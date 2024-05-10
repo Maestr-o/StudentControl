@@ -1,7 +1,7 @@
 package com.maestrx.studentcontrol.teacherapp.wifi
 
 import android.util.Log
-import com.maestrx.studentcontrol.teacherapp.db.entity.AttendanceEntity
+import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
@@ -27,31 +27,34 @@ class StudentDataHandler(
     private lateinit var newSocket: DatagramSocket
 
     suspend fun handleStudentData(packetDeviceId: DatagramPacket) = withContext(Dispatchers.IO) {
-        val deviceId = getData(packetDeviceId)
-        val studentId = studentRepository.getIdByDeviceId(deviceId)
+        try {
+            val deviceId = getData(packetDeviceId)
+            val studentId = studentRepository.getIdByDeviceId(deviceId)
 
-        newSocket = DatagramSocket()
-        Log.d(Constants.DEBUG_TAG, "Socket is open, port: ${newSocket.localPort}")
+            newSocket = DatagramSocket()
+            Log.d(Constants.DEBUG_TAG, "Socket is open, port: ${newSocket.localPort}")
 
-        if (studentId != 0L) {
-            saveAttendance(lesson.id, studentId)
-            send(packetDeviceId.address, packetDeviceId.port, "ACK$deviceId")
-        } else {
-            val data = getStudents(lesson)
-            send(
-                packetDeviceId.address,
-                packetDeviceId.port,
-                Json.encodeToString(
-                    ListSerializer(Student.serializer()),
-                    data
+            if (studentId != 0L) {
+                saveAttendance(lesson.id, studentId)
+                send(packetDeviceId.address, packetDeviceId.port, "ACK$deviceId")
+            } else {
+                val data = getStudents(lesson)
+                send(
+                    packetDeviceId.address,
+                    packetDeviceId.port,
+                    Json.encodeToString(
+                        ListSerializer(Student.serializer()),
+                        data
+                    )
                 )
-            )
-            val newStudentId = getData(receive()).toLong()
-            studentRepository.saveDeviceId(newStudentId, deviceId)
-            saveAttendance(lesson.id, newStudentId)
-            send(packetDeviceId.address, packetDeviceId.port, "ACK2$deviceId")
+                val newStudentId = getData(receive()).toLong()
+                studentRepository.saveDeviceId(newStudentId, deviceId)
+                saveAttendance(lesson.id, newStudentId)
+                send(packetDeviceId.address, packetDeviceId.port, "ACK2$deviceId")
+            }
+        } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "Exchanging data error: $e")
         }
-
         closeSocket()
     }
 
@@ -66,18 +69,14 @@ class StudentDataHandler(
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
 
-        val attempt = 1
-        while (attempt <= Constants.ATTEMPTS) {
-            try {
-                newSocket.soTimeout = Constants.SINGLE_TIMEOUT
-                newSocket.receive(receivePacket)
-                return receivePacket
-            } catch (e: SocketTimeoutException) {
-                closeSocket()
-                throw Exception("Receive operation timed out", e)
-            }
+        try {
+            newSocket.soTimeout = Constants.TIMEOUT
+            newSocket.receive(receivePacket)
+            return receivePacket
+        } catch (e: SocketTimeoutException) {
+            closeSocket()
+            throw Exception("Receive operation timed out", e)
         }
-        throw Exception("Receive operation timed out")
     }
 
     private fun getData(packet: DatagramPacket): String {
@@ -88,7 +87,7 @@ class StudentDataHandler(
 
     private suspend fun saveAttendance(lessonId: Long, studentId: Long) {
         attendanceRepository.save(
-            AttendanceEntity(
+            MarkEntity(
                 lessonId = lessonId,
                 studentId = studentId,
             )

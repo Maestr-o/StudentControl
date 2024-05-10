@@ -12,27 +12,27 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = LessonEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("lessonId"),
+            childColumns = arrayOf("lesson_id"),
             onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = GroupEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("groupId"),
+            childColumns = arrayOf("group_id"),
             onDelete = ForeignKey.CASCADE,
         )
     ],
     indices = [
-        Index(value = ["lessonId", "groupId"], unique = true),
-        Index(value = ["groupId"]),
+        Index(value = ["lesson_id", "group_id"], unique = true),
+        Index(value = ["group_id"]),
     ]
 )
 data class LessonGroupCrossEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0L,
-    @ColumnInfo(name = "lessonId")
+    @ColumnInfo(name = "lesson_id")
     val lessonId: Long = 0L,
-    @ColumnInfo(name = "groupId")
+    @ColumnInfo(name = "group_id")
     val groupId: Long = 0L,
 )

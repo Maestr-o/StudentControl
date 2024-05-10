@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface StudentDao {
     @Query(
         """
-        SELECT Student.id, `Group`.id as groupId, `Group`.name as groupName, Student.firstName, Student.midName,
-            Student.lastName, Student.deviceId
+        SELECT Student.id, `Group`.id as groupId, `Group`.name as groupName,
+            Student.first_name as firstName, Student.mid_name as midName,
+            Student.last_name as lastName, Student.device_id as deviceId
         FROM Student, `Group`
-        WHERE Student.groupId == :groupId AND `Group`.id == :groupId
+        WHERE Student.group_id == :groupId AND `Group`.id == :groupId
         """
     )
     fun getByGroupId(groupId: Long): Flow<List<StudentResponse>>
@@ -28,39 +29,44 @@ interface StudentDao {
     @Query("DELETE FROM Student WHERE id=:id")
     suspend fun deleteById(id: Long)
 
-    @Query("SELECT id FROM Student WHERE deviceId = :deviceId")
+    @Query("SELECT id FROM Student WHERE device_id = :deviceId")
     suspend fun getIdByDeviceId(deviceId: String): Long
 
-    @Query("UPDATE Student SET deviceId = :deviceId WHERE id = :studentId")
+    @Query("UPDATE Student SET device_id = :deviceId WHERE id = :studentId")
     suspend fun saveDeviceId(studentId: Long, deviceId: String)
 
     @Query(
         """
         SELECT COUNT(*) FROM Student, `Group`
-        WHERE Student.groupId == :groupId AND Student.groupId == `Group`.id
+        WHERE Student.group_id == :groupId AND Student.group_id == `Group`.id
         """
     )
     suspend fun getCountByGroupId(groupId: Long): Int
 
     @Query(
         """
-        SELECT `Group`.name as groupName, Student.*
-        FROM Student, Lesson, Attendance, `Group`, LessonGroupCross
-        WHERE Lesson.id == :lessonId AND Attendance.lessonId == Lesson.id
-            AND Attendance.studentId == Student.id AND `Group`.id == Student.groupId
-            AND LessonGroupCross.lessonId == Lesson.id AND LessonGroupCross.groupId == `Group`.id
+        SELECT `Group`.name as groupName, Student.id, Student.group_id as groupId,
+            Student.device_id as deviceId, Student.first_name as firstName,
+            Student.mid_name as midName, Student.last_name as lastName
+        FROM Student, Lesson, Mark, `Group`, LessonGroupCross
+        WHERE Lesson.id == :lessonId AND Mark.lesson_id == Lesson.id
+            AND Mark.student_id == Student.id AND `Group`.id == Student.group_id
+            AND LessonGroupCross.lesson_id == Lesson.id AND LessonGroupCross.group_id == `Group`.id
         """
     )
     suspend fun getMarkedByLessonId(lessonId: Long): List<StudentResponse>
 
     @Query(
         """
-        SELECT `Group`.name as groupName, Student.* FROM Student, Lesson, `Group`, LessonGroupCross
-        WHERE Lesson.id == :lessonId AND `Group`.id == Student.groupId
-            AND LessonGroupCross.lessonId == Lesson.id AND LessonGroupCross.groupId == `Group`.id
+        SELECT `Group`.name as groupName, Student.id, Student.group_id as groupId,
+            Student.device_id as deviceId, Student.first_name as firstName,
+            Student.mid_name as midName, Student.last_name as lastName
+        FROM Student, Lesson, `Group`, LessonGroupCross
+        WHERE Lesson.id == :lessonId AND `Group`.id == Student.group_id
+            AND LessonGroupCross.lesson_id == Lesson.id AND LessonGroupCross.group_id == `Group`.id
         AND NOT EXISTS (
-            SELECT 1 FROM Attendance 
-            WHERE Attendance.lessonId == Lesson.id AND Attendance.studentId == Student.id
+            SELECT 1 FROM Mark 
+            WHERE Mark.lesson_id == Lesson.id AND Mark.student_id == Student.id
         )
         """
     )

@@ -2,6 +2,8 @@ package com.maestrx.studentcontrol.studentapp.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.provider.Settings.Secure
 import android.util.Log
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
@@ -58,6 +60,9 @@ class ServerInteractor @Inject constructor(
 
         var data = getData(receivePacket)
         if (data == "ACK$deviceId") {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                disconnect()
+            }
             _interState.update { LoadingStatus.Success }
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
@@ -79,6 +84,9 @@ class ServerInteractor @Inject constructor(
 
             data = getData(receivePacket)
             if (data == "ACK2$deviceId") {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    disconnect()
+                }
                 _interState.update { LoadingStatus.Success }
             } else {
                 _interState.update { LoadingStatus.Error }
@@ -128,5 +136,11 @@ class ServerInteractor @Inject constructor(
             socket.close()
             Log.d(Constants.DEBUG_TAG, "Socket closed")
         }
+    }
+
+    private fun disconnect(): Boolean {
+        val wifiManager =
+            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        return wifiManager.disconnect()
     }
 }

@@ -13,12 +13,12 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonType
         ForeignKey(
             entity = SubjectEntity::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("subjectId"),
+            childColumns = arrayOf("subject_id"),
             onDelete = ForeignKey.CASCADE,
         )
     ],
     indices = [
-        Index(value = ["subjectId"]),
+        Index(value = ["subject_id"]),
     ]
 )
 data class LessonEntity(
@@ -27,11 +27,11 @@ data class LessonEntity(
     val id: Long = 0L,
     @ColumnInfo(name = "title")
     val title: String = "",
-    @ColumnInfo(name = "timeStart")
+    @ColumnInfo(name = "time_start")
     val timeStart: Long = 0L,
-    @ColumnInfo(name = "timeEnd")
+    @ColumnInfo(name = "time_end")
     val timeEnd: Long = 0L,
-    @ColumnInfo(name = "subjectId")
+    @ColumnInfo(name = "subject_id")
     val subjectId: Long = 0L,
     @ColumnInfo(name = "auditory")
     val auditory: String = "",
