@@ -24,15 +24,12 @@ class StudentDataHandler(
     private val lesson: Lesson,
 ) {
 
-    private lateinit var newSocket: DatagramSocket
+    val newSocket = DatagramSocket()
 
     suspend fun handleStudentData(packetDeviceId: DatagramPacket) = withContext(Dispatchers.IO) {
         try {
-            val deviceId = getData(packetDeviceId)
+            val deviceId = extractData(packetDeviceId)
             val studentId = studentRepository.getIdByDeviceId(deviceId)
-
-            newSocket = DatagramSocket()
-            Log.d(Constants.DEBUG_TAG, "Socket is open, port: ${newSocket.localPort}")
 
             if (studentId != 0L) {
                 saveAttendance(lesson.id, studentId)
@@ -47,7 +44,7 @@ class StudentDataHandler(
                         data
                     )
                 )
-                val newStudentId = getData(receive()).toLong()
+                val newStudentId = extractData(receive()).toLong()
                 studentRepository.saveDeviceId(newStudentId, deviceId)
                 saveAttendance(lesson.id, newStudentId)
                 send(packetDeviceId.address, packetDeviceId.port, "ACK2$deviceId")
@@ -74,12 +71,11 @@ class StudentDataHandler(
             newSocket.receive(receivePacket)
             return receivePacket
         } catch (e: SocketTimeoutException) {
-            closeSocket()
             throw Exception("Receive operation timed out", e)
         }
     }
 
-    private fun getData(packet: DatagramPacket): String {
+    private fun extractData(packet: DatagramPacket): String {
         val data = String(packet.data, 0, packet.length)
         Log.d(Constants.DEBUG_TAG, "Received data: $data")
         return data
@@ -109,7 +105,7 @@ class StudentDataHandler(
     }
 
     private fun closeSocket() {
-        if (::newSocket.isInitialized && newSocket.isBound) {
+        if (newSocket.isBound) {
             newSocket.close()
             Log.d(Constants.DEBUG_TAG, "Socket closed")
         }

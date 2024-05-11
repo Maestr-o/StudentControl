@@ -1,7 +1,8 @@
-package com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students
+package com.maestrx.studentcontrol.teacherapp.recyclerview.marked_students
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredGroupBinding
@@ -9,8 +10,8 @@ import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredStudentBi
 import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 import com.maestrx.studentcontrol.teacherapp.model.Student
 
-class AttendedStudentsAdapter(
-    private val list: List<Any>
+class MarkedStudentsAdapter(
+    private var list: List<Any>
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     companion object {
@@ -23,12 +24,12 @@ class AttendedStudentsAdapter(
         return when (viewType) {
             VIEW_TYPE_GROUP -> {
                 val binding = CardRegisteredGroupBinding.inflate(inflater, parent, false)
-                AttendedGroupViewHolder(binding)
+                MarkedGroupViewHolder(binding)
             }
 
             VIEW_TYPE_STUDENT -> {
                 val binding = CardRegisteredStudentBinding.inflate(inflater, parent, false)
-                AttendedStudentViewHolder(binding)
+                MarkedStudentViewHolder(binding)
             }
 
             else -> throw IllegalStateException("Invalid item type")
@@ -37,8 +38,8 @@ class AttendedStudentsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
-            is AttendedGroupViewHolder -> holder.bind(list[position] as MarkInGroup)
-            is AttendedStudentViewHolder -> holder.bind(list[position] as Student)
+            is MarkedGroupViewHolder -> holder.bind(list[position] as MarkInGroup)
+            is MarkedStudentViewHolder -> holder.bind(list[position] as Student)
         }
     }
 
@@ -50,4 +51,11 @@ class AttendedStudentsAdapter(
             is Student -> VIEW_TYPE_STUDENT
             else -> throw IllegalStateException("Invalid item type")
         }
+
+    fun updateData(newList: List<Any>) {
+        val diffCallback = MarkedStudentsDiffCallback(list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        list = newList
+        diffResult.dispatchUpdatesTo(this)
+    }
 }

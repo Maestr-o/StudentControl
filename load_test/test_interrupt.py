@@ -20,7 +20,7 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
             try:
                 udp_socket.settimeout(timeout)
                 udp_socket.sendto(message.encode(), (gateway_ip, start_gateway_port))
-                response, addr = udp_socket.recvfrom(50000)
+                response, addr = udp_socket.recvfrom(100000)
                 break
             except Exception as e:
                 pass
@@ -33,19 +33,23 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
         udp_socket.close()
 
 def main():
-    students_count = 200
     gateway_ip = '192.168.217.3'
     gateway_port = 5951
 
     start_time = time.time()
     threads = []
 
-    for i in range(students_count):
-        start_message = generate_start_message()
-        local_port = 6000 + i
-        t = threading.Thread(target=send_data, args=(gateway_ip, gateway_port, local_port, start_message, i + 1))
-        threads.append(t)
-        t.start()
+    x = 1
+    for y in range(40):
+        for i in range(5):
+            start_message = generate_start_message()
+            local_port = 6000 + x
+            x += 1
+            id = random.randint(1, 200)
+            t = threading.Thread(target=send_data, args=(gateway_ip, gateway_port, local_port, start_message, id))
+            threads.append(t)
+            t.start()
+        time.sleep(1)
         
     for t in threads:
         t.join()

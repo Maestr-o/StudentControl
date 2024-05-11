@@ -1,11 +1,11 @@
-package com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students
+package com.maestrx.studentcontrol.teacherapp.recyclerview.marked_students
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredGroupBinding
 import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 
-class AttendedGroupViewHolder(
+class MarkedGroupViewHolder(
     private val binding: CardRegisteredGroupBinding
 ) : ViewHolder(binding.root) {
 

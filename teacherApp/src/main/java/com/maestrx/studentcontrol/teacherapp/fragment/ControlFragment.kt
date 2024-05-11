@@ -20,9 +20,9 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentControlBinding
 import com.maestrx.studentcontrol.teacherapp.model.ControlStatus
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
-import com.maestrx.studentcontrol.teacherapp.recyclerview.attended_students.AttendedStudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected.GroupSelectedAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.manual_mark.ManualMarkAdapter
+import com.maestrx.studentcontrol.teacherapp.recyclerview.marked_students.MarkedStudentsAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.utils.toast
@@ -53,6 +53,7 @@ class ControlFragment : Fragment() {
     private var loopJob: Job? = null
 
     private lateinit var markAdapter: ManualMarkAdapter
+    private lateinit var studentsAdapter: MarkedStudentsAdapter
 
     private var lastStudentsList: List<Any> = mutableListOf()
 
@@ -91,6 +92,9 @@ class ControlFragment : Fragment() {
 
         val groupsAdapter = GroupSelectedAdapter()
         binding.groups.adapter = groupsAdapter
+
+        studentsAdapter = MarkedStudentsAdapter(mutableListOf())
+        binding.attended.adapter = studentsAdapter
 
         groupsAdapter.submitList(lesson.groups)
         binding.apply {
@@ -198,9 +202,15 @@ class ControlFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         loopJob = lifecycleScope.launch {
+            var updateListWait = Constants.UPDATE_LIST_WAIT
             while (true) {
                 delay(Constants.TIME_CHECK_DELAY)
-                checkControlStatus()
+                checkControlStatus(updateListWait)
+                updateListWait = if (updateListWait < Constants.UPDATE_LIST_WAIT) {
+                    updateListWait + 1
+                } else {
+                    0
+                }
             }
         }
 
@@ -318,9 +328,11 @@ class ControlFragment : Fragment() {
         return binding.root
     }
 
-    private fun checkControlStatus() {
+    private fun checkControlStatus(updateListWait: Int) {
         val status = viewModel.controlStatus.value
-        updateAttendedStudents()
+        if (updateListWait == Constants.UPDATE_LIST_WAIT) {
+            updateMarkedStudents()
+        }
         if (status is ControlStatus.ReadyToStart || status is ControlStatus.NotReadyToStart
             || status is ControlStatus.Running || status is ControlStatus.Loading
         ) {
@@ -329,7 +341,7 @@ class ControlFragment : Fragment() {
             val endTime = lesson.timeEnd
             val time = System.currentTimeMillis()
 
-            val studentsState = viewModel.studentsWithGroupsState.value
+            val studentsState = viewModel.studentsWithGroups.value
             if (studentsState.totalStudentsCount == studentsState.marks.count()
                 && studentsState.totalStudentsCount > 0 && status !is ControlStatus.Full
             ) {
@@ -381,8 +393,8 @@ class ControlFragment : Fragment() {
             .show()
     }
 
-    private fun updateAttendedStudents() {
-        val state = viewModel.studentsWithGroupsState.value
+    private fun updateMarkedStudents() {
+        val state = viewModel.studentsWithGroups.value
         binding.registeredCount.text =
             getString(
                 R.string.registered_students,
@@ -390,8 +402,9 @@ class ControlFragment : Fragment() {
                 state.totalStudentsCount
             )
         if (state.markedStudentsWithGroups != lastStudentsList) {
-            binding.attended.adapter = AttendedStudentsAdapter(state.markedStudentsWithGroups)
-            lastStudentsList = state.markedStudentsWithGroups
+            val list = state.markedStudentsWithGroups
+            studentsAdapter.updateData(list)
+            lastStudentsList = list
         }
     }
 

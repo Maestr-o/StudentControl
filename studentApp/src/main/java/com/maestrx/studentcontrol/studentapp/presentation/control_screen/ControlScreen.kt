@@ -147,18 +147,10 @@ internal fun ControlScreen(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            when (state) {
-                is ControlStatus.NotConnected -> {
-                    DisconnectedGroup()
-                }
-
-                is ControlStatus.Connected -> {
-                    ConnectedGroup(navClick, isDataExchanged)
-                }
-
-                is ControlStatus.Default -> {
-                    DisconnectedGroup()
-                }
+            if (state is ControlStatus.Connected || isDataExchanged) {
+                ConnectedGroup(navClick, isDataExchanged)
+            } else {
+                DisconnectedGroup()
             }
         }
     }

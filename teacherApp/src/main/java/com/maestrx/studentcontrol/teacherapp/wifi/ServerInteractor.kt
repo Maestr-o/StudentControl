@@ -7,6 +7,7 @@ import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepositor
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,20 +22,25 @@ class ServerInteractor @Inject constructor(
 ) {
 
     private val defaultServerPort = 5951
-    private lateinit var socket: DatagramSocket
+    private lateinit var mainSocket: DatagramSocket
+
+    private var loopJob: Job? = null
+    private var sockets: List<DatagramSocket> = mutableListOf()
 
     suspend fun dataExchange(lesson: Lesson) = withContext(Dispatchers.IO) {
         closeSocket()
-        socket = DatagramSocket(defaultServerPort)
-        Log.d(Constants.DEBUG_TAG, "Main socket is open, port: ${socket.localPort}")
+        mainSocket = DatagramSocket(defaultServerPort)
+        Log.d(Constants.DEBUG_TAG, "Main socket is open, port: ${mainSocket.localPort}")
         coroutineScope {
             while (true) {
                 val packetDeviceId = receive()
-                launch {
+                loopJob = launch {
                     try {
                         val studentHandler =
                             StudentDataHandler(studentRepository, attendanceRepository, lesson)
+                        sockets += studentHandler.newSocket
                         studentHandler.handleStudentData(packetDeviceId)
+                        sockets -= studentHandler.newSocket
                     } catch (e: Exception) {
                         Log.d(Constants.DEBUG_TAG, "Error: $e")
                     }
@@ -46,13 +52,17 @@ class ServerInteractor @Inject constructor(
     private fun receive(): DatagramPacket {
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        socket.receive(receivePacket)
+        mainSocket.receive(receivePacket)
         return receivePacket
     }
 
     fun closeSocket() {
-        if (::socket.isInitialized && socket.isBound) {
-            socket.close()
+        if (::mainSocket.isInitialized && mainSocket.isBound) {
+            sockets.map { socket ->
+                socket.close()
+            }
+            loopJob?.cancel()
+            mainSocket.close()
             Log.d(Constants.DEBUG_TAG, "Main socket closed")
         }
     }

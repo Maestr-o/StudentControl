@@ -46,8 +46,8 @@ class ControlViewModel @AssistedInject constructor(
     private val _controlStatus = MutableStateFlow<ControlStatus>(ControlStatus.Loading)
     val controlStatus = _controlStatus.asStateFlow()
 
-    private val _studentsWithGroupsState = MutableStateFlow(ControlUiState())
-    val studentsWithGroupsState = _studentsWithGroupsState.asStateFlow()
+    private val _studentsWithGroups = MutableStateFlow(ControlUiState())
+    val studentsWithGroups = _studentsWithGroups.asStateFlow()
 
     private val _isManualMarkDialogShowed = MutableStateFlow(false)
     val isManualMarkDialogShowed = _isManualMarkDialogShowed.asStateFlow()
@@ -56,15 +56,15 @@ class ControlViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _studentsWithGroupsState.update {
+            _studentsWithGroups.update {
                 it.copy(totalStudentsCount = getTotalStudentsCount(lesson.groups))
             }
             attendanceRepository.getByLessonId(lesson.id)
                 .onEach { list ->
-                    _studentsWithGroupsState.update {
+                    _studentsWithGroups.update {
                         it.copy(
-                            marks = list.map { attendance ->
-                                Mark.toData(attendance)
+                            marks = list.map { mark ->
+                                Mark.toData(mark)
                             },
                             markedStudentsWithGroups = getMarkedStudentsWithGroups(),
                         )
