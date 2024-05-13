@@ -11,7 +11,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Mark
 import com.maestrx.studentcontrol.teacherapp.model.MarkInGroup
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentMark
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
+import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 
 @HiltViewModel(assistedFactory = ControlViewModelFactory::class)
 class ControlViewModel @AssistedInject constructor(
-    private val attendanceRepository: AttendanceRepository,
+    private val markRepository: MarkRepository,
     private val lessonRepository: LessonRepository,
     private val studentRepository: StudentRepository,
     private val serverInteractor: ServerInteractor,
@@ -59,7 +59,7 @@ class ControlViewModel @AssistedInject constructor(
             _studentsWithGroups.update {
                 it.copy(totalStudentsCount = getTotalStudentsCount(lesson.groups))
             }
-            attendanceRepository.getByLessonId(lesson.id)
+            markRepository.getByLessonId(lesson.id)
                 .onEach { list ->
                     _studentsWithGroups.update {
                         it.copy(
@@ -87,7 +87,7 @@ class ControlViewModel @AssistedInject constructor(
                     MarkEntity(lessonId = lesson.id, studentId = mark.id)
                 }
                 withContext(Dispatchers.IO) {
-                    attendanceRepository.saveList(entities)
+                    markRepository.saveList(entities)
                 }
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)

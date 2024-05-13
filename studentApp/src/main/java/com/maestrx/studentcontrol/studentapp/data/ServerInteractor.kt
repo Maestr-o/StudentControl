@@ -58,7 +58,7 @@ class ServerInteractor @Inject constructor(
         var receivePacket = sendReceiveCycle(serverAddress, defaultServerPort, deviceId)
         val newPort = receivePacket.port
 
-        var data = getData(receivePacket)
+        var data = extractData(receivePacket)
         if (data == "ACK$deviceId") {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 disconnect()
@@ -82,7 +82,7 @@ class ServerInteractor @Inject constructor(
 
             stId = 0L
 
-            data = getData(receivePacket)
+            data = extractData(receivePacket)
             if (data == "ACK2$deviceId") {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     disconnect()
@@ -116,7 +116,7 @@ class ServerInteractor @Inject constructor(
         Log.d(Constants.DEBUG_TAG, "Sent data to port $serverPort: $message")
     }
 
-    private fun getData(packet: DatagramPacket): String {
+    private fun extractData(packet: DatagramPacket): String {
         val data = String(packet.data, 0, packet.length)
         Log.d(Constants.DEBUG_TAG, "Received data: $data")
         return data

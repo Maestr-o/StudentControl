@@ -5,7 +5,7 @@ import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
+import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import java.net.SocketTimeoutException
 
 class StudentDataHandler(
     private val studentRepository: StudentRepository,
-    private val attendanceRepository: AttendanceRepository,
+    private val markRepository: MarkRepository,
     private val lesson: Lesson,
 ) {
 
@@ -32,21 +32,18 @@ class StudentDataHandler(
             val studentId = studentRepository.getIdByDeviceId(deviceId)
 
             if (studentId != 0L) {
-                saveAttendance(lesson.id, studentId)
+                saveMark(lesson.id, studentId)
                 send(packetDeviceId.address, packetDeviceId.port, "ACK$deviceId")
             } else {
                 val data = getStudents(lesson)
                 send(
                     packetDeviceId.address,
                     packetDeviceId.port,
-                    Json.encodeToString(
-                        ListSerializer(Student.serializer()),
-                        data
-                    )
+                    Json.encodeToString(ListSerializer(Student.serializer()), data)
                 )
                 val newStudentId = extractData(receive()).toLong()
                 studentRepository.saveDeviceId(newStudentId, deviceId)
-                saveAttendance(lesson.id, newStudentId)
+                saveMark(lesson.id, newStudentId)
                 send(packetDeviceId.address, packetDeviceId.port, "ACK2$deviceId")
             }
         } catch (e: Exception) {
@@ -65,7 +62,6 @@ class StudentDataHandler(
     private fun receive(): DatagramPacket {
         val buffer = ByteArray(1024)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-
         try {
             newSocket.soTimeout = Constants.TIMEOUT
             newSocket.receive(receivePacket)
@@ -81,8 +77,8 @@ class StudentDataHandler(
         return data
     }
 
-    private suspend fun saveAttendance(lessonId: Long, studentId: Long) {
-        attendanceRepository.save(
+    private suspend fun saveMark(lessonId: Long, studentId: Long) {
+        markRepository.save(
             MarkEntity(
                 lessonId = lessonId,
                 studentId = studentId,

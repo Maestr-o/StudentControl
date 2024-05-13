@@ -9,5 +9,5 @@ import dagger.hilt.android.components.ViewModelComponent
 @Module
 interface AttendanceRepositoryModule {
     @Binds
-    fun bindAttendanceRepository(impl: LocalAttendanceRepository): AttendanceRepository
+    fun bindAttendanceRepository(impl: LocalMarkRepository): MarkRepository
 }

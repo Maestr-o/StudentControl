@@ -2,7 +2,7 @@ package com.maestrx.studentcontrol.teacherapp.wifi
 
 import android.util.Log
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
+import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class ServerInteractor @Inject constructor(
     private val studentRepository: StudentRepository,
-    private val attendanceRepository: AttendanceRepository,
+    private val markRepository: MarkRepository,
 ) {
 
     private val defaultServerPort = 5951
@@ -37,7 +37,7 @@ class ServerInteractor @Inject constructor(
                 loopJob = launch {
                     try {
                         val studentHandler =
-                            StudentDataHandler(studentRepository, attendanceRepository, lesson)
+                            StudentDataHandler(studentRepository, markRepository, lesson)
                         sockets += studentHandler.newSocket
                         studentHandler.handleStudentData(packetDeviceId)
                         sockets -= studentHandler.newSocket

@@ -18,7 +18,7 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 import com.maestrx.studentcontrol.teacherapp.model.Subject
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.AttendanceRepository
+import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
@@ -45,7 +45,7 @@ import javax.inject.Inject
 class ExcelManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val subjectRepository: SubjectRepository,
-    private val attendanceRepository: AttendanceRepository,
+    private val markRepository: MarkRepository,
     private val studentRepository: StudentRepository,
     private val groupRepository: GroupRepository,
     private val lessonRepository: LessonRepository,
@@ -60,7 +60,7 @@ class ExcelManager @Inject constructor(
         }
         val (subjects, groups) = awaitAll(subjectsDeferred, groupsDeferred)
 
-        if (attendanceRepository.getCount() == 0) {
+        if (markRepository.getCount() == 0) {
             return@withContext false
         }
 
@@ -104,7 +104,7 @@ class ExcelManager @Inject constructor(
             studentRepository.getByGroupId(group.id).first()
         }
         val attendancesDeferred = async(Dispatchers.IO) {
-            attendanceRepository.getBySubjectIdAndGroupId(subject.id, group.id)
+            markRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
         val (lessons, students, attendances) = awaitAll(
             lessonsDeferred, studentsDeferred, attendancesDeferred
@@ -214,7 +214,7 @@ class ExcelManager @Inject constructor(
                         createCell(y++).apply {
                             setCellStyle(styles.headerDecimal)
                             setCellValue(
-                                attendanceRepository.getCountByLessonIdAndGroupId(
+                                markRepository.getCountByLessonIdAndGroupId(
                                     lesson.id,
                                     group.id
                                 ).toDouble()
