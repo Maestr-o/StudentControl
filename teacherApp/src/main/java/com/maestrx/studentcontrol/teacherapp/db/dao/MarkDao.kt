@@ -47,4 +47,15 @@ interface MarkDao {
 
     @Query("SELECT COUNT(*) FROM Mark")
     suspend fun getCount(): Int
+
+    @Query(
+        """
+        SELECT Mark.id, Mark.lesson_id, Mark.student_id
+        FROM Mark, Student, Lesson, Subject
+        WHERE Mark.student_id == Student.id AND Student.id == :studentId
+            AND Mark.lesson_id == Lesson.id AND Lesson.subject_id == Subject.id
+            AND Subject.id == :subjectId
+    """
+    )
+    suspend fun getByStudentIdAndSubjectId(studentId: Long, subjectId: Long): List<MarkEntity>
 }

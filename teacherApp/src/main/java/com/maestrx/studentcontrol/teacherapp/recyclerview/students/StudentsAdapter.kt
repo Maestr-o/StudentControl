@@ -12,6 +12,7 @@ class StudentsAdapter(
 ) : ListAdapter<Student, StudentsViewHolder>(StudentsDiffCallback()) {
 
     interface StudentsListener {
+        fun onClickListener(student: Student)
         fun onEditClickListener(view: View, student: Student)
         fun onDeleteClickListener(view: View, student: Student)
     }
@@ -20,6 +21,10 @@ class StudentsAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding = CardStudentBinding.inflate(inflater, parent, false)
         val viewHolder = StudentsViewHolder(binding)
+
+        binding.root.setOnClickListener {
+            listener.onClickListener(getItem(viewHolder.adapterPosition))
+        }
 
         binding.edit.setOnClickListener {
             listener.onEditClickListener(it, getItem(viewHolder.adapterPosition))

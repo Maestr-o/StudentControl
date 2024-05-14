@@ -8,4 +8,5 @@ interface SubjectRepository {
     suspend fun save(data: SubjectEntity)
     suspend fun deleteById(id: Long)
     fun getCount(): Flow<Long>
+    suspend fun getByGroupId(groupId: Long): List<SubjectEntity>
 }

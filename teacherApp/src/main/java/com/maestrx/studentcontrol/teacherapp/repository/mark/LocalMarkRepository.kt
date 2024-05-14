@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.repository.attendance
+package com.maestrx.studentcontrol.teacherapp.repository.mark
 
 import com.maestrx.studentcontrol.teacherapp.db.dao.MarkDao
 import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
@@ -28,4 +28,10 @@ class LocalMarkRepository @Inject constructor(
 
     override suspend fun saveList(list: List<MarkEntity>) =
         markDao.saveList(list)
+
+    override suspend fun getByStudentIdAndSubjectId(
+        studentId: Long,
+        subjectId: Long
+    ): List<MarkEntity> =
+        markDao.getByStudentIdAndSubjectId(studentId, subjectId)
 }

@@ -30,7 +30,7 @@ object DbModule {
             .build()
 
     @Provides
-    fun provideAttendanceDao(db: AppDb): MarkDao = db.markDao
+    fun provideMarkDao(db: AppDb): MarkDao = db.markDao
 
     @Provides
     fun provideGroupDao(db: AppDb): GroupDao = db.groupDao

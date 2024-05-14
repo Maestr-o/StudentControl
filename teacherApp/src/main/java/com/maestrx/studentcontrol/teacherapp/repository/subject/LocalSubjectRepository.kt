@@ -25,4 +25,7 @@ class LocalSubjectRepository @Inject constructor(
 
     override fun getCount(): Flow<Long> =
         subjectDao.getCount()
+
+    override suspend fun getByGroupId(groupId: Long): List<SubjectEntity> =
+        subjectDao.getByGroupId(groupId)
 }

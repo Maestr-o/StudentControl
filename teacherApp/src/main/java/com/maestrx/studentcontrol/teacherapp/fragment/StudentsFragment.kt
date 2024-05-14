@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.documentfile.provider.DocumentFile
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditStudentBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogImportStudentsBinding
@@ -32,6 +34,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class StudentsFragment : Fragment() {
@@ -67,6 +71,13 @@ class StudentsFragment : Fragment() {
 
         val adapter = StudentsAdapter(
             object : StudentsAdapter.StudentsListener {
+                override fun onClickListener(student: Student) {
+                    findNavController().navigate(
+                        R.id.action_studentsFragment_to_reportFragment,
+                        bundleOf(Constants.STUDENT_DATA to Json.encodeToString(student))
+                    )
+                }
+
                 override fun onEditClickListener(view: View, student: Student) {
                     view.isEnabled = false
                     val dialogBinding = DialogEditStudentBinding.inflate(inflater)

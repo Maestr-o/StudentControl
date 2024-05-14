@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.repository.attendance
+package com.maestrx.studentcontrol.teacherapp.repository.mark
 
 import dagger.Binds
 import dagger.Module
@@ -7,7 +7,7 @@ import dagger.hilt.android.components.ViewModelComponent
 
 @InstallIn(ViewModelComponent::class)
 @Module
-interface AttendanceRepositoryModule {
+interface MarkRepositoryModule {
     @Binds
-    fun bindAttendanceRepository(impl: LocalMarkRepository): MarkRepository
+    fun bindMarkRepository(impl: LocalMarkRepository): MarkRepository
 }

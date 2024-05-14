@@ -5,7 +5,7 @@ import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
+import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import kotlinx.coroutines.Dispatchers

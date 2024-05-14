@@ -18,9 +18,9 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonResponse
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.StudentResponse
 import com.maestrx.studentcontrol.teacherapp.model.Subject
-import com.maestrx.studentcontrol.teacherapp.repository.attendance.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
+import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
@@ -103,14 +103,14 @@ class ExcelManager @Inject constructor(
         val studentsDeferred = async(Dispatchers.IO) {
             studentRepository.getByGroupId(group.id).first()
         }
-        val attendancesDeferred = async(Dispatchers.IO) {
+        val marksDeferred = async(Dispatchers.IO) {
             markRepository.getBySubjectIdAndGroupId(subject.id, group.id)
         }
-        val (lessons, students, attendances) = awaitAll(
-            lessonsDeferred, studentsDeferred, attendancesDeferred
+        val (lessons, students, marks) = awaitAll(
+            lessonsDeferred, studentsDeferred, marksDeferred
         )
 
-        if (attendances.isEmpty() || students.isEmpty() || lessons.isEmpty()) {
+        if (marks.isEmpty() || students.isEmpty() || lessons.isEmpty()) {
             return@withContext false
         }
 
@@ -153,7 +153,7 @@ class ExcelManager @Inject constructor(
                     }
                 }
 
-                val listOfPercentAttendance: MutableList<Double> = mutableListOf()
+                val listOfPercentMark: MutableList<Double> = mutableListOf()
                 students.forEachIndexed { index, studentResponse ->
                     val student =
                         Student.fromResponseToData(studentResponse as StudentResponse)
@@ -171,9 +171,9 @@ class ExcelManager @Inject constructor(
                         lessons.forEach { lessonResponse ->
                             val lesson =
                                 Lesson.fromResponseToData(lessonResponse as LessonResponse)
-                            val isAttended = attendances.any { attendance ->
-                                (attendance as MarkEntity).lessonId == lesson.id &&
-                                        student.id == attendance.studentId
+                            val isAttended = marks.any { mark ->
+                                (mark as MarkEntity).lessonId == lesson.id &&
+                                        student.id == mark.studentId
                             }
                             if (isAttended) {
                                 createCell(y++).apply {
@@ -194,7 +194,7 @@ class ExcelManager @Inject constructor(
                         }
 
                         val percent = attendedCount.toDouble() / lessons.count()
-                        listOfPercentAttendance += percent
+                        listOfPercentMark += percent
                         createCell(y++).apply {
                             setCellStyle(styles.percent)
                             setCellValue(percent)
@@ -226,14 +226,14 @@ class ExcelManager @Inject constructor(
                         setCellValue(lessons.count().toDouble())
                     }
 
-                    var avgPercentAttendance = 0.0
-                    listOfPercentAttendance.forEach {
-                        avgPercentAttendance += it
+                    var avgPercentMark = 0.0
+                    listOfPercentMark.forEach {
+                        avgPercentMark += it
                     }
-                    avgPercentAttendance /= students.count()
+                    avgPercentMark /= students.count()
                     createCell(y++).apply {
                         setCellStyle(styles.headerPercent)
-                        setCellValue(avgPercentAttendance)
+                        setCellValue(avgPercentMark)
                     }
                 }
             }

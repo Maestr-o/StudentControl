@@ -44,7 +44,12 @@
     <fragment
         android:id="@+id/studentsFragment"
         android:name="com.maestrx.studentcontrol.teacherapp.fragment.StudentsFragment"
-        tools:layout="@layout/fragment_students" />
+        tools:layout="@layout/fragment_students">
+        <action
+            android:id="@+id/action_studentsFragment_to_reportFragment"
+            app:destination="@id/reportFragment"
+            app:enterAnim="@anim/transition_in" />
+    </fragment>
     <fragment
         android:id="@+id/controlFragment"
         android:name="com.maestrx.studentcontrol.teacherapp.fragment.ControlFragment"
@@ -60,4 +65,9 @@
         android:name="com.maestrx.studentcontrol.teacherapp.fragment.NewLessonFragment"
         android:label="@string/add_lesson"
         tools:layout="@layout/fragment_edit_lesson" />
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="com.maestrx.studentcontrol.teacherapp.fragment.ReportFragment"
+        android:label="@string/student"
+        tools:layout="@layout/fragment_report" />
 </navigation>

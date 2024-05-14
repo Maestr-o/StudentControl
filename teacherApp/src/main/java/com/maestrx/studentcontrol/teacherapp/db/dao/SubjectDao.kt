@@ -20,4 +20,13 @@ interface SubjectDao {
 
     @Query("SELECT COUNT(*) FROM Subject")
     fun getCount(): Flow<Long>
+
+    @Query(
+        """
+        SELECT Subject.* FROM Subject, `Group`, Lesson, LessonGroupCross
+        WHERE Subject.id == Lesson.subject_id AND Lesson.id == LessonGroupCross.lesson_id
+            AND LessonGroupCross.group_id == `Group`.id AND `Group`.id == :groupId
+    """
+    )
+    suspend fun getByGroupId(groupId: Long): List<SubjectEntity>
 }

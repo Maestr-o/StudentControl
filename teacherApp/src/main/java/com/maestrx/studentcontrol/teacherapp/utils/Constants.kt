@@ -7,6 +7,7 @@ object Constants {
     const val NEW_LESSON_DATE = "NEW_LESSON_DATE"
     const val GROUP_ID = "GROUP_ID"
     const val LESSON_UPDATED = "LESSON_UPDATED"
+    const val STUDENT_DATA = "STUDENT_DATA"
 
     const val EXCEL_FORMAT = ".xlsx"
     const val EXCEL_N_COLUMN_SIZE = 1200

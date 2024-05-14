@@ -106,4 +106,9 @@
     <string name="import_db">Импорт БД</string>
     <string name="restart_error">Ошибка перезапуска. Пожалуйста, сделайте это сами</string>
     <string name="import_db_error">Ошибка импорта. Вы не выбрали файл БД</string>
+    <string name="student_group">Группа: %s</string>
+    <string name="student_name">Студент: %s</string>
+    <string name="attendance">Посещаемость</string>
+    <string name="lessons">Занятия</string>
+    <string name="student">Студент</string>
 </resources>
