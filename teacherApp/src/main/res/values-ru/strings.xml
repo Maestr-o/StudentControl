@@ -109,6 +109,8 @@
     <string name="student_group">Группа: %s</string>
     <string name="student_name">Студент: %s</string>
     <string name="attendance">Посещаемость</string>
-    <string name="lessons">Занятия</string>
     <string name="student">Студент</string>
+    <string name="list_of_lessons">Список занятий</string>
+    <string name="mark_short">Отм</string>
+    <string name="theme">Тема</string>
 </resources>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:paddingHorizontal="@dimen/small_spacing"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -9,6 +11,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/small_spacing">
+
+        <TextView
+            android:id="@+id/group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="@string/student_group" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="@string/student_name" />
 
         <LinearLayout
             android:id="@+id/subjectContainer"
@@ -35,34 +51,79 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            tools:text="@string/student_group" />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            tools:text="@string/student_name" />
-
         <com.maestrx.studentcontrol.teacherapp.utils.PercentageCircleView
             android:id="@+id/percentage"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/small_spacing" />
+            android:layout_gravity="center" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/listContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_spacing"
-            android:gravity="center"
-            android:text="@string/lessons"
-            android:textSize="18sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_spacing"
+                android:layout_marginBottom="2dp"
+                android:gravity="start"
+                android:text="@string/list_of_lessons"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/BW" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="start"
+                    android:text="@string/date_hint"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="@string/theme"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="@string/mark_short"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/BW" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/lessons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/report_table_item" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

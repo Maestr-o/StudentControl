@@ -112,6 +112,8 @@
     <string name="student_group">Group: %s</string>
     <string name="student_name">Student: %s</string>
     <string name="attendance">Attendance</string>
-    <string name="lessons">Lessons</string>
     <string name="student">Student</string>
+    <string name="list_of_lessons">List of lessons</string>
+    <string name="mark_short">Mark</string>
+    <string name="theme">Title</string>
 </resources>

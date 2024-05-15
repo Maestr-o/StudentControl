@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentReportBinding
 import com.maestrx.studentcontrol.teacherapp.model.Student
+import com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons.ReportLessonsAdapter
 import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel
@@ -40,6 +41,9 @@ class ReportFragment : Fragment() {
                 }
             }
         )
+
+        val reportLessonsAdapter = ReportLessonsAdapter()
+        binding.lessons.adapter = reportLessonsAdapter
 
         viewModel.subjectState
             .onEach { subjects ->
@@ -79,6 +83,7 @@ class ReportFragment : Fragment() {
                     group.text = getString(R.string.student_group, state.student.group)
                     name.text = getString(R.string.student_name, state.student.fullName)
                     percentage.setPercentage(state.percentage)
+                    reportLessonsAdapter.setList(state.reportLessons)
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

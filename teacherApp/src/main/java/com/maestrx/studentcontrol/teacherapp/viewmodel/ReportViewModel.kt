@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.Mark
+import com.maestrx.studentcontrol.teacherapp.model.ReportLesson
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
@@ -59,11 +60,19 @@ class ReportViewModel @AssistedInject constructor(
             ).map {
                 Mark.toData(it)
             }
+            val markedLessonIds = marks.map {
+                it.lessonId
+            }
+
+            val reportLessons: MutableList<ReportLesson> = mutableListOf()
+            lessons.forEach { lesson ->
+                reportLessons += ReportLesson(lesson, markedLessonIds.contains(lesson.id))
+            }
 
             val percentage = marks.count().toFloat() / lessons.count() * 100
 
             _reportState.update {
-                ReportUiState(subject, student, lessons, marks, percentage)
+                ReportUiState(subject, student, reportLessons, marks, percentage)
             }
         }
     }

@@ -19,7 +19,7 @@ class PercentageCircleView @JvmOverloads constructor(
         strokeWidth = 30f
     }
     private val arcPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLUE
+        color = resources.getColor(R.color.primary, null)
         style = Paint.Style.STROKE
         strokeWidth = 30f
     }
