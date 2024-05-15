@@ -9,14 +9,13 @@ import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
+import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,7 +27,7 @@ class ReportViewModel @AssistedInject constructor(
     @Assisted private val student: Student,
 ) : ViewModel() {
 
-    private val _subjectState = MutableStateFlow(ReportSubjectState())
+    private val _subjectState = MutableStateFlow<List<Subject>>(emptyList())
     val subjectState = _subjectState.asStateFlow()
 
     private val _reportState = MutableStateFlow(ReportUiState())
@@ -37,57 +36,35 @@ class ReportViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             _subjectState.update {
-                ReportSubjectState(subjects = getSubjects())
-            }
-        }
-
-        subjectState
-            .onEach {
-                _reportState.update {
-                    formReportState()
+                subjectRepository.getByGroupId(student.group.id).map {
+                    Subject.toData(it)
                 }
             }
-            .launchIn(viewModelScope)
-    }
-
-    private suspend fun formReportState(): ReportUiState {
-        val lessons = getLessons()
-        val marks = getMarks()
-        val percentage = getPercentage()
-        return ReportUiState(student, lessons, marks, percentage)
-    }
-
-    private suspend fun getSubjects(): List<Subject> =
-        subjectRepository.getByGroupId(student.group.id).map {
-            Subject.toData(it)
         }
+    }
 
-    private suspend fun getLessons(): List<Lesson> =
-        lessonRepository.getBySubjectIdAndGroupId(
-            subjectState.value.subjects[subjectState.value.selSubject].id,
-            student.group.id
-        )
-            .map {
+    fun formReport(subject: Subject) {
+        viewModelScope.launch {
+            val lessons = lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
+                subject.id,
+                student.group.id,
+                TimeFormatter.getCurrentTime()
+            ).map {
                 Lesson.fromResponseToData(it)
             }
 
-    private suspend fun getMarks(): List<Mark> =
-        markRepository.getByStudentIdAndSubjectId(
-            student.id,
-            subjectState.value.subjects[subjectState.value.selSubject].id
-        ).map {
-            Mark.toData(it)
-        }
+            val marks = markRepository.getByStudentIdAndSubjectId(
+                student.id,
+                subject.id
+            ).map {
+                Mark.toData(it)
+            }
 
-    private fun getPercentage(): Float {
-        val lessonsCount = reportState.value.lessons.count()
-        val marksCount = reportState.value.marks.count()
-        return (marksCount.toFloat() / lessonsCount * 100)
-    }
+            val percentage = marks.count().toFloat() / lessons.count() * 100
 
-    fun setSubject(subjectId: Int) {
-        _subjectState.update {
-            it.copy(selSubject = subjectId)
+            _reportState.update {
+                ReportUiState(subject, student, lessons, marks, percentage)
+            }
         }
     }
 }

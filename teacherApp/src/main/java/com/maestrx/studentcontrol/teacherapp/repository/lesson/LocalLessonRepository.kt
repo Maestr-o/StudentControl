@@ -20,15 +20,20 @@ class LocalLessonRepository @Inject constructor(
     override suspend fun deleteById(id: Long) =
         lessonDao.deleteById(id)
 
-    override suspend fun getBySubjectIdAndGroupId(
+    override suspend fun getBySubjectIdAndGroupIdAndStartTime(
         subjectId: Long,
-        groupId: Long
+        groupId: Long,
+        timeStart: Long
     ): List<LessonResponse> =
-        lessonDao.getBySubjectIdAndGroupId(subjectId, groupId)
+        lessonDao.getBySubjectIdAndGroupIdAndStartTime(subjectId, groupId, timeStart)
             .sortedBy { it.timeStart }
 
-    override suspend fun getCountBySubjectIdAndGroupId(subjectId: Long, groupId: Long): Int =
-        lessonDao.getCountBySubjectIdAndGroupId(subjectId, groupId)
+    override suspend fun getCountBySubjectIdAndGroupIdAndStartTime(
+        subjectId: Long,
+        groupId: Long,
+        timeStart: Long
+    ): Int =
+        lessonDao.getCountBySubjectIdAndGroupIdAndStartTime(subjectId, groupId, timeStart)
 
     override fun getCount(): Flow<Long> =
         lessonDao.getCount()

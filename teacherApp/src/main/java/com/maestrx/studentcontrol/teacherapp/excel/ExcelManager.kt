@@ -79,7 +79,11 @@ class ExcelManager @Inject constructor(
 
         var count = 0
         groups.forEach { groupEntity ->
-            if (lessonRepository.getCountBySubjectIdAndGroupId(subject.id, groupEntity.id) >= 1
+            if (lessonRepository.getCountBySubjectIdAndGroupIdAndStartTime(
+                    subject.id,
+                    groupEntity.id,
+                    TimeFormatter.getCurrentTime()
+                ) >= 1
                 && createSheet(workbook, styles, subject, Group.toData(groupEntity))
             ) {
                 count++
@@ -98,7 +102,11 @@ class ExcelManager @Inject constructor(
         group: Group
     ): Boolean = withContext(Dispatchers.Default) {
         val lessonsDeferred = async(Dispatchers.IO) {
-            lessonRepository.getBySubjectIdAndGroupId(subject.id, group.id)
+            lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
+                subject.id,
+                group.id,
+                TimeFormatter.getCurrentTime()
+            )
         }
         val studentsDeferred = async(Dispatchers.IO) {
             studentRepository.getByGroupId(group.id).first()

@@ -73,6 +73,8 @@ object TimeFormatter {
         }
             .timeInMillis
 
+    fun getCurrentTime(): Long = Calendar.getInstance().timeInMillis
+
     fun getCurrentTimeString(): String =
         unixTimeToDateTimeString(Calendar.getInstance().timeInMillis)
 

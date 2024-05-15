@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentReportBinding
 import com.maestrx.studentcontrol.teacherapp.model.Student
+import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
@@ -38,6 +39,14 @@ class ReportFragment : Fragment() {
                 }
             }
         )
+
+        viewModel.subjectState
+            .onEach { subjects ->
+                SubjectsSpinnerAdapter(requireContext(), subjects).apply {
+                    binding.subjects.adapter = this
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.reportState
             .onEach { state ->

@@ -34,18 +34,28 @@ interface LessonDao {
         FROM Lesson, Subject, `Group`, LessonGroupCross
         WHERE LessonGroupCross.group_id == `Group`.id AND LessonGroupCross.lesson_id == Lesson.id
             AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subject_id == Subject.id
+            AND Lesson.time_start <= :timeStart
         """
     )
-    suspend fun getBySubjectIdAndGroupId(subjectId: Long, groupId: Long): List<LessonResponse>
+    suspend fun getBySubjectIdAndGroupIdAndStartTime(
+        subjectId: Long,
+        groupId: Long,
+        timeStart: Long
+    ): List<LessonResponse>
 
     @Query(
         """
         SELECT COUNT(*) FROM Lesson, Subject, `Group`, LessonGroupCross
         WHERE LessonGroupCross.group_id == `Group`.id AND LessonGroupCross.lesson_id == Lesson.id
             AND `Group`.id == :groupId AND Subject.id == :subjectId AND Lesson.subject_id == Subject.id
+            AND Lesson.time_start <= :timeStart
         """
     )
-    suspend fun getCountBySubjectIdAndGroupId(subjectId: Long, groupId: Long): Int
+    suspend fun getCountBySubjectIdAndGroupIdAndStartTime(
+        subjectId: Long,
+        groupId: Long,
+        timeStart: Long
+    ): Int
 
     @Query("SELECT COUNT(*) FROM Lesson")
     fun getCount(): Flow<Long>
