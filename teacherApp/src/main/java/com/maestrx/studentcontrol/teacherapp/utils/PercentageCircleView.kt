@@ -57,11 +57,11 @@ class PercentageCircleView @JvmOverloads constructor(
         )
 
         val percentageText = "${percentage.toInt()}%"
-        val percentageTextY = cy - (percentagePaint.descent() + percentagePaint.ascent()) / 2
+        val percentageTextY = cy - (percentagePaint.descent() + percentagePaint.ascent()) / 2 + 20
         canvas.drawText(percentageText, cx, percentageTextY, percentagePaint)
 
         val labelText = resources.getText(R.string.attendance).toString()
-        val labelTextY = percentageTextY - percentagePaint.textSize - 10
+        val labelTextY = percentageTextY - percentagePaint.textSize
         canvas.drawText(labelText, cx, labelTextY, labelPaint)
     }
 }

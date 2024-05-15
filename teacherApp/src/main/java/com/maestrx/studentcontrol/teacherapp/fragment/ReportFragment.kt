@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,9 +43,33 @@ class ReportFragment : Fragment() {
 
         viewModel.subjectState
             .onEach { subjects ->
+                if (subjects.isEmpty()) return@onEach
                 SubjectsSpinnerAdapter(requireContext(), subjects).apply {
                     binding.subjects.adapter = this
+                    binding.subjects.onItemSelectedListener =
+                        object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                viewModel.formReport(subjects[position])
+                            }
+
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                            }
+                        }
                 }
+                subjects.forEachIndexed { index, subject ->
+                    if (subject == viewModel.reportState.value.subject) {
+                        binding.subjects.setSelection(index, false)
+                        viewModel.formReport(subject)
+                        return@onEach
+                    }
+                }
+                binding.subjects.setSelection(0, false)
+                viewModel.formReport(subjects[0])
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

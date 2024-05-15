@@ -23,7 +23,7 @@ interface SubjectDao {
 
     @Query(
         """
-        SELECT Subject.* FROM Subject, `Group`, Lesson, LessonGroupCross
+        SELECT DISTINCT Subject.* FROM Subject, `Group`, Lesson, LessonGroupCross
         WHERE Subject.id == Lesson.subject_id AND Lesson.id == LessonGroupCross.lesson_id
             AND LessonGroupCross.group_id == `Group`.id AND `Group`.id == :groupId
     """
