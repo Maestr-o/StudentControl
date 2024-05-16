@@ -115,5 +115,6 @@
     <string name="student">Student</string>
     <string name="list_of_lessons">List of lessons</string>
     <string name="mark_short">Mark</string>
-    <string name="theme">Title</string>
+    <string name="topic">Topic</string>
+    <string name="zero_lessons_error">Create at least one lesson!</string>
 </resources>

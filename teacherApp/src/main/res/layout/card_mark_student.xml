@@ -8,12 +8,6 @@
     android:orientation="horizontal"
     android:paddingHorizontal="@dimen/small_spacing">
 
-    <CheckBox
-        android:id="@+id/mark"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center" />
-
     <TextView
         android:id="@+id/name"
         android:layout_width="0dp"
@@ -24,5 +18,11 @@
         android:layout_weight="1"
         android:textSize="18sp"
         tools:text="Иванов Иван Сидорович" />
+
+    <CheckBox
+        android:id="@+id/mark"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center" />
 
 </LinearLayout>

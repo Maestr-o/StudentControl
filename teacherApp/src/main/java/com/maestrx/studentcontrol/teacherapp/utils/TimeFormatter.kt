@@ -33,6 +33,11 @@ object TimeFormatter {
         return unixTimeToPatternString(formatter, milliseconds)
     }
 
+    fun unixTimeToDateShortYearString(milliseconds: Long?): String {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yy")
+        return unixTimeToPatternString(formatter, milliseconds)
+    }
+
     private fun unixTimeToDateTimeString(milliseconds: Long?): String {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy_HH-mm")
         return unixTimeToPatternString(formatter, milliseconds)

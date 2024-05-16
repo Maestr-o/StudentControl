@@ -72,10 +72,14 @@ class StudentsFragment : Fragment() {
         val adapter = StudentsAdapter(
             object : StudentsAdapter.StudentsListener {
                 override fun onClickListener(student: Student) {
-                    findNavController().navigate(
-                        R.id.action_studentsFragment_to_reportFragment,
-                        bundleOf(Constants.STUDENT_DATA to Json.encodeToString(student))
-                    )
+                    if (viewModel.lessonsCount.value <= 0) {
+                        toast(R.string.zero_lessons_error)
+                    } else {
+                        findNavController().navigate(
+                            R.id.action_studentsFragment_to_reportFragment,
+                            bundleOf(Constants.STUDENT_DATA to Json.encodeToString(student))
+                        )
+                    }
                 }
 
                 override fun onEditClickListener(view: View, student: Student) {

@@ -90,8 +90,8 @@ class ControlViewModel @AssistedInject constructor(
                     markRepository.saveList(entities)
                 }
             } catch (e: Exception) {
+                Log.d(Constants.DEBUG_TAG, "Error saving marks: $e")
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
-                Log.d(Constants.DEBUG_TAG, "Error saving marks: ${e.printStackTrace()}")
             }
         }
     }

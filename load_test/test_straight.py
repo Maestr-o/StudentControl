@@ -3,13 +3,14 @@ import threading
 import random
 import string
 import time
+import subprocess
 
 def generate_start_message():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
 def send_data(gateway_ip, start_gateway_port, local_port, message, student):
     try:
-        local_ip = socket.gethostbyname(socket.gethostname())
+        local_ip = '0.0.0.0'
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.bind((local_ip, local_port))
 
@@ -20,7 +21,7 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
             try:
                 udp_socket.settimeout(timeout)
                 udp_socket.sendto(message.encode(), (gateway_ip, start_gateway_port))
-                response, addr = udp_socket.recvfrom(50000)
+                response, addr = udp_socket.recvfrom(100000)
                 break
             except Exception as e:
                 pass
@@ -33,8 +34,8 @@ def send_data(gateway_ip, start_gateway_port, local_port, message, student):
         udp_socket.close()
 
 def main():
-    students_count = 200
-    gateway_ip = '192.168.217.3'
+    students_count = 34
+    gateway_ip = '192.168.42.153'
     gateway_port = 5951
 
     start_time = time.time()

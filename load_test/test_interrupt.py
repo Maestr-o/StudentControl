@@ -9,31 +9,36 @@ def generate_start_message():
 
 def send_data(gateway_ip, start_gateway_port, local_port, message, student):
     try:
-        local_ip = socket.gethostbyname(socket.gethostname())
+        local_ip = '0.0.0.0'
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.bind((local_ip, local_port))
 
         timeout = 2
         addr = None
 
-        while addr == None:
+        while addr is None:
             try:
                 udp_socket.settimeout(timeout)
                 udp_socket.sendto(message.encode(), (gateway_ip, start_gateway_port))
+                print(f"Sent message to {gateway_ip}:{start_gateway_port}")
                 response, addr = udp_socket.recvfrom(100000)
+                print(f"Received response from {addr}")
                 break
+            except socket.timeout:
+                print(f"Timeout: no response received within {timeout} seconds")
             except Exception as e:
-                pass
+                print(f"Exception occurred: {e}")
 
-        new_gateway_port = addr[1]
-
-        random_number = student
-        udp_socket.sendto(str(random_number).encode(), (gateway_ip, new_gateway_port))
+        if addr:
+            new_gateway_port = addr[1]
+            random_number = student
+            udp_socket.sendto(str(random_number).encode(), (gateway_ip, new_gateway_port))
+            print(f"Sent student number to {gateway_ip}:{new_gateway_port}")
     finally:
         udp_socket.close()
 
 def main():
-    gateway_ip = '192.168.217.3'
+    gateway_ip = '192.168.42.153'
     gateway_port = 5951
 
     start_time = time.time()
@@ -50,7 +55,7 @@ def main():
             threads.append(t)
             t.start()
         time.sleep(1)
-        
+
     for t in threads:
         t.join()
 

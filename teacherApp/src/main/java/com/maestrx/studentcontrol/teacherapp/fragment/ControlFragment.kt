@@ -209,7 +209,7 @@ class ControlFragment : Fragment() {
                 updateListWait = if (updateListWait < Constants.UPDATE_LIST_WAIT) {
                     updateListWait + 1
                 } else {
-                    0
+                    1
                 }
             }
         }

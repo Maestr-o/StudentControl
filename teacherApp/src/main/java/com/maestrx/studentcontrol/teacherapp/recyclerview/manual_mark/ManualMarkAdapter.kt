@@ -4,8 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.maestrx.studentcontrol.teacherapp.databinding.CardMarkGroupBinding
-import com.maestrx.studentcontrol.teacherapp.databinding.CardMarkStudentBinding
+import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 
@@ -19,16 +18,17 @@ class ManualMarkAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             STUDENT_TYPE -> {
-                val binding = CardMarkStudentBinding.inflate(inflater)
-                ManualMarkStudentViewHolder(binding)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.card_mark_student, parent, false)
+                ManualMarkStudentViewHolder(view)
             }
 
             GROUP_TYPE -> {
-                val binding = CardMarkGroupBinding.inflate(inflater)
-                ManualMarkGroupViewHolder(binding)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.card_mark_group, parent, false)
+                ManualMarkGroupViewHolder(view)
             }
 
             else -> throw IllegalStateException("Invalid item type")

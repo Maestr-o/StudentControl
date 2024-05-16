@@ -1,17 +1,19 @@
 package com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrx.studentcontrol.teacherapp.databinding.ReportTableItemBinding
 import com.maestrx.studentcontrol.teacherapp.model.ReportLesson
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 
 class ReportLessonViewHolder(
-    private val binding: ReportTableItemBinding
-) : RecyclerView.ViewHolder(binding.root) {
+    private val view: View
+) : RecyclerView.ViewHolder(view) {
 
     fun bind(reportLesson: ReportLesson) {
+        val binding = ReportTableItemBinding.bind(view)
         binding.apply {
-            date.text = TimeFormatter.unixTimeToDateString(reportLesson.lesson.timeStart)
+            date.text = TimeFormatter.unixTimeToDateShortYearString(reportLesson.lesson.timeStart)
             title.text = reportLesson.lesson.title
             mark.isChecked = reportLesson.isMarked
         }

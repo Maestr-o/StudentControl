@@ -112,5 +112,6 @@
     <string name="student">Студент</string>
     <string name="list_of_lessons">Список занятий</string>
     <string name="mark_short">Отм</string>
-    <string name="theme">Тема</string>
+    <string name="topic">Тема</string>
+    <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
 </resources>

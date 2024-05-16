@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Student
+import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
 import com.maestrx.studentcontrol.teacherapp.utils.Event
@@ -24,12 +25,16 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = StudentsViewModelFactory::class)
 class StudentsViewModel @AssistedInject constructor(
     private val studentRepository: StudentRepository,
+    private val lessonRepository: LessonRepository,
     private val excelManager: ExcelManager,
     @Assisted private val groupId: Long,
 ) : ViewModel() {
 
     private val _studentsState = MutableStateFlow(emptyList<Student>())
     val studentsState = _studentsState.asStateFlow()
+
+    private val _lessonsCount = MutableStateFlow(0L)
+    val lessonsCount = _lessonsCount.asStateFlow()
 
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
@@ -43,6 +48,11 @@ class StudentsViewModel @AssistedInject constructor(
             }
         }
             .launchIn(viewModelScope)
+
+        lessonRepository.getCount().onEach { count ->
+            _lessonsCount.update { count }
+        }
+            .launchIn(viewModelScope)
     }
 
     fun save(student: Student) {
@@ -51,7 +61,7 @@ class StudentsViewModel @AssistedInject constructor(
                 studentRepository.save(student.toEntity())
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_SAVING_STUDENT)
-                Log.e(Constants.DEBUG_TAG, "Error saving student: ${e.printStackTrace()}")
+                Log.e(Constants.DEBUG_TAG, "Error saving student: $e")
             }
         }
     }
@@ -62,7 +72,7 @@ class StudentsViewModel @AssistedInject constructor(
                 studentRepository.deleteById(id)
             } catch (e: Exception) {
                 _message.value = Event(Constants.MESSAGE_ERROR_DELETING_STUDENT)
-                Log.e(Constants.DEBUG_TAG, "Error deleting student: ${e.printStackTrace()}")
+                Log.e(Constants.DEBUG_TAG, "Error deleting student: $e")
             }
         }
     }
@@ -91,7 +101,7 @@ class StudentsViewModel @AssistedInject constructor(
                 studentRepository.saveList(students)
                 _message.value = Event(Constants.MESSAGE_OK_IMPORT)
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Import error: ${e.printStackTrace()}")
+                Log.d(Constants.DEBUG_TAG, "Import error: $e")
                 _message.value = Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
