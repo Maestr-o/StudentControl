@@ -14,6 +14,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons.ReportLessonsAdapter
 import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +45,10 @@ class ReportFragment : Fragment() {
 
         val reportLessonsAdapter = ReportLessonsAdapter()
         binding.lessons.adapter = reportLessonsAdapter
+
+        binding.saveMarks.setOnClickListener {
+            viewModel.changeMarks(reportLessonsAdapter.items)
+        }
 
         viewModel.subjectState
             .onEach { subjects ->
@@ -84,6 +89,23 @@ class ReportFragment : Fragment() {
                     name.text = getString(R.string.student_name, state.student.fullName)
                     percentage.setPercentage(state.percentage)
                     reportLessonsAdapter.setList(state.reportLessons)
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.message
+            .onEach { event ->
+                event.getContentIfNotHandled()?.let { message ->
+                    when (message) {
+                        Constants.MESSAGE_ERROR_MANUAL_SAVING_MARKS -> {
+                            toast(R.string.error_saving_marks)
+                        }
+
+                        Constants.MESSAGE_OK_MANUAL_SAVING_MARKS -> {
+                            toast(R.string.ok_saving_marks)
+                        }
+                    }
+                    viewModel.formReport(viewModel.reportState.value.subject)
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

@@ -11,4 +11,5 @@ interface MarkRepository {
     suspend fun getCountByLessonIdAndGroupId(lessonId: Long, groupId: Long): Int
     suspend fun getCount(): Int
     suspend fun getByStudentIdAndSubjectId(studentId: Long, subjectId: Long): List<MarkEntity>
+    suspend fun delete(mark: MarkEntity)
 }

@@ -34,4 +34,7 @@ class LocalMarkRepository @Inject constructor(
         subjectId: Long
     ): List<MarkEntity> =
         markDao.getByStudentIdAndSubjectId(studentId, subjectId)
+
+    override suspend fun delete(mark: MarkEntity) =
+        markDao.delete(mark)
 }

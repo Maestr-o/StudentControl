@@ -8,7 +8,7 @@ import com.maestrx.studentcontrol.teacherapp.model.ReportLesson
 
 class ReportLessonsAdapter : RecyclerView.Adapter<ReportLessonViewHolder>() {
 
-    private var list: List<ReportLesson> = emptyList()
+    var items: List<ReportLesson> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportLessonViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -17,13 +17,13 @@ class ReportLessonsAdapter : RecyclerView.Adapter<ReportLessonViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ReportLessonViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(items[position])
     }
 
-    override fun getItemCount(): Int = list.count()
+    override fun getItemCount(): Int = items.count()
 
     fun setList(newList: List<ReportLesson>) {
-        list = newList
+        items = newList
         notifyDataSetChanged()
     }
 }

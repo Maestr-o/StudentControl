@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
@@ -10,6 +11,8 @@ import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
+import com.maestrx.studentcontrol.teacherapp.utils.Constants
+import com.maestrx.studentcontrol.teacherapp.utils.Event
 import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
 import dagger.assisted.Assisted
@@ -33,6 +36,9 @@ class ReportViewModel @AssistedInject constructor(
 
     private val _reportState = MutableStateFlow(ReportUiState())
     val reportState = _reportState.asStateFlow()
+
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -73,6 +79,40 @@ class ReportViewModel @AssistedInject constructor(
 
             _reportState.update {
                 ReportUiState(subject, student, reportLessons, marks, percentage)
+            }
+        }
+    }
+
+    fun changeMarks(reportLessons: List<ReportLesson>) {
+        viewModelScope.launch {
+            _message.value = try {
+                val oldMarks = reportState.value.marks
+                val newMarks = reportLessons
+                    .filter { reportLesson ->
+                        reportLesson.isMarked
+                    }
+                    .map { reportLesson ->
+                        Mark(
+                            lessonId = reportLesson.lesson.id,
+                            studentId = reportState.value.student.id
+                        )
+                    }
+                    .toMutableList()
+
+                oldMarks.forEach { mark ->
+                    if (!newMarks.contains(mark)) {
+                        markRepository.delete(mark.toEntity())
+                    } else {
+                        newMarks -= mark
+                    }
+                }
+                newMarks.forEach { newMark ->
+                    markRepository.save(newMark.toEntity())
+                }
+                Event(Constants.MESSAGE_OK_MANUAL_SAVING_MARKS)
+            } catch (e: Exception) {
+                Log.d(Constants.DEBUG_TAG, "Error change marks: $e")
+                Event(Constants.MESSAGE_ERROR_MANUAL_SAVING_MARKS)
             }
         }
     }

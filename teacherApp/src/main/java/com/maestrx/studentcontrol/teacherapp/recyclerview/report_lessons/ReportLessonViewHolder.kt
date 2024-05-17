@@ -16,6 +16,10 @@ class ReportLessonViewHolder(
             date.text = TimeFormatter.unixTimeToDateShortYearString(reportLesson.lesson.timeStart)
             title.text = reportLesson.lesson.title
             mark.isChecked = reportLesson.isMarked
+
+            mark.setOnClickListener {
+                reportLesson.isMarked = !reportLesson.isMarked
+            }
         }
     }
 }

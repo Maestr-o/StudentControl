@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.teacherapp.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.maestrx.studentcontrol.teacherapp.db.entity.MarkEntity
@@ -58,4 +59,7 @@ interface MarkDao {
     """
     )
     suspend fun getByStudentIdAndSubjectId(studentId: Long, subjectId: Long): List<MarkEntity>
+
+    @Delete
+    suspend fun delete(mark: MarkEntity)
 }

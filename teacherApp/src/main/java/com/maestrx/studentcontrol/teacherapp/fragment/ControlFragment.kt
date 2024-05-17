@@ -294,6 +294,10 @@ class ControlFragment : Fragment() {
                             toast(R.string.error_saving_marks)
                         }
 
+                        Constants.MESSAGE_OK_SAVING_MARKS -> {
+                            toast(R.string.ok_saving_marks)
+                        }
+
                         Constants.MESSAGE_SHOW_MARK_DIALOG -> {
                             manualMarkDialog(inflater)
                         }

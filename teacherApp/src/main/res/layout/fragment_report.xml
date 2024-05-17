@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/small_spacing">
 
@@ -29,6 +29,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/subjectsHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -53,9 +54,9 @@
         android:layout_gravity="center" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/listContainer"
+        android:id="@+id/tableContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/listHint"
@@ -139,11 +140,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lessons"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator2"
+            tools:itemCount="15"
             tools:listitem="@layout/report_table_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -81,7 +81,7 @@ class ControlViewModel @AssistedInject constructor(
 
     fun addMarks(list: List<Any>) {
         viewModelScope.launch(Dispatchers.Default) {
-            try {
+            _message.value = try {
                 val marks = list.filterIsInstance<StudentMark>().filter { it.isAttended }
                 val entities = marks.map { mark ->
                     MarkEntity(lessonId = lesson.id, studentId = mark.id)
@@ -89,9 +89,10 @@ class ControlViewModel @AssistedInject constructor(
                 withContext(Dispatchers.IO) {
                     markRepository.saveList(entities)
                 }
+                Event(Constants.MESSAGE_OK_SAVING_MARKS)
             } catch (e: Exception) {
                 Log.d(Constants.DEBUG_TAG, "Error saving marks: $e")
-                _message.value = Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
+                Event(Constants.MESSAGE_ERROR_SAVING_MARKS)
             }
         }
     }

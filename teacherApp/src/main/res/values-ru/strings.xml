@@ -114,4 +114,5 @@
     <string name="mark_short">Отм</string>
     <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
+    <string name="ok_saving_marks">Отметки о посещении сохранены</string>
 </resources>
