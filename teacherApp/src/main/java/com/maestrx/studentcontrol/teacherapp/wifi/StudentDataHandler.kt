@@ -30,16 +30,19 @@ class StudentDataHandler(
         try {
             val deviceId = extractData(packetDeviceId)
             val studentId = studentRepository.getIdByDeviceId(deviceId)
+            val students = getStudents(lesson)
+            val studentsIds = students.map { student ->
+                student.id
+            }
 
-            if (studentId != 0L) {
+            if (studentId != 0L && studentsIds.contains(studentId)) {
                 saveMark(lesson.id, studentId)
                 send(packetDeviceId.address, packetDeviceId.port, "ACK$deviceId")
             } else {
-                val data = getStudents(lesson)
                 send(
                     packetDeviceId.address,
                     packetDeviceId.port,
-                    Json.encodeToString(ListSerializer(Student.serializer()), data)
+                    Json.encodeToString(ListSerializer(Student.serializer()), students)
                 )
                 val newStudentId = extractData(receive()).toLong()
                 studentRepository.saveDeviceId(newStudentId, deviceId)
