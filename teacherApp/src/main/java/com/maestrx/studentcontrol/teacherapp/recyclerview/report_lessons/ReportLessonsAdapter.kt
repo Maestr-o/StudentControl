@@ -22,7 +22,7 @@ class ReportLessonsAdapter : RecyclerView.Adapter<ReportLessonViewHolder>() {
 
     override fun getItemCount(): Int = items.count()
 
-    fun setList(newList: List<ReportLesson>) {
+    fun updateList(newList: List<ReportLesson>) {
         items = newList
         notifyDataSetChanged()
     }

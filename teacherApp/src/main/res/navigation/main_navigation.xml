@@ -38,7 +38,6 @@
         <action
             android:id="@+id/action_editLessonFragment_to_controlFragment"
             app:destination="@id/controlFragment"
-            app:enterAnim="@anim/transition_in"
             app:popUpTo="@id/bottomNavigationFragment" />
     </fragment>
     <fragment

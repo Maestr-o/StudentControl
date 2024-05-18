@@ -2,7 +2,6 @@ package com.maestrx.studentcontrol.teacherapp.recyclerview.marked_students
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.databinding.CardRegisteredGroupBinding
@@ -52,10 +51,8 @@ class MarkedStudentsAdapter(
             else -> throw IllegalStateException("Invalid item type")
         }
 
-    fun updateData(newList: List<Any>) {
-        val diffCallback = MarkedStudentsDiffCallback(list, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
+    fun updateList(newList: List<Any>) {
         list = newList
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
     }
 }

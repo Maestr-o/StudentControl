@@ -16,10 +16,10 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBind
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentSubjectsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.recyclerview.subjects.SubjectsAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.capitalize
-import com.maestrx.studentcontrol.teacherapp.utils.toast
-import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.capitalize
+import com.maestrx.studentcontrol.teacherapp.util.toast
+import com.maestrx.studentcontrol.teacherapp.util.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn

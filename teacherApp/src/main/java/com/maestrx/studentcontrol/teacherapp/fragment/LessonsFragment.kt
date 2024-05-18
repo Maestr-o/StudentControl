@@ -15,9 +15,9 @@ import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.recyclerview.lessons.LessonAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
-import com.maestrx.studentcontrol.teacherapp.utils.toast
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn

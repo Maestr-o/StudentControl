@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.utils
+package com.maestrx.studentcontrol.teacherapp.util
 
 import android.net.Uri
 import androidx.activity.result.ActivityResultRegistry

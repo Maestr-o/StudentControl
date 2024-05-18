@@ -9,8 +9,8 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileInputStream
@@ -34,7 +34,7 @@ class DbFileManager @Inject constructor(
     fun export() {
         val dbFile = context.getDatabasePath(DB_INT_NAME)
         checkpoint()
-        if (Build.VERSION.SDK_INT <= 28) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             getBckFile().run {
                 dbFile.copyTo(this, true)
             }

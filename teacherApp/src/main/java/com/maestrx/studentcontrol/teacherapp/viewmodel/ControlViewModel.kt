@@ -14,8 +14,8 @@ import com.maestrx.studentcontrol.teacherapp.model.StudentMark
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.Event
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ControlViewModelFactory
 import com.maestrx.studentcontrol.teacherapp.wifi.ServerInteractor
 import dagger.assisted.Assisted

@@ -23,10 +23,10 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.FilePicker
-import com.maestrx.studentcontrol.teacherapp.utils.capitalize
-import com.maestrx.studentcontrol.teacherapp.utils.toast
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.FilePicker
+import com.maestrx.studentcontrol.teacherapp.util.capitalize
+import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory

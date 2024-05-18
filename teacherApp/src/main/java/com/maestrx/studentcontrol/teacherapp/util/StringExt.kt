@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.utils
+package com.maestrx.studentcontrol.teacherapp.util
 
 import java.util.Locale
 

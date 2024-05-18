@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrx.studentcontrol.teacherapp.databinding.ReportTableItemBinding
 import com.maestrx.studentcontrol.teacherapp.model.ReportLesson
-import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 
 class ReportLessonViewHolder(
     private val view: View

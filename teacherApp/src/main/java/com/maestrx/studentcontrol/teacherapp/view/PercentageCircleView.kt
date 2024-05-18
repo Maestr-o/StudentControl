@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.utils
+package com.maestrx.studentcontrol.teacherapp.view
 
 import android.content.Context
 import android.graphics.Canvas

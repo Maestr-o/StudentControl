@@ -11,9 +11,9 @@ import com.maestrx.studentcontrol.teacherapp.repository.group.GroupRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.lesson_group_cross.LessonGroupCrossRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.Event
-import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.Event
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.NewLessonViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

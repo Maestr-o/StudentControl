@@ -23,9 +23,9 @@ import com.maestrx.studentcontrol.teacherapp.model.LessonType
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_selected.GroupSelectedAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.manual_mark.ManualMarkAdapter
 import com.maestrx.studentcontrol.teacherapp.recyclerview.marked_students.MarkedStudentsAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.TimeFormatter
-import com.maestrx.studentcontrol.teacherapp.utils.toast
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
+import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ControlViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ControlViewModelFactory
@@ -407,7 +407,7 @@ class ControlFragment : Fragment() {
             )
         if (state.markedStudentsWithGroups != lastStudentsList) {
             val list = state.markedStudentsWithGroups
-            studentsAdapter.updateData(list)
+            studentsAdapter.updateList(list)
             lastStudentsList = list
         }
     }

@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.utils
+package com.maestrx.studentcontrol.teacherapp.util
 
 object Constants {
     const val DEBUG_TAG = "TeacherAppDBG"
@@ -15,7 +15,7 @@ object Constants {
 
     const val TIMEOUT = 30_000
     const val TIME_CHECK_DELAY = 1_000L
-    const val UPDATE_LIST_WAIT = 3
+    const val UPDATE_LIST_WAIT = 4
     const val TIME_RECESS = 15
 
     const val MESSAGE_ERROR_SAVING_LESSON = "MESSAGE_ERROR_SAVING_LESSON"

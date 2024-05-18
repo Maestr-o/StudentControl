@@ -17,9 +17,9 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBind
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentGroupsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups.GroupsAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.toast
-import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.toast
+import com.maestrx.studentcontrol.teacherapp.util.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.GroupsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint

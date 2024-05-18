@@ -19,7 +19,6 @@ class LoadingViewModel @Inject constructor(
 ) : ViewModel(), ServerInteractor.StudentListCallback {
 
     var state by mutableStateOf(LoadingUiState())
-        private set
 
     private var isDataExchangeStarted = false
 

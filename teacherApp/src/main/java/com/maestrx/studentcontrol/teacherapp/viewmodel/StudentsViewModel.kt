@@ -8,8 +8,8 @@ import com.maestrx.studentcontrol.teacherapp.excel.ExcelManager
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.Event
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.Event
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = StudentsViewModelFactory::class)
 class StudentsViewModel @AssistedInject constructor(
     private val studentRepository: StudentRepository,
-    private val lessonRepository: LessonRepository,
+    lessonRepository: LessonRepository,
     private val excelManager: ExcelManager,
     @Assisted private val groupId: Long,
 ) : ViewModel() {

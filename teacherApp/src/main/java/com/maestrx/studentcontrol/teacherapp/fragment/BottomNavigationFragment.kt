@@ -27,11 +27,11 @@ import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBind
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentBottomNavigationBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Subject
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.FilePicker
-import com.maestrx.studentcontrol.teacherapp.utils.capitalize
-import com.maestrx.studentcontrol.teacherapp.utils.toast
-import com.maestrx.studentcontrol.teacherapp.utils.toastBlankData
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.FilePicker
+import com.maestrx.studentcontrol.teacherapp.util.capitalize
+import com.maestrx.studentcontrol.teacherapp.util.toast
+import com.maestrx.studentcontrol.teacherapp.util.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.BottomNavigationViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.GroupsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.SubjectsViewModel

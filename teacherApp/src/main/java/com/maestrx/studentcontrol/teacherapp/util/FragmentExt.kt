@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.utils
+package com.maestrx.studentcontrol.teacherapp.util
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.maestrx.studentcontrol.teacherapp.R
+import java.util.Locale
 
 fun Fragment.toastBlankData() {
     Toast.makeText(requireContext(), R.string.blank_content, Toast.LENGTH_LONG).show()
@@ -51,7 +52,7 @@ fun Fragment.showTimeStartPicker(startView: TextInputEditText, endView: TextInpu
     TimePickerDialog(
         requireContext(),
         { _, h, m ->
-            val selectedTime = String.format("%02d:%02d", h, m)
+            val selectedTime = String.format(Locale.getDefault(), "%02d:%02d", h, m)
             calendar.apply {
                 set(Calendar.HOUR_OF_DAY, h)
                 set(Calendar.MINUTE, m)
@@ -83,7 +84,7 @@ fun Fragment.showTimeEndPicker(view: TextInputEditText, startTime: String) {
     TimePickerDialog(
         requireContext(),
         { _, h, m ->
-            val selectedTime = String.format("%02d:%02d", h, m)
+            val selectedTime = String.format(Locale.getDefault(), "%02d:%02d", h, m)
             if (TimeFormatter.compareTimes(startTime, selectedTime) >= 0) {
                 toast(R.string.invalid_times)
             } else {

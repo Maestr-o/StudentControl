@@ -13,8 +13,8 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentReportBinding
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons.ReportLessonsAdapter
 import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
-import com.maestrx.studentcontrol.teacherapp.utils.Constants
-import com.maestrx.studentcontrol.teacherapp.utils.toast
+import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,7 +88,7 @@ class ReportFragment : Fragment() {
                     group.text = getString(R.string.student_group, state.student.group)
                     name.text = getString(R.string.student_name, state.student.fullName)
                     percentage.setPercentage(state.percentage)
-                    reportLessonsAdapter.setList(state.reportLessons)
+                    reportLessonsAdapter.updateList(state.reportLessons)
                 }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)

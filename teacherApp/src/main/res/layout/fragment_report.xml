@@ -47,7 +47,7 @@
 
     </LinearLayout>
 
-    <com.maestrx.studentcontrol.teacherapp.utils.PercentageCircleView
+    <com.maestrx.studentcontrol.teacherapp.view.PercentageCircleView
         android:id="@+id/percentage"
         android:layout_width="175dp"
         android:layout_height="175dp"
