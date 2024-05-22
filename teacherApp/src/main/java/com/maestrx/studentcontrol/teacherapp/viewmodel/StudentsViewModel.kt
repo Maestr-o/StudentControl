@@ -30,6 +30,9 @@ class StudentsViewModel @AssistedInject constructor(
     @Assisted val groupId: Long,
 ) : ViewModel() {
 
+    private val _message = MutableStateFlow(Event(""))
+    val message = _message.asStateFlow()
+
     private val _studentsState = MutableStateFlow(emptyList<Student>())
     val studentsState = _studentsState.asStateFlow()
 
@@ -42,8 +45,8 @@ class StudentsViewModel @AssistedInject constructor(
     private val _importState = MutableStateFlow(StudentsImportUiState())
     val importState = _importState.asStateFlow()
 
-    private val _message = MutableStateFlow(Event(""))
-    val message = _message.asStateFlow()
+    private val _isConfigChanged = MutableStateFlow(false)
+    val isConfigChanged = _isConfigChanged.asStateFlow()
 
     init {
         studentRepository.getByGroupId(groupId).onEach { list ->
@@ -60,14 +63,16 @@ class StudentsViewModel @AssistedInject constructor(
         }
             .launchIn(viewModelScope)
 
-        fileState.onEach { uri ->
-            if (uri != null) {
-                _importState.update {
-                    it.copy(tableNames = excelManager.getExcelTableNames(uri))
+        viewModelScope.launch {
+            fileState.onEach { uri ->
+                if (uri != null) {
+                    _importState.update {
+                        it.copy(tableNames = excelManager.getExcelTableNames(uri))
+                    }
                 }
             }
+                .launchIn(viewModelScope)
         }
-            .launchIn(viewModelScope)
     }
 
     fun save(student: Student) {
@@ -132,6 +137,10 @@ class StudentsViewModel @AssistedInject constructor(
                 _message.value = Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
+    }
+
+    fun setConfigChange(state: Boolean) {
+        _isConfigChanged.update { state }
     }
 
     fun cleanImportState() {

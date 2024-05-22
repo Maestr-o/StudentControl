@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/small_spacing">
+    android:paddingHorizontal="12dp">
 
     <TextView
         android:id="@+id/group"
@@ -47,10 +47,18 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/attendance"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
     <com.maestrx.studentcontrol.teacherapp.view.PercentageCircleView
         android:id="@+id/percentage"
-        android:layout_width="175dp"
-        android:layout_height="175dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_gravity="center" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,6 +71,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start"
+            android:singleLine="true"
             android:text="@string/list_of_lessons"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -132,6 +141,7 @@
             android:id="@+id/separator2"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_marginTop="2dp"
             android:background="@color/BW"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

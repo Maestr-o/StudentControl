@@ -33,7 +33,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
@@ -51,6 +50,8 @@ class ExcelManager @Inject constructor(
     private val groupRepository: GroupRepository,
     private val lessonRepository: LessonRepository,
 ) {
+
+    private var importWorkbook = XSSFWorkbook()
 
     suspend fun export(): Boolean = withContext(Dispatchers.IO) {
         val subjectsDeferred = async {
@@ -317,8 +318,7 @@ class ExcelManager @Inject constructor(
         endX: Int
     ): List<StudentEntity>? = withContext(Dispatchers.IO) {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
-        val workbook = XSSFWorkbook(inputStream)
-        val sheet = workbook.getSheet(sheetName)
+        val sheet = importWorkbook.getSheet(sheetName)
         val students: MutableList<StudentEntity> = mutableListOf()
 
         withContext(Dispatchers.Default) {
@@ -359,15 +359,15 @@ class ExcelManager @Inject constructor(
         return@withContext students
     }
 
-    fun getExcelTableNames(fileUri: Uri): List<String> {
+    suspend fun getExcelTableNames(fileUri: Uri): List<String> = withContext(Dispatchers.Default) {
         val names = mutableListOf<String>()
         context.contentResolver.openInputStream(fileUri).use { inputStream ->
-            val workbook = WorkbookFactory.create(inputStream)
-            for (i in 0 until workbook.numberOfSheets) {
-                names.add(workbook.getSheetName(i))
+            importWorkbook = XSSFWorkbook(inputStream)
+            for (i in 0 until importWorkbook.numberOfSheets) {
+                names.add(importWorkbook.getSheetName(i))
             }
         }
-        return names
+        return@withContext names
     }
 
     private fun columnToIndex(column: String): Int {

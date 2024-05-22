@@ -23,11 +23,6 @@ class PercentageCircleView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeWidth = 30f
     }
-    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = resources.getColor(R.color.BW, null)
-        textSize = 40f
-        textAlign = Paint.Align.CENTER
-    }
     private val percentagePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = resources.getColor(R.color.BW, null)
         textSize = 128f
@@ -57,11 +52,7 @@ class PercentageCircleView @JvmOverloads constructor(
         )
 
         val percentageText = "${percentage.toInt()}%"
-        val percentageTextY = cy - (percentagePaint.descent() + percentagePaint.ascent()) / 2 + 20
+        val percentageTextY = cy - (percentagePaint.descent() + percentagePaint.ascent()) / 2
         canvas.drawText(percentageText, cx, percentageTextY, percentagePaint)
-
-        val labelText = resources.getText(R.string.attendance).toString()
-        val labelTextY = percentageTextY - percentagePaint.textSize
-        canvas.drawText(labelText, cx, labelTextY, labelPaint)
     }
 }

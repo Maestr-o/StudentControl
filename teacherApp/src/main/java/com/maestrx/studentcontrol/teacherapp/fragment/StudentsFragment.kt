@@ -281,9 +281,12 @@ class StudentsFragment : Fragment() {
                     } else {
                         tableNameContainer.isGone = true
                     }
-                    column.setText(state.column)
-                    startX.setText(state.startX)
-                    endX.setText(state.endX)
+                    if (viewModel.isConfigChanged.value) {
+                        column.setText(state.column)
+                        startX.setText(state.startX)
+                        endX.setText(state.endX)
+                        viewModel.setConfigChange(false)
+                    }
                 }
                 state.tableNames.forEachIndexed { index, name ->
                     if (name == state.selectedTable) {
@@ -335,6 +338,7 @@ class StudentsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.setConfigChange(true)
         viewModel.saveImportState(createImportState())
         importBinding = null
     }

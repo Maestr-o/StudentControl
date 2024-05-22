@@ -83,17 +83,15 @@
     <string name="amount">Всего</string>
     <string name="percent">%</string>
     <string name="total">Итого</string>
-    <string name="ok_data_clear">Все данные удалены!</string>
+    <string name="ok_data_clear">Все данные удалены! Перезапуск…</string>
     <string name="error_data_clear">Ошибка удаления данных</string>
     <string name="manual_mark">Отметить вручную</string>
     <string name="error_saving_marks">Ошибка сохранения отметок</string>
     <string name="no_unmarked_students">Неотмеченных студентов нет!</string>
     <string name="import_students">Импортировать студентов из Excel-файла</string>
-    <string name="sheet_name">Название таблицы</string>
     <string name="column">Колонка</string>
     <string name="start_row">Номер первой строки</string>
     <string name="end_row">Номер последней строки</string>
-    <string name="choose_file_path">Файл: %s</string>
     <string name="choose_file">Выбрать файл</string>
     <string name="check_input_data">Пожалуйста, проверьте правильность введенных данных</string>
     <string name="import_ok">Импорт данных успешно завершен</string>
@@ -110,11 +108,10 @@
     <string name="student_name">Студент: %s</string>
     <string name="attendance">Посещаемость</string>
     <string name="student">Студент</string>
-    <string name="list_of_lessons">Список занятий</string>
+    <string name="list_of_lessons">Занятия</string>
     <string name="mark_short">Отм</string>
     <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
     <string name="ok_saving_marks">Отметки о посещении сохранены</string>
-    <string name="work_in_background">Фоновый режим</string>
     <string name="table_hint">Таблица:</string>
 </resources>
