@@ -91,8 +91,8 @@
     <string name="import_students">Импортировать студентов из Excel-файла</string>
     <string name="sheet_name">Название таблицы</string>
     <string name="column">Колонка</string>
-    <string name="start_row">X нач</string>
-    <string name="end_row">X кон</string>
+    <string name="start_row">Номер первой строки</string>
+    <string name="end_row">Номер последней строки</string>
     <string name="choose_file_path">Файл: %s</string>
     <string name="choose_file">Выбрать файл</string>
     <string name="check_input_data">Пожалуйста, проверьте правильность введенных данных</string>
@@ -105,7 +105,7 @@
     <string name="export_db">Экспорт БД</string>
     <string name="import_db">Импорт БД</string>
     <string name="restart_error">Ошибка перезапуска. Пожалуйста, сделайте это сами</string>
-    <string name="import_db_error">Ошибка импорта. Вы не выбрали файл БД</string>
+    <string name="import_db_error">Ошибка импорта. Вы не выбрали файл базы данных</string>
     <string name="student_group">Группа: %s</string>
     <string name="student_name">Студент: %s</string>
     <string name="attendance">Посещаемость</string>
@@ -115,4 +115,6 @@
     <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
     <string name="ok_saving_marks">Отметки о посещении сохранены</string>
+    <string name="work_in_background">Фоновый режим</string>
+    <string name="table_hint">Таблица:</string>
 </resources>

@@ -33,6 +33,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
@@ -254,7 +255,7 @@ class ExcelManager @Inject constructor(
 
     private fun writeFile(fileName: String, workbook: XSSFWorkbook): Boolean =
         try {
-            if (Build.VERSION.SDK_INT <= 28) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                 val dir = File(
                     Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS,
@@ -321,9 +322,10 @@ class ExcelManager @Inject constructor(
         val students: MutableList<StudentEntity> = mutableListOf()
 
         withContext(Dispatchers.Default) {
-            for (i in startX..endX) {
+            val columnNum = columnToIndex(column)
+            for (i in startX - 1 until endX) {
                 try {
-                    val fullName = sheet.getRow(i).getCell(columnToIndex(column)).stringCellValue
+                    val fullName = sheet.getRow(i).getCell(columnNum).stringCellValue
                     val names = fullName.split(" ")
 
                     val lastName = if (names.isNotEmpty()) {
@@ -357,12 +359,26 @@ class ExcelManager @Inject constructor(
         return@withContext students
     }
 
-    private fun columnToIndex(columnName: String): Int {
-        var columnIndex = 0
-        for (i in columnName.indices) {
-            val c = columnName[i]
-            columnIndex = columnIndex * 26 + (c - 'A' + 1)
+    fun getExcelTableNames(fileUri: Uri): List<String> {
+        val names = mutableListOf<String>()
+        context.contentResolver.openInputStream(fileUri).use { inputStream ->
+            val workbook = WorkbookFactory.create(inputStream)
+            for (i in 0 until workbook.numberOfSheets) {
+                names.add(workbook.getSheetName(i))
+            }
         }
-        return columnIndex - 1
+        return names
+    }
+
+    private fun columnToIndex(column: String): Int {
+        var number = 0
+        var power = 1
+        for (i in column.length - 1 downTo 0) {
+            val char = column[i]
+            val value = char - 'A' + 1
+            number += value * power
+            power *= 26
+        }
+        return number - 1
     }
 }

@@ -12,7 +12,7 @@ import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentReportBinding
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons.ReportLessonsAdapter
-import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
+import com.maestrx.studentcontrol.teacherapp.spinner.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.util.Constants
 import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel

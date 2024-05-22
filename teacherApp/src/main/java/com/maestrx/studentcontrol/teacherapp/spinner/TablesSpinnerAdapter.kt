@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.teacherapp.spinner.subjects
+package com.maestrx.studentcontrol.teacherapp.spinner
 
 import android.content.Context
 import android.view.View
@@ -6,30 +6,29 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.model.Subject
 
-class SubjectsSpinnerAdapter(
+class TablesSpinnerAdapter(
     context: Context,
-    subjects: List<Subject>
-) : ArrayAdapter<Subject>(context, R.layout.spinner_subject, subjects) {
+    subjects: List<String>
+) : ArrayAdapter<String>(context, R.layout.spinner_item, subjects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val maxLength = 12
         val view = super.getView(position, convertView, parent)
-        val name = getItem(position)?.name ?: ""
+        val name = getItem(position) ?: ""
         val viewName = if (name.length > maxLength) {
             name.substring(0..maxLength) + "..."
         } else {
             name
         }
-        view.findViewById<TextView>(R.id.subjectText).text = viewName
+        view.findViewById<TextView>(R.id.textItem).text = viewName
         return view
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getDropDownView(position, convertView, parent)
-        val subject = getItem(position)
-        view.findViewById<TextView>(R.id.subjectText).text = subject?.name
+        val table = getItem(position)
+        view.findViewById<TextView>(R.id.textItem).text = table
         return view
     }
 }

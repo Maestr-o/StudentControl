@@ -93,8 +93,8 @@
     <string name="import_students">Import students from Excel-file</string>
     <string name="sheet_name">Sheet name</string>
     <string name="column">Column</string>
-    <string name="start_row">Start row</string>
-    <string name="end_row">End row</string>
+    <string name="start_row">Start row number</string>
+    <string name="end_row">End row number</string>
     <string name="choose_file_path">File: %s</string>
     <string name="choose_file">Choose file</string>
     <string name="check_input_data">Please check that the entered data is correct</string>
@@ -118,4 +118,6 @@
     <string name="topic">Topic</string>
     <string name="zero_lessons_error">Create at least one lesson!</string>
     <string name="ok_saving_marks">Marks saved</string>
+    <string name="work_in_background">To background</string>
+    <string name="table_hint">Table:</string>
 </resources>

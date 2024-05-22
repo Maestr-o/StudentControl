@@ -43,7 +43,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:paddingTop="1dp"
-            tools:listitem="@layout/spinner_subject" />
+            tools:listitem="@layout/spinner_item" />
 
     </LinearLayout>
 

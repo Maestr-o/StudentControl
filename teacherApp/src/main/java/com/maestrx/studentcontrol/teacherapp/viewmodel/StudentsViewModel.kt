@@ -27,7 +27,7 @@ class StudentsViewModel @AssistedInject constructor(
     private val studentRepository: StudentRepository,
     lessonRepository: LessonRepository,
     private val excelManager: ExcelManager,
-    @Assisted private val groupId: Long,
+    @Assisted val groupId: Long,
 ) : ViewModel() {
 
     private val _studentsState = MutableStateFlow(emptyList<Student>())
@@ -35,6 +35,12 @@ class StudentsViewModel @AssistedInject constructor(
 
     private val _lessonsCount = MutableStateFlow(0L)
     val lessonsCount = _lessonsCount.asStateFlow()
+
+    private val _fileState = MutableStateFlow<Uri?>(null)
+    val fileState = _fileState.asStateFlow()
+
+    private val _importState = MutableStateFlow(StudentsImportUiState())
+    val importState = _importState.asStateFlow()
 
     private val _message = MutableStateFlow(Event(""))
     val message = _message.asStateFlow()
@@ -51,6 +57,15 @@ class StudentsViewModel @AssistedInject constructor(
 
         lessonRepository.getCount().onEach { count ->
             _lessonsCount.update { count }
+        }
+            .launchIn(viewModelScope)
+
+        fileState.onEach { uri ->
+            if (uri != null) {
+                _importState.update {
+                    it.copy(tableNames = excelManager.getExcelTableNames(uri))
+                }
+            }
         }
             .launchIn(viewModelScope)
     }
@@ -77,25 +92,37 @@ class StudentsViewModel @AssistedInject constructor(
         }
     }
 
-    fun importStudents(
-        uri: Uri?,
-        sheetName: String,
-        groupId: Long,
-        column: String,
-        startX: Int,
-        endX: Int
-    ) {
+    fun selectFile(uri: Uri) {
+        _fileState.update { uri }
+    }
+
+    fun saveImportState(state: StudentsImportUiState?) = with(state) {
+        if (this != null) {
+            _importState.update {
+                it.copy(
+                    selectedTable = selectedTable,
+                    column = column,
+                    startX = startX,
+                    endX = endX,
+                )
+            }
+        }
+    }
+
+    fun importStudents(groupId: Long) {
         viewModelScope.launch {
             try {
                 val students = requireNotNull(
-                    excelManager.importStudents(
-                        requireNotNull(uri),
-                        sheetName,
-                        groupId,
-                        column,
-                        startX,
-                        endX
-                    )
+                    importState.value.run {
+                        excelManager.importStudents(
+                            requireNotNull(fileState.value),
+                            selectedTable,
+                            groupId,
+                            column,
+                            startX.toInt(),
+                            endX.toInt(),
+                        )
+                    }
                 )
                 require(students.isNotEmpty())
                 studentRepository.saveList(students)
@@ -105,5 +132,10 @@ class StudentsViewModel @AssistedInject constructor(
                 _message.value = Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
+    }
+
+    fun cleanImportState() {
+        _fileState.update { null }
+        _importState.update { StudentsImportUiState() }
     }
 }

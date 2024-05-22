@@ -1,7 +1,6 @@
 package com.maestrx.studentcontrol.teacherapp.fragment
 
 import android.app.AlertDialog
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,10 +22,12 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentStudentsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.students.StudentsAdapter
+import com.maestrx.studentcontrol.teacherapp.spinner.TablesSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.util.Constants
 import com.maestrx.studentcontrol.teacherapp.util.FilePicker
 import com.maestrx.studentcontrol.teacherapp.util.capitalize
 import com.maestrx.studentcontrol.teacherapp.util.toast
+import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsImportUiState
 import com.maestrx.studentcontrol.teacherapp.viewmodel.StudentsViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.StudentsViewModelFactory
@@ -41,6 +42,16 @@ import kotlinx.serialization.json.Json
 class StudentsFragment : Fragment() {
 
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
+
+    private var importBinding: DialogImportStudentsBinding? = null
+
+    val viewModel by viewModels<StudentsViewModel>(
+        extrasProducer = {
+            defaultViewModelCreationExtras.withCreationCallback<StudentsViewModelFactory> { factory ->
+                factory.create(arguments?.getLong(Constants.GROUP_ID) ?: 0L)
+            }
+        }
+    )
 
     override fun onStart() {
         super.onStart()
@@ -59,17 +70,7 @@ class StudentsFragment : Fragment() {
     ): View {
         val binding = FragmentStudentsBinding.inflate(inflater, container, false)
 
-        val groupId = arguments?.getLong(Constants.GROUP_ID) ?: 0L
-
-        val viewModel by viewModels<StudentsViewModel>(
-            extrasProducer = {
-                defaultViewModelCreationExtras.withCreationCallback<StudentsViewModelFactory> { factory ->
-                    factory.create(groupId)
-                }
-            }
-        )
-
-        val adapter = StudentsAdapter(
+        val studentsAdapter = StudentsAdapter(
             object : StudentsAdapter.StudentsListener {
                 override fun onClickListener(student: Student) {
                     if (viewModel.lessonsCount.value <= 0) {
@@ -146,7 +147,7 @@ class StudentsFragment : Fragment() {
                 }
             }
         )
-        binding.attended.adapter = adapter
+        binding.attended.adapter = studentsAdapter
 
         binding.add.setOnClickListener {
             val dialogBinding = DialogEditStudentBinding.inflate(inflater)
@@ -170,7 +171,7 @@ class StudentsFragment : Fragment() {
                             firstName = newFirstName,
                             midName = newMidName,
                             lastName = newLastName,
-                            group = Group(groupId),
+                            group = Group(viewModel.groupId),
                         )
                     )
                     alertDialog.dismiss()
@@ -181,7 +182,7 @@ class StudentsFragment : Fragment() {
         }
 
         viewModel.studentsState.onEach { state ->
-            adapter.submitList(state)
+            studentsAdapter.submitList(state)
         }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -189,24 +190,11 @@ class StudentsFragment : Fragment() {
         toolbarViewModel.importClicked
             .onEach { state ->
                 if (state) {
-                    var fileUri: Uri? = null
-                    var fileName = ""
-                    val dialogBinding = DialogImportStudentsBinding.inflate(inflater).apply {
+                    importBinding = DialogImportStudentsBinding.inflate(inflater).apply {
                         chooseFile.setOnClickListener {
                             FilePicker(requireActivity().activityResultRegistry) { uri ->
-                                uri?.let {
-                                    fileUri = it
-                                    val documentFile =
-                                        DocumentFile.fromSingleUri(requireContext(), it)
-                                    fileName = documentFile?.name ?: ""
-                                }
-                                if (fileName.isNotBlank()) {
-                                    fileStr.apply {
-                                        text = getString(R.string.choose_file_path, fileName)
-                                        isVisible = true
-                                    }
-                                } else {
-                                    fileStr.isGone = true
+                                if (uri != null) {
+                                    viewModel.selectFile(uri)
                                 }
                             }.apply {
                                 pickExcelFile()
@@ -214,7 +202,7 @@ class StudentsFragment : Fragment() {
                         }
                     }
                     importDialog = AlertDialog.Builder(context)
-                        .setView(dialogBinding.root)
+                        .setView(importBinding?.root)
                         .setTitle(R.string.import_students)
                         .setCancelable(false)
                         .setPositiveButton(R.string.ok, null)
@@ -222,46 +210,43 @@ class StudentsFragment : Fragment() {
                             dialog.dismiss()
                         }
                         .setOnDismissListener {
+                            viewModel.cleanImportState()
                             toolbarViewModel.importClicked(false)
                         }
                         .show()
 
                     importDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
                         try {
-                            if (fileUri == null) {
+                            val importState = requireNotNull(createImportState())
+                            if (viewModel.fileState.value == null) {
                                 throw IllegalArgumentException(getString(R.string.choose_file_error))
                             }
-                            val sheetName = dialogBinding.sheetName.text.toString()
-                            val column = dialogBinding.column.text.toString().trim()
-                            val startX = dialogBinding.startX.text.toString().trim().toInt()
-                            val endX = dialogBinding.endX.text.toString().trim().toInt()
 
-                            if (sheetName.isBlank()) {
+                            if (importState.selectedTable.isBlank()) {
                                 throw IllegalArgumentException(getString(R.string.sheet_name_error))
                             }
-                            if (column.isBlank()) {
+                            if (importState.column.isBlank()) {
                                 throw IllegalArgumentException(getString(R.string.column_error))
                             }
-                            if (startX < 1 || endX < 1 || startX > endX) {
+                            if (importState.startX.toInt() < 1 || importState.endX.toInt() < 1
+                                || importState.startX > importState.endX
+                            ) {
                                 throw IllegalArgumentException(getString(R.string.row_numbers_error))
                             }
 
-                            dialogBinding.apply {
+                            importBinding?.apply {
                                 progressBar.isVisible = true
                                 fileContainer.isGone = true
-                                this.sheetName.isGone = true
-                                sheetContainer.isGone = true
+                                this.tableNameContainer.isGone = true
+                                this.column.isGone = true
+                                this.startX.isGone = true
+                                this.endX.isGone = true
                             }
                             importDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.isGone = true
+                            importDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isGone = true
 
-                            viewModel.importStudents(
-                                uri = fileUri,
-                                sheetName = sheetName,
-                                groupId = groupId,
-                                column = column,
-                                startX = startX,
-                                endX = endX
-                            )
+                            viewModel.saveImportState(importState)
+                            viewModel.importStudents(viewModel.groupId)
                         } catch (e: NumberFormatException) {
                             toast(R.string.row_numbers_error)
                         } catch (e: IllegalArgumentException) {
@@ -269,6 +254,40 @@ class StudentsFragment : Fragment() {
                         } catch (e: Exception) {
                             toast(R.string.import_error)
                         }
+                    }
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.fileState
+            .onEach { uri ->
+                if (uri != null) {
+                    val documentFile =
+                        DocumentFile.fromSingleUri(requireContext(), uri)
+                    importBinding?.fileStr?.text = documentFile?.name ?: ""
+                    importBinding?.fileStr?.isVisible = true
+                } else {
+                    importBinding?.fileStr?.isGone = true
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.importState
+            .onEach { state ->
+                importBinding?.apply {
+                    tableNames.adapter = TablesSpinnerAdapter(requireContext(), state.tableNames)
+                    if (state.tableNames.isNotEmpty() && !progressBar.isVisible) {
+                        tableNameContainer.isVisible = true
+                    } else {
+                        tableNameContainer.isGone = true
+                    }
+                    column.setText(state.column)
+                    startX.setText(state.startX)
+                    endX.setText(state.endX)
+                }
+                state.tableNames.forEachIndexed { index, name ->
+                    if (name == state.selectedTable) {
+                        importBinding?.tableNames?.setSelection(index, false)
                     }
                 }
             }
@@ -299,5 +318,24 @@ class StudentsFragment : Fragment() {
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
         return binding.root
+    }
+
+    private fun createImportState(): StudentsImportUiState? {
+        importBinding?.apply {
+            return StudentsImportUiState(
+                fileName = fileStr.text.toString(),
+                selectedTable = tableNames.selectedItem as String? ?: "",
+                column = column.text.toString().trim(),
+                startX = startX.text.toString().trim(),
+                endX = endX.text.toString().trim(),
+            )
+        }
+        return null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.saveImportState(createImportState())
+        importBinding = null
     }
 }

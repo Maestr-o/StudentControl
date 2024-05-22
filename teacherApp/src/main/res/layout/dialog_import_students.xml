@@ -1,96 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="18dp"
-    android:paddingVertical="12dp">
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/fileContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="12dp">
 
-        <TextView
-            android:id="@+id/fileStr"
-            android:layout_width="0dp"
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/tiny_spacing"
-            android:layout_marginEnd="@dimen/tiny_spacing"
-            android:layout_marginBottom="@dimen/tiny_spacing"
-            android:layout_weight="0.6"
-            android:paddingStart="@dimen/tiny_spacing"
-            android:textSize="16sp"
-            android:visibility="gone"
-            tools:ignore="RtlSymmetry"
-            tools:text="@string/choose_file_path"
-            tools:visibility="visible" />
+            android:visibility="gone" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/chooseFile"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/fileContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
-            android:text="@string/choose_file"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/fileStr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/tiny_spacing"
+                android:layout_marginEnd="@dimen/tiny_spacing"
+                android:layout_marginBottom="@dimen/tiny_spacing"
+                android:layout_weight="0.6"
+                android:paddingStart="@dimen/tiny_spacing"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:ignore="RtlSymmetry"
+                tools:text="@string/choose_file_path"
+                tools:visibility="visible" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/chooseFile"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:text="@string/choose_file"
+                android:textSize="12sp" />
 
-    <EditText
-        android:id="@+id/sheetName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:hint="@string/sheet_name"
-        android:inputType="textPersonName" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sheetContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/tableNameContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingHorizontal="3dp"
+                android:text="@string/table_hint"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/tableNames"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingTop="1dp"
+                tools:listitem="@layout/spinner_item" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/column"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/small_spacing"
-            android:layout_weight="1"
             android:autofillHints=""
             android:hint="@string/column"
-            android:inputType="textCapWords" />
+            android:inputType="textCapCharacters" />
 
         <EditText
             android:id="@+id/startX"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/small_spacing"
-            android:layout_weight="1"
             android:autofillHints=""
             android:hint="@string/start_row"
             android:inputType="number" />
 
         <EditText
             android:id="@+id/endX"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:autofillHints=""
             android:hint="@string/end_row"
             android:inputType="number" />
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

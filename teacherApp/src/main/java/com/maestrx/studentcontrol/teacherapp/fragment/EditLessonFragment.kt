@@ -19,7 +19,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.model.LessonType
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.recyclerview.groups_select.GroupSelectAdapter
-import com.maestrx.studentcontrol.teacherapp.spinner.subjects.SubjectsSpinnerAdapter
+import com.maestrx.studentcontrol.teacherapp.spinner.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.util.Constants
 import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.util.showDatePicker

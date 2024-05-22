@@ -60,7 +60,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/subjectsHint"
                 app:layout_constraintTop_toTopOf="@+id/subjectsHint"
-                tools:listitem="@layout/spinner_subject" />
+                tools:listitem="@layout/spinner_item" />
 
             <com.maestrx.studentcontrol.teacherapp.view.PercentageCircleView
                 android:id="@+id/percentage"
