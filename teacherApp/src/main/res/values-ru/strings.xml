@@ -76,7 +76,7 @@
     <string name="sure_clean_data">Вы действительно хотите очистить все данные?</string>
     <string name="back">Назад</string>
     <string name="error_export">Ошибка экспорта данных</string>
-    <string name="ok_creating_file">Экспортировано в папку загрузок</string>
+    <string name="ok_creating_file">Экспорт завершен</string>
     <string name="need_files_permission">Для того, чтобы экспортировать данные в Excel-файлы, нужно разрешение на доступ к внешнему хранилищу</string>
     <string name="person_name_header">ФИО</string>
     <string name="quantity">N</string>
@@ -114,4 +114,5 @@
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
     <string name="ok_saving_marks">Отметки о посещении сохранены</string>
     <string name="table_hint">Таблица:</string>
+    <string name="import_same">Ошибка импорта: такие студенты уже существуют</string>
 </resources>

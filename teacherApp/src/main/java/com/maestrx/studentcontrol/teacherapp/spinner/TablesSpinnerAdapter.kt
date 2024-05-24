@@ -13,15 +13,9 @@ class TablesSpinnerAdapter(
 ) : ArrayAdapter<String>(context, R.layout.spinner_item, subjects) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val maxLength = 12
         val view = super.getView(position, convertView, parent)
         val name = getItem(position) ?: ""
-        val viewName = if (name.length > maxLength) {
-            name.substring(0..maxLength) + "..."
-        } else {
-            name
-        }
-        view.findViewById<TextView>(R.id.textItem).text = viewName
+        view.findViewById<TextView>(R.id.textItem).text = name
         return view
     }
 

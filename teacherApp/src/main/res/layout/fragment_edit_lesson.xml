@@ -24,7 +24,7 @@
             android:layout_marginBottom="@dimen/tiny_spacing"
             android:autofillHints="Crime"
             android:hint="@string/title_hint"
-            android:inputType="text" />
+            android:inputType="textCapSentences" />
 
         <LinearLayout
             android:id="@+id/subjectContainer"
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:paddingTop="1dp"
+                android:paddingTop="2dp"
                 tools:listitem="@layout/spinner_item" />
 
         </LinearLayout>
@@ -130,13 +130,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_spacing"
-            android:hint="@string/auditory_hint"
-            android:inputType="text">
+            android:hint="@string/auditory_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/auditory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 tools:text="7-301" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -208,17 +208,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/common_spacing"
-            android:hint="@string/notes_hint"
-            android:inputType="textMultiLine">
+            android:hint="@string/notes_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences|textMultiLine"
                 tools:text="@tools:sample/lorem[30]" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
 
     </LinearLayout>
 

@@ -115,8 +115,8 @@ class StudentsViewModel @AssistedInject constructor(
     }
 
     fun importStudents(groupId: Long) {
-        viewModelScope.launch {
-            try {
+        viewModelScope.launch(Dispatchers.IO) {
+            _message.value = try {
                 val students = requireNotNull(
                     importState.value.run {
                         excelManager.importStudents(
@@ -130,11 +130,16 @@ class StudentsViewModel @AssistedInject constructor(
                     }
                 )
                 require(students.isNotEmpty())
+                val count = studentRepository.getCountByGroupId(groupId)
                 studentRepository.saveList(students)
-                _message.value = Event(Constants.MESSAGE_OK_IMPORT)
+                if (count == studentRepository.getCountByGroupId(groupId)) {
+                    Event(Constants.MESSAGE_SAME_IMPORT)
+                } else {
+                    Event(Constants.MESSAGE_OK_IMPORT)
+                }
             } catch (e: Exception) {
                 Log.d(Constants.DEBUG_TAG, "Import error: $e")
-                _message.value = Event(Constants.MESSAGE_ERROR_IMPORT)
+                Event(Constants.MESSAGE_ERROR_IMPORT)
             }
         }
     }

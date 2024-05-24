@@ -41,7 +41,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/common_spacing"
                 android:layout_weight="1"
+                android:singleLine="false"
                 android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/placemark"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/subject"
                 tools:text="20.03.2024 | 12:00 - 13:30" />
@@ -194,6 +196,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/common_spacing"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/registeredCount"
                 tools:listitem="@layout/card_registered_group" />

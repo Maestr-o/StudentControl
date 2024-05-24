@@ -84,7 +84,7 @@ class ExcelManager @Inject constructor(
             if (lessonRepository.getCountBySubjectIdAndGroupIdAndStartTime(
                     subject.id,
                     groupEntity.id,
-                    TimeFormatter.getCurrentTime()
+                    TimeFormatter.getCurrentTimeAddRecess()
                 ) >= 1
                 && createSheet(workbook, styles, subject, Group.toData(groupEntity))
             ) {
@@ -107,7 +107,7 @@ class ExcelManager @Inject constructor(
             lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
                 subject.id,
                 group.id,
-                TimeFormatter.getCurrentTime()
+                TimeFormatter.getCurrentTimeAddRecess()
             )
         }
         val studentsDeferred = async(Dispatchers.IO) {

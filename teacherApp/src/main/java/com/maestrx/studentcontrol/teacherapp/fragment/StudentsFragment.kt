@@ -312,6 +312,11 @@ class StudentsFragment : Fragment() {
                         importDialog?.dismiss()
                     }
 
+                    Constants.MESSAGE_SAME_IMPORT -> {
+                        toast(R.string.import_same)
+                        importDialog?.dismiss()
+                    }
+
                     Constants.MESSAGE_ERROR_IMPORT -> {
                         toast(R.string.import_error)
                         importDialog?.dismiss()

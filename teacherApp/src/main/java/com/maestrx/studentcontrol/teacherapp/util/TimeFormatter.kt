@@ -78,7 +78,14 @@ object TimeFormatter {
         }
             .timeInMillis
 
-    fun getCurrentTime(): Long = Calendar.getInstance().timeInMillis
+    private fun getCurrentTime(): Long = Calendar.getInstance().timeInMillis
+
+    fun getCurrentTimeAddRecess(): Long =
+        Calendar.getInstance().apply {
+            timeInMillis = getCurrentTime()
+            add(Calendar.MINUTE, Constants.TIME_RECESS)
+        }
+            .timeInMillis
 
     fun getCurrentTimeString(): String =
         unixTimeToDateTimeString(Calendar.getInstance().timeInMillis)

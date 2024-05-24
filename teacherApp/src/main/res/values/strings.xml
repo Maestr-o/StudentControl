@@ -75,7 +75,7 @@
     <string name="sure_clean_data">Do you really want to clean all data?</string>
     <string name="back">Back</string>
     <string name="error_export">Export error</string>
-    <string name="ok_creating_file">Exported to downloads folder</string>
+    <string name="ok_creating_file">Export finished</string>
     <string name="need_files_permission">Exporting data to Excel-files requires permission to access external storage</string>
     <string name="person_name_header">Name</string>
     <string name="quantity">N</string>
@@ -117,4 +117,5 @@
     <string name="zero_lessons_error">Create at least one lesson!</string>
     <string name="ok_saving_marks">Marks saved</string>
     <string name="table_hint">Table:</string>
+    <string name="import_same">Import error: these students already exist</string>
 </resources>

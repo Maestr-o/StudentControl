@@ -55,7 +55,7 @@ class ReportViewModel @AssistedInject constructor(
             val lessons = lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
                 subject.id,
                 student.group.id,
-                TimeFormatter.getCurrentTime()
+                TimeFormatter.getCurrentTimeAddRecess()
             ).map {
                 Lesson.fromResponseToData(it)
             }
@@ -75,7 +75,11 @@ class ReportViewModel @AssistedInject constructor(
                 reportLessons += ReportLesson(lesson, markedLessonIds.contains(lesson.id))
             }
 
-            val percentage = marks.count().toFloat() / lessons.count() * 100
+            val percentage = if (lessons.isNotEmpty()) {
+                marks.count().toFloat() / lessons.count() * 100
+            } else {
+                100f
+            }
 
             _reportState.update {
                 ReportUiState(subject, student, reportLessons, marks, percentage)
