@@ -59,11 +59,16 @@ class ControlViewModel @AssistedInject constructor(
             _studentsWithGroups.update {
                 it.copy(totalStudentsCount = getTotalStudentsCount(lesson.groups))
             }
-            markRepository.getByLessonId(lesson.id)
-                .onEach { list ->
+            markRepository.getCountByLessonId(lesson.id)
+                .onEach { _ ->
+                    val marks: MutableList<MarkEntity> = mutableListOf()
+                    lesson.groups.forEach { group ->
+                        marks += markRepository.getByLessonIdAndGroupId(lesson.id, group.id)
+                    }
+
                     _studentsWithGroups.update {
                         it.copy(
-                            marks = list.map { mark ->
+                            marks = marks.map { mark ->
                                 Mark.toData(mark)
                             },
                             markedStudentsWithGroups = getMarkedStudentsWithGroups(),

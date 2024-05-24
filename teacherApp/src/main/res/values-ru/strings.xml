@@ -14,7 +14,7 @@
     <string name="lecture">Лекция</string>
     <string name="laboratory_work">Лабораторная</string>
     <string name="practice">Практика</string>
-    <string name="type_hit">Тип:</string>
+    <string name="type_hint">Тип:</string>
     <string name="subject_hint">Предмет:</string>
     <string name="groups_hint">Группы:</string>
     <string name="edit">Редактировать</string>
@@ -45,7 +45,7 @@
     <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Добавьте хотя бы одну группу!</string>
     <string name="zero_subjects_error">Добавьте хотя бы один предмет!</string>
-    <string name="enter_title">Пожалуйста, введите заголовок</string>
+    <string name="enter_title">Пожалуйста, введите тему занятия</string>
     <string name="time_end_hint">Конец</string>
     <string name="default_end_time">13:30</string>
     <string name="notes_hint">Заметки</string>
@@ -77,7 +77,7 @@
     <string name="back">Назад</string>
     <string name="error_export">Ошибка экспорта данных</string>
     <string name="ok_creating_file">Экспорт завершен</string>
-    <string name="need_files_permission">Для того, чтобы экспортировать данные в Excel-файлы, нужно разрешение на доступ к внешнему хранилищу</string>
+    <string name="need_files_permission">Для того, чтобы экспортировать данные, нужно разрешение на доступ к внешнему хранилищу. Все данные будут сохраняться в папку загрузок.</string>
     <string name="person_name_header">ФИО</string>
     <string name="quantity">N</string>
     <string name="amount">Всего</string>
@@ -112,7 +112,7 @@
     <string name="mark_short">Отм</string>
     <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
-    <string name="ok_saving_marks">Отметки о посещении сохранены</string>
+    <string name="ok_saving_marks">Отметки сохранены</string>
     <string name="table_hint">Таблица:</string>
     <string name="import_same">Ошибка импорта: такие студенты уже существуют</string>
 </resources>

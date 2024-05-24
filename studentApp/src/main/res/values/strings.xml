@@ -4,16 +4,16 @@
     <string name="data_placeholder">Group: %s\nName: %s</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="no_connection">No connection</string>
-    <string name="connect_to_network">Connect to teacher\'s network</string>
+    <string name="connect_to_network">Connect to your teacher\'s network</string>
     <string name="connected">Connected to Wi-Fi network</string>
     <string name="sending_data">Sending data…</string>
     <string name="error_exchanging_data">Error exchanging data. Please retry</string>
     <string name="send">Send</string>
-    <string name="choose_group">Choose group</string>
-    <string name="choose_student">Choose student</string>
+    <string name="choose_group">Select group</string>
+    <string name="choose_student">Select student</string>
     <string name="checked_in">You are checked in!</string>
-    <string name="choose_student_hint">The entered data will be saved in memory for next connections.</string>
-    <string name="checked_in_toast">You have been successfully checked-in!</string>
+    <string name="choose_student_hint">The entered data will be saved in memory for next connections.\nIf you aren\'t on the list, contact your teacher.</string>
+    <string name="checked_in_toast">You have been successfully checked in!</string>
     <string name="error_go_to_settings">Error going to settings</string>
     <string name="cancel">Cancel</string>
 </resources>

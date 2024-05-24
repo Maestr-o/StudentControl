@@ -169,7 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_spacing"
             android:paddingHorizontal="6dp"
-            android:text="@string/type_hit"
+            android:text="@string/type_hint"
             android:textSize="18sp" />
 
         <RadioGroup

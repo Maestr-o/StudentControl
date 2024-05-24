@@ -8,8 +8,11 @@ import javax.inject.Inject
 class LocalMarkRepository @Inject constructor(
     private val markDao: MarkDao,
 ) : MarkRepository {
-    override fun getByLessonId(lessonId: Long): Flow<List<MarkEntity>> =
-        markDao.getByLessonId(lessonId)
+    override fun getCountByLessonId(lessonId: Long): Flow<Int> =
+        markDao.getCountByLessonId(lessonId)
+
+    override suspend fun getByLessonIdAndGroupId(lessonId: Long, groupId: Long): List<MarkEntity> =
+        markDao.getByLessonIdAndGroupId(lessonId, groupId)
 
     override suspend fun save(data: MarkEntity) =
         markDao.save(data)

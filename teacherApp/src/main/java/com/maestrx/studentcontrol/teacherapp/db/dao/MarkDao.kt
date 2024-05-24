@@ -12,12 +12,23 @@ interface MarkDao {
 
     @Query(
         """
-        SELECT Mark.id, Mark.lesson_id, Mark.student_id
-        FROM Mark, Lesson
+        SELECT COUNT(*) FROM Mark, Lesson
         WHERE Mark.lesson_id == Lesson.id AND Mark.lesson_id == :lessonId
         """
     )
-    fun getByLessonId(lessonId: Long): Flow<List<MarkEntity>>
+    fun getCountByLessonId(lessonId: Long): Flow<Int>
+
+    @Query(
+        """
+        SELECT Mark.id, Mark.lesson_id, Mark.student_id
+        FROM Mark, Lesson, LessonGroupCross, `Group`, Student
+        WHERE Mark.lesson_id == Lesson.id AND LessonGroupCross.lesson_id == Lesson.id
+            AND `Group`.id == LessonGroupCross.group_id
+            AND LessonGroupCross.group_id == :groupId AND Mark.lesson_id == :lessonId
+            AND Student.group_id == `Group`.id AND Mark.student_id == Student.id
+        """
+    )
+    suspend fun getByLessonIdAndGroupId(lessonId: Long, groupId: Long): List<MarkEntity>
 
     @Upsert
     suspend fun save(mark: MarkEntity)
