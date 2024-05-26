@@ -1,9 +1,11 @@
 package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
+import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +40,7 @@ import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
 import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
 import com.maestrx.studentcontrol.studentapp.util.Constants
+import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 
 @Composable
 internal fun ControlScreen(
@@ -47,6 +50,10 @@ internal fun ControlScreen(
     navClick: () -> Unit,
 ) {
     val context = LocalContext.current
+
+    BackHandler {
+        (context as? Activity)?.finish()
+    }
 
     Column(
         modifier = Modifier
@@ -72,7 +79,7 @@ internal fun ControlScreen(
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(start = 14.dp)
+                            .padding(start = 14.dp, top = 8.dp, bottom = 8.dp)
                             .weight(1f),
                         textAlign = TextAlign.Start,
                         text = when (state) {
@@ -81,7 +88,10 @@ internal fun ControlScreen(
                             }
 
                             is ControlStatus.Connected -> {
-                                stringResource(id = R.string.connected)
+                                stringResource(
+                                    id = R.string.connected,
+                                    WifiHelper.getCurrentSSID(context)
+                                )
                             }
 
                             is ControlStatus.Default -> {

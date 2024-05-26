@@ -5,7 +5,7 @@
     <string name="go_to_settings">Go to settings</string>
     <string name="no_connection">No connection</string>
     <string name="connect_to_network">Connect to your teacher\'s network</string>
-    <string name="connected">Connected to Wi-Fi network</string>
+    <string name="connected">Connected to %s</string>
     <string name="sending_data">Sending data…</string>
     <string name="error_exchanging_data">Error exchanging data. Please retry</string>
     <string name="send">Send</string>
@@ -16,4 +16,5 @@
     <string name="checked_in_toast">You have been successfully checked in!</string>
     <string name="error_go_to_settings">Error going to settings</string>
     <string name="cancel">Cancel</string>
+    <string name="wifi_network">Wi-Fi network</string>
 </resources>

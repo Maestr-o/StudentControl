@@ -4,7 +4,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.util.Log
+import com.maestrx.studentcontrol.studentapp.R
 import java.net.InetAddress
 
 object WifiHelper {
@@ -16,6 +18,29 @@ object WifiHelper {
         val networkCapabilities =
             connectivityManager.getNetworkCapabilities(network) ?: return false
         return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    }
+
+    fun getCurrentSSID(context: Context): String {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            return context.getString(R.string.wifi_network)
+        }
+        return try {
+            val wifiManager =
+                context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiInfo = wifiManager.connectionInfo
+            if (wifiInfo.ssid != null && wifiInfo.ssid != Constants.UNKNOWN_SSID) {
+                val ssid = wifiInfo.ssid
+                if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
+                    ssid.substring(1, ssid.length - 1)
+                } else {
+                    ssid
+                }
+            } else {
+                context.getString(R.string.wifi_network)
+            }
+        } catch (e: Exception) {
+            context.getString(R.string.wifi_network)
+        }
     }
 
     fun getServerAddress(context: Context): InetAddress {

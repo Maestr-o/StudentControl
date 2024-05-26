@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.studentapp.util
 
 object Constants {
+    const val UNKNOWN_SSID = "<unknown ssid>"
     const val DEBUG_TAG = "StudentAppDBG"
 
     const val TIMEOUT = 2_000

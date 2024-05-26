@@ -6,7 +6,7 @@
     <string name="go_to_settings">Перейти в настройки</string>
     <string name="no_connection">Нет подключения</string>
     <string name="connect_to_network">Подключитесь к сети преподавателя</string>
-    <string name="connected">Подключено к Wi-Fi сети</string>
+    <string name="connected">Подключено к %s</string>
     <string name="sending_data">Отправка данных…</string>
     <string name="error_exchanging_data">Ошибка обмена данными. Пожалуйста, повторите попытку</string>
     <string name="send">Отправить</string>
@@ -17,4 +17,5 @@
     <string name="checked_in_toast">Вы успешно отмечены!</string>
     <string name="error_go_to_settings">Ошибка перехода к настройкам</string>
     <string name="cancel">Отмена</string>
+    <string name="wifi_network">Wi-Fi сети</string>
 </resources>
