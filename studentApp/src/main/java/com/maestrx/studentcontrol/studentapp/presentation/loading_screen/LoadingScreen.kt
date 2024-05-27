@@ -41,13 +41,14 @@ internal fun LoadingScreen(
     onEvent: (LoadingEvent) -> Unit,
     prefs: SharedPreferencesManager,
     isLocationEnabled: Boolean,
-    locationDisable: () -> Unit,
+    isWifiEnabled: Boolean,
+    badState: () -> Unit,
     navClick: (isConnected: Boolean) -> Unit,
 ) {
     val context = LocalContext.current
 
-    if (!isLocationEnabled) {
-        locationDisable()
+    if (!isLocationEnabled || !isWifiEnabled) {
+        badState()
     }
 
     when (state.screenState) {
@@ -247,7 +248,6 @@ internal fun LoadingScreen(
         }
 
         is LoadingStatus.Success -> {
-            context.Toast(res = R.string.checked_in_toast)
             onEvent(LoadingEvent.SetScreenStatus(LoadingStatus.ReadyToBack(true)))
         }
 
@@ -282,7 +282,8 @@ fun LoadingPreview() {
         onEvent = {},
         prefs = SharedPreferencesManager(context),
         isLocationEnabled = true,
-        locationDisable = {},
+        badState = {},
+        isWifiEnabled = true,
         navClick = {},
     )
 }

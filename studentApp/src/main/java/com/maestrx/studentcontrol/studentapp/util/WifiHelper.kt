@@ -1,8 +1,6 @@
 package com.maestrx.studentcontrol.studentapp.util
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.util.Log
@@ -10,15 +8,6 @@ import com.maestrx.studentcontrol.studentapp.R
 import java.net.InetAddress
 
 object WifiHelper {
-
-    fun isWifiConnected(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val networkCapabilities =
-            connectivityManager.getNetworkCapabilities(network) ?: return false
-        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-    }
 
     fun getCurrentSSID(context: Context): String {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {

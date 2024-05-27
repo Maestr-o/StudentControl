@@ -6,7 +6,6 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import com.maestrx.studentcontrol.studentapp.R
 import com.maestrx.studentcontrol.studentapp.domain.model.PersonalData
-import com.maestrx.studentcontrol.studentapp.ui.theme.Connected
 import com.maestrx.studentcontrol.studentapp.util.Constants
 import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 
@@ -48,7 +45,7 @@ internal fun ControlScreen(
     personalData: PersonalData?,
     isDataExchanged: Boolean,
     isLocationEnabled: Boolean,
-    locationDisable: () -> Unit,
+    badState: () -> Unit,
     navClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -58,7 +55,7 @@ internal fun ControlScreen(
     }
 
     if (!isLocationEnabled) {
-        locationDisable()
+        badState()
     }
 
     Column(
@@ -89,8 +86,12 @@ internal fun ControlScreen(
                             .weight(1f),
                         textAlign = TextAlign.Start,
                         text = when (state) {
-                            is ControlStatus.NotConnected -> {
-                                stringResource(id = R.string.no_connection)
+                            is ControlStatus.WifiIsDown -> {
+                                stringResource(id = R.string.wifi_down)
+                            }
+
+                            is ControlStatus.WifiIsUp -> {
+                                stringResource(id = R.string.wifi_up)
                             }
 
                             is ControlStatus.Connected -> {
@@ -100,8 +101,8 @@ internal fun ControlScreen(
                                 )
                             }
 
-                            is ControlStatus.Default -> {
-                                stringResource(id = R.string.no_connection)
+                            is ControlStatus.Completed -> {
+                                stringResource(id = R.string.checked_in)
                             }
                         },
                         fontSize = 17.sp,
@@ -163,17 +164,21 @@ internal fun ControlScreen(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            if (state is ControlStatus.Connected || isDataExchanged) {
-                ConnectedGroup(navClick, isDataExchanged)
-            } else {
-                DisconnectedGroup()
+            if (isDataExchanged) {
+                CompletedGroup()
+            } else if (state is ControlStatus.WifiIsUp) {
+                WifiIsUpGroup()
+            } else if (state is ControlStatus.WifiIsDown) {
+                WifiIsDownGroup()
+            } else if (state is ControlStatus.Connected) {
+                WifiIsUpGroup()
             }
         }
     }
 }
 
 @Composable
-fun DisconnectedGroup() {
+fun WifiIsDownGroup() {
     val context = LocalContext.current
 
     Column(
@@ -185,7 +190,7 @@ fun DisconnectedGroup() {
         Text(
             modifier = Modifier
                 .padding(bottom = 8.dp),
-            text = stringResource(id = R.string.connect_to_network),
+            text = stringResource(id = R.string.turn_on_wifi),
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
         )
@@ -213,45 +218,37 @@ fun DisconnectedGroup() {
 }
 
 @Composable
-fun ConnectedGroup(
-    navClick: () -> Unit,
-    isDataExchanged: Boolean,
-) {
-    val buttonSize = 165.dp
+fun WifiIsUpGroup() {
+
+}
+
+@Composable
+fun CompletedGroup() {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        IconButton(
-            modifier = Modifier
-                .size(buttonSize),
-            enabled = !isDataExchanged,
-            onClick = {
-                navClick()
-            },
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(buttonSize),
-                painter = painterResource(id = R.drawable.control_start),
-                contentDescription = "start control",
-            )
-        }
         Text(
             modifier = Modifier
-                .padding(top = 8.dp),
-            text = stringResource(
-                id = if (isDataExchanged) {
-                    R.string.checked_in
-                } else {
-                    R.string.check_in
-                }
-            ),
-            color = Connected,
-            fontSize = 22.sp,
+                .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+            text = stringResource(id = R.string.checked_in_hint),
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
         )
+        Button(
+            onClick = {
+                (context as? Activity)?.finish()
+            },
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.exit),
+                fontSize = 16.sp,
+            )
+        }
     }
 }
 
@@ -260,13 +257,13 @@ fun ConnectedGroup(
 fun ControlPreview() {
     ControlScreen(
         navClick = {},
-        state = ControlStatus.Connected,
+        state = ControlStatus.WifiIsUp,
         personalData = PersonalData(
             group = "АВТ-042",
             fullName = "Сидоров Иван Сидорович"
         ),
-        isDataExchanged = true,
+        isDataExchanged = false,
         isLocationEnabled = true,
-        locationDisable = {},
+        badState = {},
     )
 }

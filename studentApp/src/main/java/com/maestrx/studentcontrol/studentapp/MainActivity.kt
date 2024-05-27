@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,7 +16,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,8 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.maestrx.studentcontrol.studentapp.broadcast_receiver.LocationReceiver
+import com.maestrx.studentcontrol.studentapp.broadcast_receiver.WifiReceiver
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
-import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlEvent
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlScreen
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlStatus
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlViewModel
@@ -37,7 +40,6 @@ import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.Loading
 import com.maestrx.studentcontrol.studentapp.presentation.settings_screen.PermissionsScreen
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentAppTheme
 import com.maestrx.studentcontrol.studentapp.util.Constants
-import com.maestrx.studentcontrol.studentapp.util.WifiHelper.isWifiConnected
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -48,6 +50,8 @@ class MainActivity : ComponentActivity() {
     lateinit var prefs: SharedPreferencesManager
 
     private lateinit var locationReceiver: LocationReceiver
+    private lateinit var wifiReceiver: WifiReceiver
+    private var wifiState: Int = 0 // 0 - off, 1 - on, 2 - connected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +69,19 @@ class MainActivity : ComponentActivity() {
                     locationReceiver = LocationReceiver { enabled ->
                         isLocationEnabled = enabled
                     }
-                    val intentFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-                    registerReceiver(locationReceiver, intentFilter)
+                    val locationIntentFilter =
+                        IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+                    registerReceiver(locationReceiver, locationIntentFilter)
+
+                    var isWifiEnabled by rememberSaveable {
+                        mutableStateOf(WifiReceiver.isWifiEnabled(applicationContext))
+                    }
+                    wifiReceiver = WifiReceiver { enabled ->
+                        isWifiEnabled = enabled
+                    }
+                    val wifiIntentFilter =
+                        IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
+                    registerReceiver(wifiReceiver, wifiIntentFilter)
 
                     NavHost(
                         navController = navController,
@@ -90,22 +105,46 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             val personalData = prefs.getPersonalData()
                             val viewModel = hiltViewModel<ControlViewModel>()
-                            val state = viewModel.state
-                            if (state.value is ControlStatus.Default) {
-                                state.value = if (isWifiConnected(applicationContext)) {
-                                    ControlStatus.Connected
-                                } else {
-                                    ControlStatus.NotConnected
+
+                            var wifiState by remember {
+                                mutableIntStateOf(0) // 0 - off, 1 - on, 2 - connected
+                            }
+
+                            val isDataExchanged =
+                                entry.arguments?.getBoolean(Constants.IS_DATA_EXCHANGED) ?: false
+
+                            var state by remember {
+                                mutableStateOf(
+                                    when {
+                                        isDataExchanged -> ControlStatus.Completed
+                                        wifiState == 2 -> ControlStatus.Connected
+                                        wifiState == 1 -> ControlStatus.WifiIsUp
+                                        else -> ControlStatus.WifiIsDown
+                                    }
+                                )
+                            }
+
+                            WifiStateReceiverCompose { isConnected ->
+                                wifiState = when {
+                                    isConnected -> 2
+                                    isWifiEnabled -> 1
+                                    else -> 0
+                                }
+
+                                state = when {
+                                    isDataExchanged -> ControlStatus.Completed
+                                    wifiState == 2 -> ControlStatus.Connected
+                                    wifiState == 1 -> ControlStatus.WifiIsUp
+                                    else -> ControlStatus.WifiIsDown
                                 }
                             }
-                            WifiStateReceiverCompose(viewModel::onEvent)
+
                             ControlScreen(
-                                state = state.value,
+                                state = state,
                                 personalData = personalData,
                                 isLocationEnabled = isLocationEnabled,
-                                isDataExchanged = entry.arguments?.getBoolean(Constants.IS_DATA_EXCHANGED)
-                                    ?: false,
-                                locationDisable = {
+                                isDataExchanged = isDataExchanged,
+                                badState = {
                                     navController.navigateUp()
                                 },
                             ) {
@@ -123,7 +162,8 @@ class MainActivity : ComponentActivity() {
                                 onEvent = viewModel::onEvent,
                                 prefs = prefs,
                                 isLocationEnabled = isLocationEnabled,
-                                locationDisable = {
+                                isWifiEnabled = wifiState >= 1,
+                                badState = {
                                     navController.navigateUp()
                                 },
                             ) { isConnected ->
@@ -141,22 +181,23 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(locationReceiver)
+        unregisterReceiver(wifiReceiver)
     }
 
     @Composable
-    fun WifiStateReceiverCompose(onEvent: (ControlEvent) -> Unit) {
+    fun WifiStateReceiverCompose(isConnected: (Boolean) -> Unit) {
         val context = LocalContext.current
 
         DisposableEffect(key1 = context) {
             val networkCallback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    onEvent(ControlEvent.SetScreenStatus(ControlStatus.Connected))
+                    isConnected(true)
                 }
 
                 override fun onLost(network: Network) {
                     super.onLost(network)
-                    onEvent(ControlEvent.SetScreenStatus(ControlStatus.NotConnected))
+                    isConnected(false)
                 }
             }
 

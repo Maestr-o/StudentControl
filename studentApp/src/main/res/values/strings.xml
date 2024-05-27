@@ -21,4 +21,9 @@
     <string name="settings_info">The app requires permission to accurately determine your location and running location services.</string>
     <string name="request_permission">Request permission</string>
     <string name="enable_location">Enable location</string>
+    <string name="wifi_down">Wi-Fi is down</string>
+    <string name="wifi_up">Wi-Fi is up</string>
+    <string name="turn_on_wifi">Please turn on Wi-Fi</string>
+    <string name="checked_in_hint">You have successfully checked in, you can close the application</string>
+    <string name="exit">Exit</string>
 </resources>

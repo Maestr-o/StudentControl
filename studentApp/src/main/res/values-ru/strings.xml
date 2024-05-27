@@ -22,4 +22,9 @@
     <string name="settings_info">Для работы приложения необходимо разрешение на точное определение вашего местоположения и запуск служб геолокации.</string>
     <string name="request_permission">Запросить разрешение</string>
     <string name="enable_location">Включить геолокацию</string>
+    <string name="wifi_down">Wi-Fi выключен</string>
+    <string name="wifi_up">Wi-Fi активен</string>
+    <string name="turn_on_wifi">Пожалуйста, включите Wi-Fi</string>
+    <string name="checked_in_hint">Вы успешно отметились, можете закрыть приложение</string>
+    <string name="exit">Выйти</string>
 </resources>
