@@ -17,4 +17,8 @@
     <string name="error_go_to_settings">Error going to settings</string>
     <string name="cancel">Cancel</string>
     <string name="wifi_network">Wi-Fi network</string>
+    <string name="check_settings">Checking settings</string>
+    <string name="settings_info">The app requires permission to accurately determine your location and running location services.</string>
+    <string name="request_permission">Request permission</string>
+    <string name="enable_location">Enable location</string>
 </resources>

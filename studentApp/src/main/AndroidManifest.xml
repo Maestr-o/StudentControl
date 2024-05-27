@@ -31,14 +31,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".MainActivity$LocationReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.location.PROVIDERS_CHANGED" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>

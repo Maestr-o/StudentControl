@@ -1,8 +1,6 @@
 package com.maestrx.studentcontrol.studentapp
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
+import android.content.IntentFilter
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -18,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.maestrx.studentcontrol.studentapp.broadcast_receiver.LocationReceiver
 import com.maestrx.studentcontrol.studentapp.data.SharedPreferencesManager
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlEvent
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlScreen
@@ -35,7 +34,7 @@ import com.maestrx.studentcontrol.studentapp.presentation.control_screen.Control
 import com.maestrx.studentcontrol.studentapp.presentation.control_screen.ControlViewModel
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingScreen
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingViewModel
-import com.maestrx.studentcontrol.studentapp.presentation.permissions_screen.PermissionsScreen
+import com.maestrx.studentcontrol.studentapp.presentation.settings_screen.PermissionsScreen
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentAppTheme
 import com.maestrx.studentcontrol.studentapp.util.Constants
 import com.maestrx.studentcontrol.studentapp.util.WifiHelper.isWifiConnected
@@ -60,17 +59,21 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    var isLocationEnabled by remember { mutableStateOf(false) }
+                    var isLocationEnabled by rememberSaveable {
+                        mutableStateOf(LocationReceiver.isLocationEnabled(applicationContext))
+                    }
                     locationReceiver = LocationReceiver { enabled ->
                         isLocationEnabled = enabled
                     }
+                    val intentFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+                    registerReceiver(locationReceiver, intentFilter)
 
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Permissions.route,
+                        startDestination = Screen.Settings.route,
                     ) {
                         composable(
-                            route = Screen.Permissions.route,
+                            route = Screen.Settings.route,
                         ) {
                             PermissionsScreen(isLocationEnabled) {
                                 navController.navigate(route = Screen.Control.route + "/false")
@@ -99,8 +102,12 @@ class MainActivity : ComponentActivity() {
                             ControlScreen(
                                 state = state.value,
                                 personalData = personalData,
+                                isLocationEnabled = isLocationEnabled,
                                 isDataExchanged = entry.arguments?.getBoolean(Constants.IS_DATA_EXCHANGED)
                                     ?: false,
+                                locationDisable = {
+                                    navController.navigateUp()
+                                },
                             ) {
                                 navController.navigate(Screen.Loading.route)
                             }
@@ -115,6 +122,10 @@ class MainActivity : ComponentActivity() {
                                 state = state,
                                 onEvent = viewModel::onEvent,
                                 prefs = prefs,
+                                isLocationEnabled = isLocationEnabled,
+                                locationDisable = {
+                                    navController.navigateUp()
+                                },
                             ) { isConnected ->
                                 navController.popBackStack()
                                 navController.popBackStack()
@@ -160,17 +171,6 @@ class MainActivity : ComponentActivity() {
 
             onDispose {
                 connectivityManager.unregisterNetworkCallback(networkCallback)
-            }
-        }
-    }
-
-    class LocationReceiver(private val onLocationEnabled: (Boolean) -> Unit) : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null && intent.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
-                val locationManager =
-                    context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                onLocationEnabled(isGpsEnabled)
             }
         }
     }

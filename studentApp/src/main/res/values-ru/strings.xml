@@ -18,4 +18,8 @@
     <string name="error_go_to_settings">Ошибка перехода к настройкам</string>
     <string name="cancel">Отмена</string>
     <string name="wifi_network">Wi-Fi сети</string>
+    <string name="check_settings">Проверка настроек</string>
+    <string name="settings_info">Для работы приложения необходимо разрешение на точное определение вашего местоположения и запуск служб геолокации.</string>
+    <string name="request_permission">Запросить разрешение</string>
+    <string name="enable_location">Включить геолокацию</string>
 </resources>

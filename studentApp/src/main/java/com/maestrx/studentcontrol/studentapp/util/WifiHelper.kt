@@ -21,7 +21,7 @@ object WifiHelper {
     }
 
     fun getCurrentSSID(context: Context): String {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
             return context.getString(R.string.wifi_network)
         }
         return try {

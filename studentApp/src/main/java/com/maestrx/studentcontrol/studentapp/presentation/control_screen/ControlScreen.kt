@@ -47,12 +47,18 @@ internal fun ControlScreen(
     state: ControlStatus,
     personalData: PersonalData?,
     isDataExchanged: Boolean,
+    isLocationEnabled: Boolean,
+    locationDisable: () -> Unit,
     navClick: () -> Unit,
 ) {
     val context = LocalContext.current
 
     BackHandler {
         (context as? Activity)?.finish()
+    }
+
+    if (!isLocationEnabled) {
+        locationDisable()
     }
 
     Column(
@@ -260,5 +266,7 @@ fun ControlPreview() {
             fullName = "Сидоров Иван Сидорович"
         ),
         isDataExchanged = true,
+        isLocationEnabled = true,
+        locationDisable = {},
     )
 }

@@ -1,4 +1,4 @@
-package com.maestrx.studentcontrol.studentapp.presentation.permissions_screen
+package com.maestrx.studentcontrol.studentapp.presentation.settings_screen
 
 import android.Manifest
 import android.app.Activity
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.maestrx.studentcontrol.studentapp.R
 
 @Composable
 fun PermissionsScreen(
@@ -66,32 +70,42 @@ fun PermissionsScreen(
         Text(
             modifier = Modifier
                 .padding(top = 8.dp),
-            text = "Проверка разрешений",
+            text = stringResource(id = R.string.check_settings),
             fontSize = 22.sp
         )
         Text(
             modifier = Modifier.padding(top = 24.dp),
-            text = "Для работы приложения нужно разрешение на точное определение местоположения и работающие сервисы геолокации",
+            text = stringResource(id = R.string.settings_info),
             fontSize = 18.sp
         )
         Button(
-            modifier = Modifier.padding(top = 24.dp),
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .width(220.dp),
             onClick = {
                 requestPermission(context, permissionLauncher)
             },
             enabled = !checkLocalPermissionsFlags(isFineLocationGranted)
         ) {
-            Text(text = "Запросить разрешение")
+            Text(
+                text = stringResource(id = R.string.request_permission),
+                textAlign = TextAlign.Center
+            )
         }
         Button(
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .width(220.dp),
             onClick = {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 context.startActivity(intent)
             },
             enabled = !isLocationEnabled
         ) {
-            Text(text = "Включить геолокацию")
+            Text(
+                text = stringResource(id = R.string.enable_location),
+                textAlign = TextAlign.Center
+            )
         }
     }
 

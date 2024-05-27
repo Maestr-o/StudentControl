@@ -40,9 +40,15 @@ internal fun LoadingScreen(
     state: LoadingUiState,
     onEvent: (LoadingEvent) -> Unit,
     prefs: SharedPreferencesManager,
+    isLocationEnabled: Boolean,
+    locationDisable: () -> Unit,
     navClick: (isConnected: Boolean) -> Unit,
 ) {
     val context = LocalContext.current
+
+    if (!isLocationEnabled) {
+        locationDisable()
+    }
 
     when (state.screenState) {
         is LoadingStatus.Loading -> {
@@ -275,6 +281,8 @@ fun LoadingPreview() {
         ),
         onEvent = {},
         prefs = SharedPreferencesManager(context),
+        isLocationEnabled = true,
+        locationDisable = {},
         navClick = {},
     )
 }
