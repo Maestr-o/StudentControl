@@ -26,9 +26,10 @@ class ControlViewModel @Inject constructor() : ViewModel() {
     val wifiResults: List<ScanResult> = _wifiResults
     private lateinit var wifiManager: WifiManager
     private lateinit var handler: Handler
-    private val scanInterval: Long = 10000
+    private val scanInterval: Long = 15000
 
     var selectedNetwork = mutableStateOf<ScanResult?>(null)
+    var connectedNetwork = mutableStateOf<String?>(null)
 
     fun onEvent(event: ControlEvent) {
         when (event) {
@@ -80,17 +81,24 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
     private fun scanSuccess() {
         _wifiResults.clear()
-        val result = wifiManager.scanResults.filter {
-            it.SSID.isNotBlank()
-        }
-        _wifiResults.addAll(result)
+        _wifiResults.addAll(getSortedScanResults(connectedNetwork.value))
     }
 
     private fun scanFailure() {
         _wifiResults.clear()
-        val result = wifiManager.scanResults.filter {
-            it.SSID.isNotBlank()
+        _wifiResults.addAll(getSortedScanResults(connectedNetwork.value))
+    }
+
+    private fun getSortedScanResults(targetBSSID: String?): List<ScanResult> {
+        val scanResults = wifiManager.scanResults.filter { it.SSID.isNotBlank() }
+
+        val targetNetwork = scanResults.find { it.BSSID == targetBSSID }
+        val otherNetworks = scanResults.filter { it.BSSID != targetBSSID }
+
+        return if (targetNetwork != null) {
+            listOf(targetNetwork) + otherNetworks
+        } else {
+            scanResults
         }
-        _wifiResults.addAll(result)
     }
 }

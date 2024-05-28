@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -57,7 +60,7 @@ internal fun ControlScreen(
     isLocationEnabled: Boolean,
     wifiResults: List<ScanResult>?,
     selectedNetwork: ScanResult?,
-    connectedNetwork: ScanResult?,
+    connectedNetwork: String?,
     onEvent: (ControlEvent) -> Unit,
     badState: () -> Unit,
     navClick: () -> Unit,
@@ -244,7 +247,7 @@ fun WifiIsDownGroup() {
 fun WifiIsUpGroup(
     wifiResults: List<ScanResult>?,
     selectedNetwork: ScanResult?,
-    connectedNetwork: ScanResult?,
+    connectedNetwork: String?,
     onEvent: (ControlEvent) -> Unit,
 ) {
     var password by remember { mutableStateOf("") }
@@ -256,15 +259,33 @@ fun WifiIsUpGroup(
         ) {
             LazyColumn {
                 items(wifiResults) { network ->
-                    Text(
-                        text = network.SSID,
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 onEvent(ControlEvent.SelectNetwork(network))
-                            }
-                            .padding(16.dp)
-                    )
+                            },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = network.SSID,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 14.dp)
+                        )
+                        if (connectedNetwork == network.BSSID) {
+                            Icon(
+                                modifier = Modifier.padding(end = 12.dp),
+                                imageVector = Icons.Filled.Check,
+                                tint = if (isSystemInDarkTheme()) {
+                                    Color.White
+                                } else {
+                                    Color.Black
+                                },
+                                contentDescription = "connected"
+                            )
+                        }
+                    }
                 }
             }
 
@@ -291,8 +312,8 @@ fun WifiIsUpGroup(
                     confirmButton = {
                         Button(
                             onClick = {
-                                // handle connection logic here
-                                onEvent(ControlEvent.SelectNetwork(null))
+
+                            onEvent(ControlEvent.SelectNetwork(null))
                             },
                             shape = RoundedCornerShape(10.dp),
                         ) {

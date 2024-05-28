@@ -38,6 +38,7 @@ import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.Loading
 import com.maestrx.studentcontrol.studentapp.presentation.settings_screen.PermissionsScreen
 import com.maestrx.studentcontrol.studentapp.ui.theme.StudentAppTheme
 import com.maestrx.studentcontrol.studentapp.util.Constants
+import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -112,8 +113,13 @@ class MainActivity : ComponentActivity() {
                             var isWifiConnected by rememberSaveable {
                                 mutableStateOf(false)
                             }
-                            WifiStateReceiverCompose { isConnected ->
+                            val connectedNetwork = rememberSaveable {
+                                mutableStateOf<String?>(null)
+                            }
+                            WifiStateReceiverCompose { isConnected, bssid ->
                                 isWifiConnected = isConnected
+                                connectedNetwork.value = bssid
+                                viewModel.connectedNetwork = connectedNetwork
                             }
 
                             ControlScreen(
@@ -129,7 +135,7 @@ class MainActivity : ComponentActivity() {
                                 personalData = personalData,
                                 isLocationEnabled = isLocationEnabled,
                                 wifiResults = viewModel.wifiResults,
-                                connectedNetwork = null,
+                                connectedNetwork = connectedNetwork.value,
                                 onEvent = viewModel::onEvent,
                                 selectedNetwork = viewModel.selectedNetwork.value,
                                 badState = {
@@ -173,19 +179,19 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun WifiStateReceiverCompose(isConnected: (Boolean) -> Unit) {
+    fun WifiStateReceiverCompose(isConnected: (Boolean, String?) -> Unit) {
         val context = LocalContext.current
 
         DisposableEffect(key1 = context) {
             val networkCallback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    isConnected(true)
+                    isConnected(true, WifiHelper.getCurrentBSSID(applicationContext))
                 }
 
                 override fun onLost(network: Network) {
                     super.onLost(network)
-                    isConnected(false)
+                    isConnected(false, null)
                 }
             }
 

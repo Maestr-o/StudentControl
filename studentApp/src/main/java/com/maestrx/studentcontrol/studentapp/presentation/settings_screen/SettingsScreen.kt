@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,7 +55,7 @@ fun PermissionsScreen(
     val permissionLauncher: ActivityResultLauncher<String> =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             isFineLocationGranted = isGranted
-            if (checkPermissions(context) && isLocationEnabled) {
+            if (checkFineLocationPermission(context) && isLocationEnabled) {
                 navClick()
             }
         }
@@ -86,7 +85,7 @@ fun PermissionsScreen(
             onClick = {
                 requestPermission(context, permissionLauncher)
             },
-            enabled = !checkLocalPermissionsFlags(isFineLocationGranted),
+            enabled = !isFineLocationGranted,
             shape = RoundedCornerShape(10.dp),
         ) {
             Text(
@@ -112,7 +111,7 @@ fun PermissionsScreen(
         }
     }
 
-    if (checkPermissions(context) && isLocationEnabled) {
+    if (checkFineLocationPermission(context) && isLocationEnabled) {
         navClick()
     }
 }
@@ -122,30 +121,6 @@ private fun checkFineLocationPermission(context: Context): Boolean =
         context,
         Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
-
-private fun checkPermissions(
-    context: Context,
-): Boolean {
-    val sdkVersion = Build.VERSION.SDK_INT
-    return if (sdkVersion >= Build.VERSION_CODES.P && (checkFineLocationPermission(context))) {
-        true
-    } else if (sdkVersion < Build.VERSION_CODES.P) {
-        true
-    } else {
-        false
-    }
-}
-
-private fun checkLocalPermissionsFlags(fineLocation: Boolean): Boolean {
-    val sdkVersion = Build.VERSION.SDK_INT
-    return if (sdkVersion >= Build.VERSION_CODES.P && fineLocation) {
-        true
-    } else if (sdkVersion < Build.VERSION_CODES.P) {
-        true
-    } else {
-        false
-    }
-}
 
 private fun requestPermission(
     context: Context,
