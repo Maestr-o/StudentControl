@@ -132,6 +132,7 @@ class MainActivity : ComponentActivity() {
                                 } else {
                                     ControlStatus.WifiIsDown
                                 },
+                                appContext = applicationContext,
                                 personalData = personalData,
                                 isLocationEnabled = isLocationEnabled,
                                 wifiResults = viewModel.wifiResults,

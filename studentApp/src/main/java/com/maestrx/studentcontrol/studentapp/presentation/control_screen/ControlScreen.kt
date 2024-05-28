@@ -1,6 +1,7 @@
 package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.wifi.ScanResult
 import android.provider.Settings
@@ -55,6 +56,7 @@ import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 
 @Composable
 internal fun ControlScreen(
+    appContext: Context,
     state: ControlStatus,
     personalData: PersonalData?,
     isLocationEnabled: Boolean,
@@ -184,6 +186,7 @@ internal fun ControlScreen(
             when (state) {
                 is ControlStatus.WifiIsDown -> WifiIsDownGroup()
                 is ControlStatus.WifiIsUp -> WifiIsUpGroup(
+                    appContext,
                     wifiResults,
                     selectedNetwork,
                     connectedNetwork,
@@ -191,6 +194,7 @@ internal fun ControlScreen(
                 )
 
                 is ControlStatus.Connected -> WifiIsUpGroup(
+                    appContext,
                     wifiResults,
                     selectedNetwork,
                     connectedNetwork,
@@ -245,12 +249,13 @@ fun WifiIsDownGroup() {
 
 @Composable
 fun WifiIsUpGroup(
+    appContext: Context,
     wifiResults: List<ScanResult>?,
     selectedNetwork: ScanResult?,
     connectedNetwork: String?,
     onEvent: (ControlEvent) -> Unit,
 ) {
-    var password by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf<String?>(null) }
 
     if (!wifiResults.isNullOrEmpty()) {
         Column(
@@ -290,6 +295,8 @@ fun WifiIsUpGroup(
             }
 
             selectedNetwork?.let { network ->
+                val isRequirePassword = network.capabilities.contains("WPA")
+
                 AlertDialog(
                     onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
                     title = {
@@ -301,21 +308,30 @@ fun WifiIsUpGroup(
                         )
                     },
                     text = {
-                        Column {
-                            TextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                label = { Text(text = stringResource(id = R.string.password)) }
-                            )
+                        if (isRequirePassword) {
+                            Column {
+                                TextField(
+                                    value = password ?: "",
+                                    onValueChange = { password = it },
+                                    label = { Text(text = stringResource(id = R.string.password)) }
+                                )
+                            }
                         }
                     },
                     confirmButton = {
                         Button(
                             onClick = {
-
-                            onEvent(ControlEvent.SelectNetwork(null))
+                                onEvent(ControlEvent.Connect(network, appContext, password))
+                                onEvent(ControlEvent.SelectNetwork(null))
+                                password = null
                             },
                             shape = RoundedCornerShape(10.dp),
+                            enabled = try {
+                                !network.capabilities.contains("WPA")
+                                        || (!password.isNullOrBlank() && password?.length!! >= 8)
+                            } catch (_: Exception) {
+                                false
+                            }
                         ) {
                             Text(stringResource(id = R.string.ok))
                         }
@@ -324,6 +340,7 @@ fun WifiIsUpGroup(
                         Button(
                             onClick = {
                                 onEvent(ControlEvent.SelectNetwork(null))
+                                password = null
                             },
                             shape = RoundedCornerShape(10.dp),
                         ) {
@@ -383,6 +400,7 @@ fun ControlPreview() {
         connectedNetwork = null,
         selectedNetwork = null,
         onEvent = {},
+        appContext = LocalContext.current,
         badState = {},
     )
 }

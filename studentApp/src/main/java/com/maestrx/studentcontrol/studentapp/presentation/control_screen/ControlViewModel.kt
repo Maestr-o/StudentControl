@@ -4,10 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.MacAddress
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.wifi.ScanResult
+import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
+import android.net.wifi.WifiNetworkSpecifier
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -36,8 +45,17 @@ class ControlViewModel @Inject constructor() : ViewModel() {
             is ControlEvent.SetScreenStatus -> {
                 changeScreenStatus(event.status)
             }
+
             is ControlEvent.SelectNetwork -> {
                 selectNetwork(event.network)
+            }
+
+            is ControlEvent.Connect -> {
+                if (event.password != null) {
+                    connectToWpaWifi(event.context, event.network, event.password)
+                } else {
+                    connectToOpenWifi(event.context, event.network)
+                }
             }
         }
     }
@@ -90,7 +108,10 @@ class ControlViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun getSortedScanResults(targetBSSID: String?): List<ScanResult> {
-        val scanResults = wifiManager.scanResults.filter { it.SSID.isNotBlank() }
+        val scanResults = wifiManager.scanResults.filter {
+            it.SSID.isNotBlank() && (it.capabilities.contains("WPA")
+                    || it.capabilities.contains("ESS"))
+        }
 
         val targetNetwork = scanResults.find { it.BSSID == targetBSSID }
         val otherNetworks = scanResults.filter { it.BSSID != targetBSSID }
@@ -99,6 +120,91 @@ class ControlViewModel @Inject constructor() : ViewModel() {
             listOf(targetNetwork) + otherNetworks
         } else {
             scanResults
+        }
+    }
+
+    private fun connectToWpaWifi(context: Context, scanResult: ScanResult, password: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            connectToWifiApi29(context, scanResult, password)
+        } else {
+            connectToWifiLegacy(wifiManager, scanResult, password)
+        }
+    }
+
+    private fun connectToOpenWifi(context: Context, scanResult: ScanResult) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            connectToWifiApi29(context, scanResult, null)
+        } else {
+            connectToOpenWifiLegacy(wifiManager, scanResult)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun connectToOpenWifiLegacy(wifiManager: WifiManager, scanResult: ScanResult) {
+        val wifiConfig = WifiConfiguration().apply {
+            SSID = scanResult.SSID
+            BSSID = scanResult.BSSID
+            allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE)
+        }
+
+        val networkId = wifiManager.addNetwork(wifiConfig)
+        if (networkId != -1) {
+            wifiManager.disconnect()
+            wifiManager.enableNetwork(networkId, true)
+            wifiManager.reconnect()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun connectToWifiApi29(context: Context, scanResult: ScanResult, password: String?) {
+        val wifiNetworkSpecifier = if (password != null) {
+            WifiNetworkSpecifier.Builder()
+                .setSsid(scanResult.SSID)
+                .setBssid(MacAddress.fromString(scanResult.BSSID))
+                .setWpa2Passphrase(password)
+                .build()
+        } else {
+            WifiNetworkSpecifier.Builder()
+                .setSsid(scanResult.SSID)
+                .setBssid(MacAddress.fromString(scanResult.BSSID))
+                .build()
+        }
+
+        val networkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .setNetworkSpecifier(wifiNetworkSpecifier)
+            .build()
+
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.requestNetwork(
+            networkRequest,
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    connectivityManager.bindProcessToNetwork(network)
+                }
+            })
+    }
+
+    @Suppress("DEPRECATION")
+    private fun connectToWifiLegacy(
+        wifiManager: WifiManager,
+        scanResult: ScanResult,
+        password: String
+    ) {
+        val wifiConfig = WifiConfiguration().apply {
+            SSID = scanResult.SSID
+            BSSID = scanResult.BSSID
+            preSharedKey = password
+            allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK)
+        }
+
+        val networkId = wifiManager.addNetwork(wifiConfig)
+        if (networkId != -1) {
+            wifiManager.disconnect()
+            wifiManager.enableNetwork(networkId, true)
+            wifiManager.reconnect()
         }
     }
 }
