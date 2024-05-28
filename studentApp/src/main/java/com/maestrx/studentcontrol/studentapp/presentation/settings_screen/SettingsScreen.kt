@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -85,7 +86,8 @@ fun PermissionsScreen(
             onClick = {
                 requestPermission(context, permissionLauncher)
             },
-            enabled = !checkLocalPermissionsFlags(isFineLocationGranted)
+            enabled = !checkLocalPermissionsFlags(isFineLocationGranted),
+            shape = RoundedCornerShape(10.dp),
         ) {
             Text(
                 text = stringResource(id = R.string.request_permission),
@@ -100,7 +102,8 @@ fun PermissionsScreen(
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 context.startActivity(intent)
             },
-            enabled = !isLocationEnabled
+            enabled = !isLocationEnabled,
+            shape = RoundedCornerShape(10.dp),
         ) {
             Text(
                 text = stringResource(id = R.string.enable_location),

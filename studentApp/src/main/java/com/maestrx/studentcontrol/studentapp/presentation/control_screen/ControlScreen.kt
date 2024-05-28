@@ -2,10 +2,12 @@ package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
 import android.app.Activity
 import android.content.Intent
+import android.net.wifi.ScanResult
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,16 +15,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,8 +54,11 @@ import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 internal fun ControlScreen(
     state: ControlStatus,
     personalData: PersonalData?,
-    isDataExchanged: Boolean,
     isLocationEnabled: Boolean,
+    wifiResults: List<ScanResult>?,
+    selectedNetwork: ScanResult?,
+    connectedNetwork: ScanResult?,
+    onEvent: (ControlEvent) -> Unit,
     badState: () -> Unit,
     navClick: () -> Unit,
 ) {
@@ -164,14 +178,23 @@ internal fun ControlScreen(
                 .weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            if (isDataExchanged) {
-                CompletedGroup()
-            } else if (state is ControlStatus.WifiIsUp) {
-                WifiIsUpGroup()
-            } else if (state is ControlStatus.WifiIsDown) {
-                WifiIsDownGroup()
-            } else if (state is ControlStatus.Connected) {
-                WifiIsUpGroup()
+            when (state) {
+                is ControlStatus.WifiIsDown -> WifiIsDownGroup()
+                is ControlStatus.WifiIsUp -> WifiIsUpGroup(
+                    wifiResults,
+                    selectedNetwork,
+                    connectedNetwork,
+                    onEvent
+                )
+
+                is ControlStatus.Connected -> WifiIsUpGroup(
+                    wifiResults,
+                    selectedNetwork,
+                    connectedNetwork,
+                    onEvent
+                )
+
+                is ControlStatus.Completed -> CompletedGroup()
             }
         }
     }
@@ -218,8 +241,80 @@ fun WifiIsDownGroup() {
 }
 
 @Composable
-fun WifiIsUpGroup() {
+fun WifiIsUpGroup(
+    wifiResults: List<ScanResult>?,
+    selectedNetwork: ScanResult?,
+    connectedNetwork: ScanResult?,
+    onEvent: (ControlEvent) -> Unit,
+) {
+    var password by remember { mutableStateOf("") }
 
+    if (!wifiResults.isNullOrEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+        ) {
+            LazyColumn {
+                items(wifiResults) { network ->
+                    Text(
+                        text = network.SSID,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onEvent(ControlEvent.SelectNetwork(network))
+                            }
+                            .padding(16.dp)
+                    )
+                }
+            }
+
+            selectedNetwork?.let { network ->
+                AlertDialog(
+                    onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
+                    title = {
+                        Text(
+                            text = stringResource(
+                                id = R.string.connect_and_check_in,
+                                network.SSID
+                            )
+                        )
+                    },
+                    text = {
+                        Column {
+                            TextField(
+                                value = password,
+                                onValueChange = { password = it },
+                                label = { Text(text = stringResource(id = R.string.password)) }
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                // handle connection logic here
+                                onEvent(ControlEvent.SelectNetwork(null))
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                        ) {
+                            Text(stringResource(id = R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                onEvent(ControlEvent.SelectNetwork(null))
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                        ) {
+                            Text(stringResource(id = R.string.cancel))
+                        }
+                    }
+                )
+            }
+        }
+    } else {
+        CircularProgressIndicator()
+    }
 }
 
 @Composable
@@ -262,8 +357,11 @@ fun ControlPreview() {
             group = "АВТ-042",
             fullName = "Сидоров Иван Сидорович"
         ),
-        isDataExchanged = false,
         isLocationEnabled = true,
+        wifiResults = null,
+        connectedNetwork = null,
+        selectedNetwork = null,
+        onEvent = {},
         badState = {},
     )
 }

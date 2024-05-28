@@ -16,9 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var wifiReceiver: WifiReceiver
-    private var wifiState: Int = 0 // 0 - off, 1 - on, 2 - connected
+    private var isDataExchanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,46 +102,36 @@ class MainActivity : ComponentActivity() {
                             ),
                         ) { entry ->
                             val personalData = prefs.getPersonalData()
+
                             val viewModel = hiltViewModel<ControlViewModel>()
+                            viewModel.startWifiScan(applicationContext)
 
-                            var wifiState by remember {
-                                mutableIntStateOf(0) // 0 - off, 1 - on, 2 - connected
-                            }
-
-                            val isDataExchanged =
+                            isDataExchanged =
                                 entry.arguments?.getBoolean(Constants.IS_DATA_EXCHANGED) ?: false
 
-                            var state by remember {
-                                mutableStateOf(
-                                    when {
-                                        isDataExchanged -> ControlStatus.Completed
-                                        wifiState == 2 -> ControlStatus.Connected
-                                        wifiState == 1 -> ControlStatus.WifiIsUp
-                                        else -> ControlStatus.WifiIsDown
-                                    }
-                                )
+                            var isWifiConnected by rememberSaveable {
+                                mutableStateOf(false)
                             }
-
                             WifiStateReceiverCompose { isConnected ->
-                                wifiState = when {
-                                    isConnected -> 2
-                                    isWifiEnabled -> 1
-                                    else -> 0
-                                }
-
-                                state = when {
-                                    isDataExchanged -> ControlStatus.Completed
-                                    wifiState == 2 -> ControlStatus.Connected
-                                    wifiState == 1 -> ControlStatus.WifiIsUp
-                                    else -> ControlStatus.WifiIsDown
-                                }
+                                isWifiConnected = isConnected
                             }
 
                             ControlScreen(
-                                state = state,
+                                state = if (isDataExchanged) {
+                                    ControlStatus.Completed
+                                } else if (isWifiConnected) {
+                                    ControlStatus.Connected
+                                } else if (isWifiEnabled) {
+                                    ControlStatus.WifiIsUp
+                                } else {
+                                    ControlStatus.WifiIsDown
+                                },
                                 personalData = personalData,
                                 isLocationEnabled = isLocationEnabled,
-                                isDataExchanged = isDataExchanged,
+                                wifiResults = viewModel.wifiResults,
+                                connectedNetwork = null,
+                                onEvent = viewModel::onEvent,
+                                selectedNetwork = viewModel.selectedNetwork.value,
                                 badState = {
                                     navController.navigateUp()
                                 },
@@ -162,7 +150,7 @@ class MainActivity : ComponentActivity() {
                                 onEvent = viewModel::onEvent,
                                 prefs = prefs,
                                 isLocationEnabled = isLocationEnabled,
-                                isWifiEnabled = wifiState >= 1,
+                                isWifiEnabled = isWifiEnabled,
                                 badState = {
                                     navController.navigateUp()
                                 },

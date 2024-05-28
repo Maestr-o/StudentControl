@@ -20,8 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ControlViewModel @Inject constructor() : ViewModel() {
 
-    var state = mutableStateOf<ControlStatus>(ControlStatus.WifiIsDown)
-        private set
+    private var state = mutableStateOf<ControlStatus>(ControlStatus.WifiIsDown)
 
     private val _wifiResults = mutableStateListOf<ScanResult>()
     val wifiResults: List<ScanResult> = _wifiResults
@@ -29,16 +28,25 @@ class ControlViewModel @Inject constructor() : ViewModel() {
     private lateinit var handler: Handler
     private val scanInterval: Long = 10000
 
+    var selectedNetwork = mutableStateOf<ScanResult?>(null)
+
     fun onEvent(event: ControlEvent) {
         when (event) {
             is ControlEvent.SetScreenStatus -> {
                 changeScreenStatus(event.status)
+            }
+            is ControlEvent.SelectNetwork -> {
+                selectNetwork(event.network)
             }
         }
     }
 
     private fun changeScreenStatus(status: ControlStatus) {
         state.value = status
+    }
+
+    private fun selectNetwork(network: ScanResult?) {
+        selectedNetwork.value = network
     }
 
     fun startWifiScan(context: Context) {
@@ -72,11 +80,17 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
     private fun scanSuccess() {
         _wifiResults.clear()
-        _wifiResults.addAll(wifiManager.scanResults)
+        val result = wifiManager.scanResults.filter {
+            it.SSID.isNotBlank()
+        }
+        _wifiResults.addAll(result)
     }
 
     private fun scanFailure() {
         _wifiResults.clear()
-        _wifiResults.addAll(wifiManager.scanResults)
+        val result = wifiManager.scanResults.filter {
+            it.SSID.isNotBlank()
+        }
+        _wifiResults.addAll(result)
     }
 }

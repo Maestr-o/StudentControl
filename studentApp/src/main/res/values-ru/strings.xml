@@ -27,4 +27,7 @@
     <string name="turn_on_wifi">Пожалуйста, включите Wi-Fi</string>
     <string name="checked_in_hint">Вы успешно отметились, можете закрыть приложение</string>
     <string name="exit">Выйти</string>
+    <string name="password">Пароль</string>
+    <string name="connect_and_check_in">Подключиться к %s и отметиться?</string>
+    <string name="ok">ОК</string>
 </resources>
