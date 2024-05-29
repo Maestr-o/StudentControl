@@ -122,6 +122,11 @@ class MainActivity : ComponentActivity() {
                                 viewModel.connectedNetwork = connectedNetwork
                             }
 
+                            if (!isWifiEnabled) {
+                                viewModel.connecting.value = false
+                                viewModel.selectedNetwork.value = null
+                            }
+
                             ControlScreen(
                                 state = if (isDataExchanged) {
                                     ControlStatus.Completed
@@ -155,6 +160,7 @@ class MainActivity : ComponentActivity() {
                             val viewModel = hiltViewModel<LoadingViewModel>()
                             val state = viewModel.state
                             LoadingScreen(
+                                appContext = applicationContext,
                                 state = state,
                                 onEvent = viewModel::onEvent,
                                 prefs = prefs,

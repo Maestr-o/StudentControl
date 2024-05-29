@@ -84,9 +84,6 @@ class ServerInteractor @Inject constructor(
 
             data = extractData(receivePacket)
             if (data == "ACK2$deviceId") {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                    disconnect()
-                }
                 _interState.update { LoadingStatus.Success }
             } else {
                 _interState.update { LoadingStatus.Error }
@@ -97,15 +94,25 @@ class ServerInteractor @Inject constructor(
     private fun sendReceiveCycle(address: InetAddress, port: Int, data: String): DatagramPacket {
         val buffer = ByteArray(Constants.PACKET_BUFFER_SIZE)
         val receivePacket = DatagramPacket(buffer, buffer.size)
-        while (receivePacket.length == Constants.PACKET_BUFFER_SIZE) {
+        var attempts = 0
+        var success = false
+
+        while (attempts < Constants.ATTEMPTS && !success) {
             try {
                 send(address, port, data)
                 socket.soTimeout = Constants.TIMEOUT
                 socket.receive(receivePacket)
+                success = true
             } catch (e: Exception) {
-                Log.d(Constants.DEBUG_TAG, "Attempt exchanging data error: $e")
+                attempts++
             }
         }
+
+        if (!success) {
+            Log.d(Constants.DEBUG_TAG, "Failed to exchange data")
+            throw Exception()
+        }
+
         return receivePacket
     }
 
@@ -126,12 +133,17 @@ class ServerInteractor @Inject constructor(
         if (::socket.isInitialized && socket.isBound) {
             socket.close()
             Log.d(Constants.DEBUG_TAG, "Socket closed")
+            disconnect()
         }
     }
 
-    private fun disconnect(): Boolean {
-        val wifiManager =
-            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        return wifiManager.disconnect()
+    private fun disconnect() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            val wifiManager =
+                context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            wifiManager.disconnect()
+        } else {
+
+        }
     }
 }

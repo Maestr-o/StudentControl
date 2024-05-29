@@ -46,6 +46,9 @@ object WifiHelper {
             context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val address = InetAddress.getByAddress(intToByteArray(wm.dhcpInfo.gateway))
         Log.d(Constants.DEBUG_TAG, "Server address: $address")
+        if (address.toString().contains("0.0.0.0")) {
+            throw Exception()
+        }
         return address
     }
 

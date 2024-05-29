@@ -36,7 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,6 +69,8 @@ internal fun ControlScreen(
     navClick: () -> Unit,
 ) {
     val context = LocalContext.current
+
+    var password by rememberSaveable { mutableStateOf<String?>(null) }
 
     BackHandler {
         (context as? Activity)?.finish()
@@ -191,30 +193,78 @@ internal fun ControlScreen(
         ) {
             when (state) {
                 is ControlStatus.WifiIsDown -> WifiIsDownGroup()
-                is ControlStatus.WifiIsUp -> WifiIsUpGroup(
-                    appContext,
-                    wifiResults,
-                    selectedNetwork,
-                    onEvent,
-                )
-
+                is ControlStatus.WifiIsUp -> WifiIsUpGroup(wifiResults, onEvent)
                 is ControlStatus.Connected -> WifiConnectedGroup(
-                    appContext,
                     wifiResults,
-                    selectedNetwork,
                     connectedNetwork,
                     onEvent,
                     navClick,
                 )
-
                 is ControlStatus.Completed -> CompletedGroup()
             }
         }
     }
 
-    if (connecting) {
+    selectedNetwork?.let { network ->
+        val isRequirePassword = network.capabilities.contains("WPA")
+
         AlertDialog(
             onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
+            title = {
+                Text(
+                    text = stringResource(
+                        id = R.string.connect_and_check_in,
+                        network.SSID
+                    )
+                )
+            },
+            text = {
+                if (isRequirePassword) {
+                    Column {
+                        TextField(
+                            value = password ?: "",
+                            onValueChange = { password = it },
+                            label = { Text(text = stringResource(id = R.string.password)) }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onEvent(ControlEvent.Connect(network, appContext, password))
+                        onEvent(ControlEvent.SelectNetwork(null))
+                        password = null
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    enabled = try {
+                        !network.capabilities.contains("WPA")
+                                || ((!password.isNullOrBlank() && password?.length!! >= 8)
+                                && (!containsNonAsciiCharacters(password!!)))
+                    } catch (_: Exception) {
+                        false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        onEvent(ControlEvent.SelectNetwork(null))
+                        password = null
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                ) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (connecting) {
+        AlertDialog(
+            onDismissRequest = { onEvent(ControlEvent.ChangeStopConnecting(true)) },
             title = {
                 Text(
                     text = stringResource(id = R.string.connecting)
@@ -285,13 +335,9 @@ fun WifiIsDownGroup() {
 
 @Composable
 fun WifiIsUpGroup(
-    appContext: Context,
     wifiResults: List<ScanResult>?,
-    selectedNetwork: ScanResult?,
     onEvent: (ControlEvent) -> Unit,
 ) {
-    var password by remember { mutableStateOf<String?>(null) }
-
     if (!wifiResults.isNullOrEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -316,62 +362,6 @@ fun WifiIsUpGroup(
                     }
                 }
             }
-
-            selectedNetwork?.let { network ->
-                val isRequirePassword = network.capabilities.contains("WPA")
-
-                AlertDialog(
-                    onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
-                    title = {
-                        Text(
-                            text = stringResource(
-                                id = R.string.connect_and_check_in,
-                                network.SSID
-                            )
-                        )
-                    },
-                    text = {
-                        if (isRequirePassword) {
-                            Column {
-                                TextField(
-                                    value = password ?: "",
-                                    onValueChange = { password = it },
-                                    label = { Text(text = stringResource(id = R.string.password)) }
-                                )
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                onEvent(ControlEvent.Connect(network, appContext, password))
-                                onEvent(ControlEvent.SelectNetwork(null))
-                                password = null
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                            enabled = try {
-                                !network.capabilities.contains("WPA")
-                                        || (!password.isNullOrBlank() && password?.length!! >= 8)
-                            } catch (_: Exception) {
-                                false
-                            }
-                        ) {
-                            Text(stringResource(id = R.string.ok))
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-                            onClick = {
-                                onEvent(ControlEvent.SelectNetwork(null))
-                                password = null
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                        ) {
-                            Text(stringResource(id = R.string.cancel))
-                        }
-                    }
-                )
-            }
         }
     } else {
         CircularProgressIndicator()
@@ -380,15 +370,11 @@ fun WifiIsUpGroup(
 
 @Composable
 fun WifiConnectedGroup(
-    appContext: Context,
     wifiResults: List<ScanResult>?,
-    selectedNetwork: ScanResult?,
     connectedNetwork: String?,
     onEvent: (ControlEvent) -> Unit,
     navClick: () -> Unit,
 ) {
-    var password by remember { mutableStateOf<String?>(null) }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -432,62 +418,6 @@ fun WifiConnectedGroup(
                         }
                     }
                 }
-
-                selectedNetwork?.let { network ->
-                    val isRequirePassword = network.capabilities.contains("WPA")
-
-                    AlertDialog(
-                        onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
-                        title = {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.connect_and_check_in,
-                                    network.SSID
-                                )
-                            )
-                        },
-                        text = {
-                            if (isRequirePassword) {
-                                Column {
-                                    TextField(
-                                        value = password ?: "",
-                                        onValueChange = { password = it },
-                                        label = { Text(text = stringResource(id = R.string.password)) }
-                                    )
-                                }
-                            }
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    onEvent(ControlEvent.Connect(network, appContext, password))
-                                    onEvent(ControlEvent.SelectNetwork(null))
-                                    password = null
-                                },
-                                shape = RoundedCornerShape(10.dp),
-                                enabled = try {
-                                    !network.capabilities.contains("WPA")
-                                            || (!password.isNullOrBlank() && password?.length!! >= 8)
-                                } catch (_: Exception) {
-                                    false
-                                }
-                            ) {
-                                Text(stringResource(id = R.string.ok))
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = {
-                                    onEvent(ControlEvent.SelectNetwork(null))
-                                    password = null
-                                },
-                                shape = RoundedCornerShape(10.dp),
-                            ) {
-                                Text(stringResource(id = R.string.cancel))
-                            }
-                        }
-                    )
-                }
                 Button(
                     modifier = Modifier.padding(bottom = 16.dp, top = 8.dp),
                     onClick = {
@@ -530,4 +460,8 @@ fun CompletedGroup() {
             )
         }
     }
+}
+
+fun containsNonAsciiCharacters(input: String): Boolean {
+    return input.any { it.code > 127 }
 }

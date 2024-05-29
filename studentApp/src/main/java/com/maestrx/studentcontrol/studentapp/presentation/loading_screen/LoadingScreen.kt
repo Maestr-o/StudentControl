@@ -1,5 +1,6 @@
 package com.maestrx.studentcontrol.studentapp.presentation.loading_screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.maestrx.studentcontrol.studentapp.R
@@ -37,6 +37,7 @@ import com.maestrx.studentcontrol.studentapp.util.Toast
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LoadingScreen(
+    appContext: Context,
     state: LoadingUiState,
     onEvent: (LoadingEvent) -> Unit,
     prefs: SharedPreferencesManager,
@@ -255,35 +256,4 @@ internal fun LoadingScreen(
             navClick(state.screenState.isConnected)
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoadingPreview() {
-    val context = LocalContext.current
-    LoadingScreen(
-        state = LoadingUiState(
-            screenState = LoadingStatus.Loading,
-            students = listOf(
-                Student(
-                    id = 1L,
-                    group = Group(id = 1L, name = "АВТ-012"),
-                    firstName = "Иван",
-                    lastName = "Иванов",
-                ),
-                Student(
-                    id = 2L,
-                    group = Group(id = 2L, name = "АВТ-013"),
-                    firstName = "Степан",
-                    lastName = "Мельников",
-                ),
-            )
-        ),
-        onEvent = {},
-        prefs = SharedPreferencesManager(context),
-        isLocationEnabled = true,
-        badState = {},
-        isWifiEnabled = true,
-        navClick = {},
-    )
 }
