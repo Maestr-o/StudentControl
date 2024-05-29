@@ -30,4 +30,5 @@
     <string name="password">Пароль</string>
     <string name="connect_and_check_in">Подключиться к %s и отметиться?</string>
     <string name="ok">ОК</string>
+    <string name="connecting">Подключение…</string>
 </resources>

@@ -139,6 +139,8 @@ class MainActivity : ComponentActivity() {
                                 connectedNetwork = connectedNetwork.value,
                                 onEvent = viewModel::onEvent,
                                 selectedNetwork = viewModel.selectedNetwork.value,
+                                connecting = viewModel.connecting.value,
+                                checkIn = viewModel.checkIn.value,
                                 badState = {
                                     navController.navigateUp()
                                 },

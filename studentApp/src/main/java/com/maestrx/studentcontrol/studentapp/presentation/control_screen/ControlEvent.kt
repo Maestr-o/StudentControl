@@ -8,4 +8,6 @@ interface ControlEvent {
     data class SelectNetwork(val network: ScanResult?) : ControlEvent
     data class Connect(val network: ScanResult, val context: Context, val password: String?) :
         ControlEvent
+    data class ChangeStopConnecting(val state: Boolean) : ControlEvent
+    data class ChangeCheckIn(val state: Boolean) : ControlEvent
 }

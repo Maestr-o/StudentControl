@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maestrx.studentcontrol.studentapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,6 +40,9 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
     var selectedNetwork = mutableStateOf<ScanResult?>(null)
     var connectedNetwork = mutableStateOf<String?>(null)
+    var connecting = mutableStateOf(false)
+    var stopConnecting = mutableStateOf(false)
+    var checkIn = mutableStateOf(false)
 
     fun onEvent(event: ControlEvent) {
         when (event) {
@@ -57,6 +61,14 @@ class ControlViewModel @Inject constructor() : ViewModel() {
                     connectToOpenWifi(event.context, event.network)
                 }
             }
+
+            is ControlEvent.ChangeStopConnecting -> {
+                changeStopConnecting(event.state)
+            }
+
+            is ControlEvent.ChangeCheckIn -> {
+                changeCheckIn(event.state)
+            }
         }
     }
 
@@ -66,6 +78,14 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
     private fun selectNetwork(network: ScanResult?) {
         selectedNetwork.value = network
+    }
+
+    private fun changeStopConnecting(state: Boolean) {
+        stopConnecting.value = state
+    }
+
+    private fun changeCheckIn(state: Boolean) {
+        checkIn.value = state
     }
 
     fun startWifiScan(context: Context) {
@@ -151,7 +171,15 @@ class ControlViewModel @Inject constructor() : ViewModel() {
         if (networkId != -1) {
             wifiManager.disconnect()
             wifiManager.enableNetwork(networkId, true)
-            wifiManager.reconnect()
+            viewModelScope.launch {
+                var time = Constants.WIFI_TIMEOUT_DEFAULT
+                connecting.value = true
+                while (!wifiManager.reconnect()) {
+                    delay(time)
+                    time += Constants.WIFI_TIMEOUT_ADD
+                }
+                connecting.value = false
+            }
         }
     }
 
@@ -177,14 +205,38 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.requestNetwork(
-            networkRequest,
-            object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    super.onAvailable(network)
-                    connectivityManager.bindProcessToNetwork(network)
-                }
-            })
+
+        val handler = Handler(Looper.getMainLooper())
+        var attempt = 0
+        val baseDelay = Constants.WIFI_TIMEOUT_DEFAULT
+
+        connecting.value = true
+
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                connectivityManager.bindProcessToNetwork(network)
+                connecting.value = false
+                changeCheckIn(true)
+            }
+
+            override fun onUnavailable() {
+                super.onUnavailable()
+                attempt++
+                val delay = baseDelay * attempt
+                handler.postDelayed({
+                    if (stopConnecting.value) {
+                        connectivityManager.unregisterNetworkCallback(this)
+                        connecting.value = false
+                        changeStopConnecting(false)
+                    } else {
+                        connectivityManager.requestNetwork(networkRequest, this)
+                    }
+                }, delay)
+            }
+        }
+
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
     @Suppress("DEPRECATION")
@@ -205,6 +257,7 @@ class ControlViewModel @Inject constructor() : ViewModel() {
             wifiManager.disconnect()
             wifiManager.enableNetwork(networkId, true)
             wifiManager.reconnect()
+            //
         }
     }
 }

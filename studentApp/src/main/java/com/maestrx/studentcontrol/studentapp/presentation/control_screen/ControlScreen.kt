@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -63,6 +62,8 @@ internal fun ControlScreen(
     wifiResults: List<ScanResult>?,
     selectedNetwork: ScanResult?,
     connectedNetwork: String?,
+    connecting: Boolean,
+    checkIn: Boolean,
     onEvent: (ControlEvent) -> Unit,
     badState: () -> Unit,
     navClick: () -> Unit,
@@ -75,6 +76,11 @@ internal fun ControlScreen(
 
     if (!isLocationEnabled) {
         badState()
+    }
+
+    if (checkIn) {
+        onEvent(ControlEvent.ChangeCheckIn(false))
+        navClick()
     }
 
     Column(
@@ -189,21 +195,51 @@ internal fun ControlScreen(
                     appContext,
                     wifiResults,
                     selectedNetwork,
-                    connectedNetwork,
-                    onEvent
+                    onEvent,
                 )
 
-                is ControlStatus.Connected -> WifiIsUpGroup(
+                is ControlStatus.Connected -> WifiConnectedGroup(
                     appContext,
                     wifiResults,
                     selectedNetwork,
                     connectedNetwork,
-                    onEvent
+                    onEvent,
+                    navClick,
                 )
 
                 is ControlStatus.Completed -> CompletedGroup()
             }
         }
+    }
+
+    if (connecting) {
+        AlertDialog(
+            onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.connecting)
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator()
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                Button(
+                    onClick = {
+                        onEvent(ControlEvent.ChangeStopConnecting(true))
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                ) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            }
+        )
     }
 }
 
@@ -252,7 +288,6 @@ fun WifiIsUpGroup(
     appContext: Context,
     wifiResults: List<ScanResult>?,
     selectedNetwork: ScanResult?,
-    connectedNetwork: String?,
     onEvent: (ControlEvent) -> Unit,
 ) {
     var password by remember { mutableStateOf<String?>(null) }
@@ -278,18 +313,6 @@ fun WifiIsUpGroup(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 14.dp)
                         )
-                        if (connectedNetwork == network.BSSID) {
-                            Icon(
-                                modifier = Modifier.padding(end = 12.dp),
-                                imageVector = Icons.Filled.Check,
-                                tint = if (isSystemInDarkTheme()) {
-                                    Color.White
-                                } else {
-                                    Color.Black
-                                },
-                                contentDescription = "connected"
-                            )
-                        }
                     }
                 }
             }
@@ -356,6 +379,130 @@ fun WifiIsUpGroup(
 }
 
 @Composable
+fun WifiConnectedGroup(
+    appContext: Context,
+    wifiResults: List<ScanResult>?,
+    selectedNetwork: ScanResult?,
+    connectedNetwork: String?,
+    onEvent: (ControlEvent) -> Unit,
+    navClick: () -> Unit,
+) {
+    var password by remember { mutableStateOf<String?>(null) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (wifiResults.isNullOrEmpty()) {
+            CircularProgressIndicator()
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(wifiResults) { network ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onEvent(ControlEvent.SelectNetwork(network))
+                                },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = network.SSID,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                            )
+                            if (connectedNetwork == network.BSSID) {
+                                Icon(
+                                    modifier = Modifier.padding(end = 12.dp),
+                                    imageVector = Icons.Filled.Check,
+                                    tint = if (isSystemInDarkTheme()) {
+                                        Color.White
+                                    } else {
+                                        Color.Black
+                                    },
+                                    contentDescription = "connected"
+                                )
+                            }
+                        }
+                    }
+                }
+
+                selectedNetwork?.let { network ->
+                    val isRequirePassword = network.capabilities.contains("WPA")
+
+                    AlertDialog(
+                        onDismissRequest = { onEvent(ControlEvent.SelectNetwork(null)) },
+                        title = {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.connect_and_check_in,
+                                    network.SSID
+                                )
+                            )
+                        },
+                        text = {
+                            if (isRequirePassword) {
+                                Column {
+                                    TextField(
+                                        value = password ?: "",
+                                        onValueChange = { password = it },
+                                        label = { Text(text = stringResource(id = R.string.password)) }
+                                    )
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    onEvent(ControlEvent.Connect(network, appContext, password))
+                                    onEvent(ControlEvent.SelectNetwork(null))
+                                    password = null
+                                },
+                                shape = RoundedCornerShape(10.dp),
+                                enabled = try {
+                                    !network.capabilities.contains("WPA")
+                                            || (!password.isNullOrBlank() && password?.length!! >= 8)
+                                } catch (_: Exception) {
+                                    false
+                                }
+                            ) {
+                                Text(stringResource(id = R.string.ok))
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    onEvent(ControlEvent.SelectNetwork(null))
+                                    password = null
+                                },
+                                shape = RoundedCornerShape(10.dp),
+                            ) {
+                                Text(stringResource(id = R.string.cancel))
+                            }
+                        }
+                    )
+                }
+                Button(
+                    modifier = Modifier.padding(bottom = 16.dp, top = 8.dp),
+                    onClick = {
+                        navClick()
+                    },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = stringResource(id = R.string.check_in))
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun CompletedGroup() {
     val context = LocalContext.current
     Column(
@@ -383,24 +530,4 @@ fun CompletedGroup() {
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ControlPreview() {
-    ControlScreen(
-        navClick = {},
-        state = ControlStatus.WifiIsUp,
-        personalData = PersonalData(
-            group = "АВТ-042",
-            fullName = "Сидоров Иван Сидорович"
-        ),
-        isLocationEnabled = true,
-        wifiResults = null,
-        connectedNetwork = null,
-        selectedNetwork = null,
-        onEvent = {},
-        appContext = LocalContext.current,
-        badState = {},
-    )
 }
