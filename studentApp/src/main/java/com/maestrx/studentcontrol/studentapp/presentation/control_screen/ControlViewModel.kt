@@ -1,28 +1,28 @@
 package com.maestrx.studentcontrol.studentapp.presentation.control_screen
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.ConnectivityManager
-import android.net.MacAddress
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
+import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
-import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maestrx.studentcontrol.studentapp.util.Constants
+import com.maestrx.studentcontrol.studentapp.util.NetworkCallbackManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,7 +30,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ControlViewModel @Inject constructor() : ViewModel() {
+class ControlViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+    private val networkCallbackManager: NetworkCallbackManager,
+) : ViewModel() {
 
     private var state = mutableStateOf<ControlStatus>(ControlStatus.WifiIsDown)
 
@@ -43,7 +46,7 @@ class ControlViewModel @Inject constructor() : ViewModel() {
     var selectedNetwork = mutableStateOf<ScanResult?>(null)
     var connectedNetwork = mutableStateOf<String?>(null)
     var connecting = mutableStateOf(false)
-    var stopConnecting = mutableStateOf(false)
+    private var stopConnecting = mutableStateOf(false)
     var checkIn = mutableStateOf(false)
 
     private var jobConnection: Job? = null
@@ -60,10 +63,14 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
             is ControlEvent.Connect -> {
                 jobConnection = viewModelScope.launch {
-                    if (event.password != null) {
-                        connectToWpaWifi(event.context, event.network, event.password)
-                    } else {
-                        connectToOpenWifi(event.context, event.network)
+                    try {
+                        if (event.password != null) {
+                            connectToWpaWifi(event.context, event.network, event.password)
+                        } else {
+                            connectToOpenWifi(event.context, event.network)
+                        }
+                    } catch (e: Exception) {
+                        Log.d(Constants.DEBUG_TAG, "Can't connect to Wi-Fi network: $e")
                     }
                 }
             }
@@ -140,12 +147,15 @@ class ControlViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun getSortedScanResults(targetBSSID: String?): List<ScanResult> {
+        if (!checkFineLocationPermission()) {
+            return emptyList()
+        }
         val scanResults = wifiManager.scanResults.filter {
             it.SSID.isNotBlank() && (it.capabilities.contains("WPA")
                     || it.capabilities.contains("ESS"))
         }
             .sortedBy {
-                it.SSID
+                it.SSID.lowercase()
             }
 
         val targetNetwork = scanResults.find { it.BSSID == targetBSSID }
@@ -176,59 +186,23 @@ class ControlViewModel @Inject constructor() : ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun connectToWifiApi29(context: Context, scanResult: ScanResult, password: String?) {
-        val wifiNetworkSpecifier = if (password != null) {
-            WifiNetworkSpecifier.Builder()
-                .setSsid(scanResult.SSID)
-                .setBssid(MacAddress.fromString(scanResult.BSSID))
-                .setWpa2Passphrase(password)
-                .build()
-        } else {
-            WifiNetworkSpecifier.Builder()
-                .setSsid(scanResult.SSID)
-                .setBssid(MacAddress.fromString(scanResult.BSSID))
-                .build()
-        }
-
-        val networkRequest = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-            .setNetworkSpecifier(wifiNetworkSpecifier)
-            .build()
-
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        val handler = Handler(Looper.getMainLooper())
-        var attempt = 0
-        val baseDelay = Constants.WIFI_TIMEOUT_DEFAULT
-
-        connecting.value = true
-
-        val networkCallback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                connectivityManager.bindProcessToNetwork(network)
+        networkCallbackManager.registerNetworkCallback(
+            ssid = scanResult.SSID,
+            bssid = scanResult.BSSID,
+            password = password,
+            onNetworkAvailable = {
                 connecting.value = false
                 changeCheckIn(true)
-            }
-
-            override fun onUnavailable() {
-                super.onUnavailable()
-                if (connecting.value) {
-                    attempt++
-                    val delay = baseDelay * attempt
-                    handler.postDelayed({
-                        if (stopConnecting.value) {
-                            connectivityManager.unregisterNetworkCallback(this)
-                            changeStopConnecting(false)
-                        } else {
-                            connectivityManager.requestNetwork(networkRequest, this)
-                        }
-                    }, delay)
+            },
+            onNetworkUnavailable = {
+                if (stopConnecting.value) {
+                    networkCallbackManager.unregisterNetworkCallback()
+                    changeStopConnecting(false)
                 }
             }
-        }
+        )
 
-        connectivityManager.requestNetwork(networkRequest, networkCallback)
+        connecting.value = true
     }
 
     @Suppress("DEPRECATION")
@@ -288,4 +262,10 @@ class ControlViewModel @Inject constructor() : ViewModel() {
         val connectionInfo = wifiManager.connectionInfo
         return connectionInfo != null && connectionInfo.ssid == "\"$ssid\"" && connectionInfo.networkId != -1
     }
+
+    private fun checkFineLocationPermission(): Boolean =
+        ContextCompat.checkSelfPermission(
+            appContext,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 }

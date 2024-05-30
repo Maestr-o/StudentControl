@@ -9,6 +9,7 @@ import android.util.Log
 import com.maestrx.studentcontrol.studentapp.domain.model.Student
 import com.maestrx.studentcontrol.studentapp.presentation.loading_screen.LoadingStatus
 import com.maestrx.studentcontrol.studentapp.util.Constants
+import com.maestrx.studentcontrol.studentapp.util.NetworkCallbackManager
 import com.maestrx.studentcontrol.studentapp.util.WifiHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -29,6 +30,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class ServerInteractor @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val networkCallbackManager: NetworkCallbackManager,
 ) {
     interface StudentListCallback {
         fun onStudentsReceived(students: List<Student>)
@@ -60,9 +62,6 @@ class ServerInteractor @Inject constructor(
 
         var data = extractData(receivePacket)
         if (data == "ACK$deviceId") {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                disconnect()
-            }
             _interState.update { LoadingStatus.Success }
         } else {
             val list = Json.decodeFromString(ListSerializer(Student.serializer()), data)
@@ -138,12 +137,16 @@ class ServerInteractor @Inject constructor(
     }
 
     private fun disconnect() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val wifiManager =
-                context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            wifiManager.disconnect()
-        } else {
-
+        try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                val wifiManager =
+                    context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                wifiManager.disconnect()
+            } else {
+                networkCallbackManager.unregisterNetworkCallback()
+            }
+        } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "Can't disconnect from Wi-Fi network: $e")
         }
     }
 }
