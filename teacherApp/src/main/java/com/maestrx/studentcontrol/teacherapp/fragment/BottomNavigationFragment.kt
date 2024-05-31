@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,15 +23,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.maestrx.studentcontrol.teacherapp.R
-import com.maestrx.studentcontrol.teacherapp.databinding.DialogDataControlBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogEditLineBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.DialogMultilineTextBinding
+import com.maestrx.studentcontrol.teacherapp.databinding.DialogSettingsBinding
 import com.maestrx.studentcontrol.teacherapp.databinding.FragmentBottomNavigationBinding
 import com.maestrx.studentcontrol.teacherapp.model.Group
 import com.maestrx.studentcontrol.teacherapp.model.Subject
 import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 import com.maestrx.studentcontrol.teacherapp.util.FilePicker
+import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.util.capitalize
+import com.maestrx.studentcontrol.teacherapp.util.showDateConstraintPicker
 import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.util.toastBlankData
 import com.maestrx.studentcontrol.teacherapp.viewmodel.BottomNavigationViewModel
@@ -39,6 +44,7 @@ import com.maestrx.studentcontrol.teacherapp.viewmodel.ToolbarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
@@ -48,6 +54,9 @@ class BottomNavigationFragment : Fragment() {
     private val toolbarViewModel by activityViewModels<ToolbarViewModel>()
 
     private lateinit var pLauncher: ActivityResultLauncher<String>
+
+    @Inject
+    lateinit var dateManager: DatePreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,7 +152,39 @@ class BottomNavigationFragment : Fragment() {
         toolbarViewModel.dataControlClicked
             .onEach { state ->
                 if (state) {
-                    val dialogBinding = DialogDataControlBinding.inflate(inflater).apply {
+                    val dialogBinding = DialogSettingsBinding.inflate(inflater).apply {
+
+                        date.setOnFocusChangeListener { v, hasFocus ->
+                            if (hasFocus) {
+                                showDateConstraintPicker(date)
+                                v.clearFocus()
+                            }
+                        }
+
+                        date.addTextChangedListener(object : TextWatcher {
+                            override fun beforeTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                count: Int,
+                                after: Int
+                            ) {
+                            }
+
+                            override fun onTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                before: Int,
+                                count: Int
+                            ) {
+                                dateManager.saveDate(TimeFormatter.stringDateToUnixTime(s.toString()))
+                            }
+
+                            override fun afterTextChanged(s: Editable?) {
+                            }
+                        })
+
+                        date.setText(TimeFormatter.unixTimeToDateString(dateManager.getDate()))
+
                         clean.setOnClickListener {
                             val sureDialogBinding =
                                 DialogMultilineTextBinding.inflate(inflater).apply {
@@ -187,7 +228,7 @@ class BottomNavigationFragment : Fragment() {
                         }
                     }
                     dataControlDialog = AlertDialog.Builder(context)
-                        .setTitle(getString(R.string.data_control))
+                        .setTitle(getString(R.string.settings))
                         .setView(dialogBinding.root)
                         .setNegativeButton(getString(R.string.back)) { dialog, _ ->
                             dialog.dismiss()

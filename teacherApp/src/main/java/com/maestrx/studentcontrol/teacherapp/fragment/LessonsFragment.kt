@@ -16,6 +16,7 @@ import com.maestrx.studentcontrol.teacherapp.databinding.FragmentLessonsBinding
 import com.maestrx.studentcontrol.teacherapp.model.Lesson
 import com.maestrx.studentcontrol.teacherapp.recyclerview.lessons.LessonAdapter
 import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.LessonsViewModel
@@ -24,11 +25,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LessonsFragment : Fragment() {
 
     private val viewModel by viewModels<LessonsViewModel>()
+
+    @Inject
+    lateinit var dateManager: DatePreferenceManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +73,14 @@ class LessonsFragment : Fragment() {
 
         viewModel.date
             .onEach { date ->
-                binding.dateSelect.text = TimeFormatter.unixTimeToDateStringWithDayOfWeek(date)
+                val str =
+                    "${TimeFormatter.unixTimeToDateString(date)}\n${
+                        TimeFormatter.getWeekNumberFromDate(
+                            dateManager.getDate(),
+                            date
+                        )
+                    } ${getString(R.string.week)} | ${TimeFormatter.unixTimeToDayOfWeek(date)}"
+                binding.dateSelect.text = str
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 

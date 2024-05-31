@@ -8,7 +8,7 @@
     <string name="title">Главное</string>
     <string name="auditory">Аудитория</string>
     <string name="save">Сохранить</string>
-    <string name="title_hint">Введите тему занятия</string>
+    <string name="title_hint">Тема занятия</string>
     <string name="details">Дополнительно</string>
     <string name="auditory_hint">Аудитория</string>
     <string name="lecture">Лекция</string>
@@ -45,7 +45,6 @@
     <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Добавьте хотя бы одну группу!</string>
     <string name="zero_subjects_error">Добавьте хотя бы один предмет!</string>
-    <string name="enter_title">Пожалуйста, введите тему занятия</string>
     <string name="time_end_hint">Конец</string>
     <string name="default_end_time">13:30</string>
     <string name="notes_hint">Заметки</string>
@@ -89,7 +88,6 @@
     <string name="error_saving_marks">Ошибка сохранения отметок</string>
     <string name="no_unmarked_students">Неотмеченных студентов нет!</string>
     <string name="import_students">Импортировать студентов из Excel-файла</string>
-    <string name="column">Колонка</string>
     <string name="start_row">Номер первой строки</string>
     <string name="end_row">Номер последней строки</string>
     <string name="choose_file">Выбрать файл</string>
@@ -115,4 +113,8 @@
     <string name="ok_saving_marks">Отметки сохранены</string>
     <string name="table_hint">Таблица:</string>
     <string name="import_same">Ошибка импорта: такие студенты уже существуют</string>
+    <string name="column_hint">Колонка (например: \"B\")</string>
+    <string name="settings">Настройки</string>
+    <string name="date_first_week">Начало первой недели</string>
+    <string name="week">нед</string>
 </resources>

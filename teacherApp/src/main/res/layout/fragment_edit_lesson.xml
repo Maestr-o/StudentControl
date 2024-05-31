@@ -17,15 +17,6 @@
             android:layout_height="wrap_content"
             android:text="@string/title" />
 
-        <EditText
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/tiny_spacing"
-            android:autofillHints="Crime"
-            android:hint="@string/title_hint"
-            android:inputType="textCapSentences" />
-
         <LinearLayout
             android:id="@+id/subjectContainer"
             android:layout_width="match_parent"
@@ -163,11 +154,19 @@
             android:layout_marginTop="@dimen/small_spacing"
             android:text="@string/details" />
 
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:autofillHints="Crime"
+            android:hint="@string/title_hint"
+            android:inputType="textCapSentences" />
+
         <TextView
             android:id="@+id/type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_spacing"
             android:paddingHorizontal="6dp"
             android:text="@string/type_hint"
             android:textSize="18sp" />

@@ -151,9 +151,7 @@ class NewLessonFragment : Fragment() {
         toolbarViewModel.saveClicked.onEach { state ->
             if (state) {
                 val lesson = formLesson()
-                if (lesson.title.isBlank()) {
-                    toast(R.string.enter_title)
-                } else if (lesson.auditory.isBlank()) {
+                if (lesson.auditory.isBlank()) {
                     toast(R.string.enter_auditory)
                 } else if (lesson.groups.isEmpty()) {
                     toast(R.string.enter_group)

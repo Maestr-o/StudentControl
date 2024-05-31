@@ -208,7 +208,7 @@ class ControlViewModel @AssistedInject constructor(
     fun getMarkList(): List<Any> =
         _notMarkedStudentsWithGroups.value.map { item ->
             when (item) {
-                is Student -> StudentMark(item.id, item.fullName)
+                is Student -> StudentMark(item.id, "${item.lastName} ${item.firstName}")
                 is StudentMark -> item
                 is Group -> item
                 else -> throw IllegalStateException("Type error")

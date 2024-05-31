@@ -44,6 +44,30 @@ fun Fragment.showDatePicker(view: TextInputEditText) {
     }
 }
 
+fun Fragment.showDateConstraintPicker(view: TextInputEditText) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+    DatePickerDialog(requireContext(), { _, y, m, dOfM ->
+        val selectedCalendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, y)
+            set(Calendar.MONTH, m)
+            set(Calendar.DAY_OF_MONTH, dOfM)
+        }
+        val selectedDateInMillis = selectedCalendar.timeInMillis
+        view.setText(TimeFormatter.unixTimeToDateString(selectedDateInMillis))
+    }, year, month, dayOfMonth).apply {
+        datePicker.maxDate = calendar.timeInMillis
+        view.isEnabled = false
+        setOnDismissListener {
+            view.isEnabled = true
+        }
+        show()
+    }
+}
+
 fun Fragment.showTimeStartPicker(startView: TextInputEditText, endView: TextInputEditText) {
     val calendar = Calendar.getInstance()
     val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)

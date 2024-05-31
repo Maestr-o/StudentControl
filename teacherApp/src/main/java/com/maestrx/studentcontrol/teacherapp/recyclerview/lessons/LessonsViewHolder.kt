@@ -1,6 +1,8 @@
 package com.maestrx.studentcontrol.teacherapp.recyclerview.lessons
 
 import android.annotation.SuppressLint
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.databinding.CardLessonBinding
@@ -32,7 +34,12 @@ class LessonsViewHolder(
                 root.context.getString(R.string.lesson)
             }
         }
-        title.text = item.title
+        if (item.title.isNotBlank()) {
+            title.isVisible = true
+            title.text = item.title
+        } else {
+            title.isGone = true
+        }
         time.text = "${TimeFormatter.unixTimeToTimeString(item.timeStart)} - ${
             TimeFormatter.unixTimeToTimeString(item.timeEnd)
         }"

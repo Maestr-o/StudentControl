@@ -123,7 +123,12 @@ class ControlFragment : Fragment() {
                     root.context.getString(R.string.lesson)
                 }
             }
-            title.text = lesson.title
+            if (lesson.title.isNotBlank()) {
+                title.text = lesson.title
+                title.isVisible = true
+            } else {
+                title.isGone = true
+            }
             if (lesson.description.isNotBlank()) {
                 notesLayout.isVisible = true
                 notes.text = lesson.description

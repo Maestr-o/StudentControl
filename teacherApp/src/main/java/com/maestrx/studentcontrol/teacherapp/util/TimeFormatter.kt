@@ -21,8 +21,8 @@ object TimeFormatter {
         return hours1.compareTo(hours2)
     }
 
-    fun unixTimeToDateStringWithDayOfWeek(milliseconds: Long): String {
-        val formatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy")
+    fun unixTimeToDayOfWeek(milliseconds: Long): String {
+        val formatter = DateTimeFormatter.ofPattern("EEEE")
         val date =
             LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault())
         return formatter.format(date)
@@ -65,6 +65,13 @@ object TimeFormatter {
     fun stringToUnixTime(dateString: String, timeString: String): Long {
         val dateTimeString = "$dateString $timeString"
         val dateTimeFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+        val dateTime = dateTimeFormat.parse(dateTimeString)
+        return dateTime?.time ?: 0L
+    }
+
+    fun stringDateToUnixTime(dateString: String): Long {
+        val dateTimeString = "$dateString 00:00"
+        val dateTimeFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val dateTime = dateTimeFormat.parse(dateTimeString)
         return dateTime?.time ?: 0L
     }
@@ -150,4 +157,31 @@ object TimeFormatter {
             set(Calendar.MILLISECOND, 0)
         }
             .timeInMillis
+
+    fun getUnixTimeForFirstSeptember(): Long {
+        val currentCalendar = Calendar.getInstance()
+        val currentYear = currentCalendar.get(Calendar.YEAR)
+
+        val septemberFirstCalendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, currentYear)
+            set(Calendar.MONTH, Calendar.SEPTEMBER)
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        if (currentCalendar.before(septemberFirstCalendar)) {
+            septemberFirstCalendar.set(Calendar.YEAR, currentYear - 1)
+        }
+
+        return septemberFirstCalendar.timeInMillis
+    }
+
+    fun getWeekNumberFromDate(startDateInMillis: Long, currentDateInMillis: Long): Int {
+        val diffInMillis = currentDateInMillis - startDateInMillis
+        val diffInDays = (diffInMillis / (1000 * 60 * 60 * 24)).toInt()
+        return (diffInDays / 7) + 1
+    }
 }
