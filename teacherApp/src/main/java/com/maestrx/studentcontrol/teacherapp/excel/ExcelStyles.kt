@@ -3,6 +3,7 @@ package com.maestrx.studentcontrol.teacherapp.excel
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
@@ -10,7 +11,6 @@ class ExcelStyles(workbook: XSSFWorkbook) {
 
     private val numberDataFormat = workbook.createDataFormat().getFormat("0")
     private val percentFormat = workbook.createDataFormat().getFormat("0%")
-    private val dateFormat = workbook.createDataFormat().getFormat("dd.MM")
 
     private val baseFont: XSSFFont = workbook.createFont().apply {
         fontName = "Times New Roman"
@@ -64,20 +64,10 @@ class ExcelStyles(workbook: XSSFWorkbook) {
             borderRight = BorderStyle.THIN
         }
 
-    val headerDate: CellStyle =
-        workbook.createCellStyle().apply {
-            setAlignment(HorizontalAlignment.CENTER)
-            setFont(boldFont)
-            dataFormat = dateFormat
-            borderTop = BorderStyle.THIN
-            borderBottom = BorderStyle.THIN
-            borderLeft = BorderStyle.THIN
-            borderRight = BorderStyle.THIN
-        }
-
     val headerText: CellStyle =
         workbook.createCellStyle().apply {
             setAlignment(HorizontalAlignment.CENTER)
+            verticalAlignment = VerticalAlignment.CENTER
             setFont(boldFont)
             borderTop = BorderStyle.THIN
             borderBottom = BorderStyle.THIN
@@ -88,6 +78,7 @@ class ExcelStyles(workbook: XSSFWorkbook) {
     val headerDecimal: CellStyle =
         workbook.createCellStyle().apply {
             setAlignment(HorizontalAlignment.CENTER)
+            verticalAlignment = VerticalAlignment.CENTER
             setFont(boldFont)
             dataFormat = numberDataFormat
             borderTop = BorderStyle.THIN

@@ -40,7 +40,7 @@
     <string name="add_lesson">Добавить занятие</string>
     <string name="enter_auditory">Пожалуйста, введите аудиторию</string>
     <string name="enter_group">Пожалуйста, выберите хотя бы одну группу</string>
-    <string name="date_hint">Дата</string>
+    <string name="date_hint">Дата проведения занятия</string>
     <string name="time_start_hint">Начало</string>
     <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Добавьте хотя бы одну группу!</string>
@@ -107,7 +107,7 @@
     <string name="attendance">Посещаемость</string>
     <string name="student">Студент</string>
     <string name="list_of_lessons">Занятия</string>
-    <string name="mark_short">Отм</string>
+    <string name="mark_short">Отметка</string>
     <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
     <string name="ok_saving_marks">Отметки сохранены</string>
@@ -117,4 +117,5 @@
     <string name="settings">Настройки</string>
     <string name="date_first_week">Начало первой недели</string>
     <string name="week">нед</string>
+    <string name="start_semester">Начало семестра</string>
 </resources>

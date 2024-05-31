@@ -14,6 +14,7 @@ import com.maestrx.studentcontrol.teacherapp.model.Student
 import com.maestrx.studentcontrol.teacherapp.recyclerview.report_lessons.ReportLessonsAdapter
 import com.maestrx.studentcontrol.teacherapp.spinner.SubjectsSpinnerAdapter
 import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 import com.maestrx.studentcontrol.teacherapp.util.toast
 import com.maestrx.studentcontrol.teacherapp.viewmodel.ReportViewModel
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
@@ -23,9 +24,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ReportFragment : Fragment() {
+
+    @Inject
+    lateinit var dateManager: DatePreferenceManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +48,7 @@ class ReportFragment : Fragment() {
             }
         )
 
-        val reportLessonsAdapter = ReportLessonsAdapter()
+        val reportLessonsAdapter = ReportLessonsAdapter(dateManager)
         binding.lessons.adapter = reportLessonsAdapter
 
         binding.saveMarks.setOnClickListener {

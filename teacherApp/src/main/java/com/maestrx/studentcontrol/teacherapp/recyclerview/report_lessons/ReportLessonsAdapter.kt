@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.maestrx.studentcontrol.teacherapp.R
 import com.maestrx.studentcontrol.teacherapp.model.ReportLesson
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 
-class ReportLessonsAdapter : RecyclerView.Adapter<ReportLessonViewHolder>() {
+class ReportLessonsAdapter(
+    private val dateManager: DatePreferenceManager,
+) : RecyclerView.Adapter<ReportLessonViewHolder>() {
 
     var items: List<ReportLesson> = emptyList()
 
@@ -17,7 +20,7 @@ class ReportLessonsAdapter : RecyclerView.Adapter<ReportLessonViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ReportLessonViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], dateManager.getDate())
     }
 
     override fun getItemCount(): Int = items.count()

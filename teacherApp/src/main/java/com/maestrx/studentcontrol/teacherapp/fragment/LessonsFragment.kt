@@ -73,14 +73,7 @@ class LessonsFragment : Fragment() {
 
         viewModel.date
             .onEach { date ->
-                val str =
-                    "${TimeFormatter.unixTimeToDateString(date)}\n${
-                        TimeFormatter.getWeekNumberFromDate(
-                            dateManager.getDate(),
-                            date
-                        )
-                    } ${getString(R.string.week)} | ${TimeFormatter.unixTimeToDayOfWeek(date)}"
-                binding.dateSelect.text = str
+                updateDateButton(binding, date)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -101,6 +94,13 @@ class LessonsFragment : Fragment() {
             viewLifecycleOwner
         ) { _, _ ->
             updateList()
+        }
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            Constants.SEMESTER_DATE_UPDATED,
+            viewLifecycleOwner
+        ) { _, _ ->
+            updateDateButton(binding, viewModel.date.value)
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -155,5 +155,17 @@ class LessonsFragment : Fragment() {
     private fun updateList() {
         val startTime = viewModel.date.value
         viewModel.updateLessonsForPeriod(startTime, TimeFormatter.getEndTime(startTime))
+    }
+
+    private fun updateDateButton(binding: FragmentLessonsBinding, date: Long) {
+        val week = TimeFormatter.getWeekNumberFromDate(dateManager.getDate(), date)
+        val str = if (week >= 1) {
+            "${TimeFormatter.unixTimeToDateString(date)}\n${week} ${getString(R.string.week)} | ${
+                TimeFormatter.unixTimeToDayOfWeek(date)
+            }"
+        } else {
+            "${TimeFormatter.unixTimeToDateString(date)}, ${TimeFormatter.unixTimeToDayOfWeek(date)}"
+        }
+        binding.dateSelect.text = str
     }
 }

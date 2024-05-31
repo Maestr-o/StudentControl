@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -177,6 +178,10 @@ class BottomNavigationFragment : Fragment() {
                                 count: Int
                             ) {
                                 dateManager.saveDate(TimeFormatter.stringDateToUnixTime(s.toString()))
+                                requireActivity().supportFragmentManager.setFragmentResult(
+                                    Constants.SEMESTER_DATE_UPDATED,
+                                    bundleOf()
+                                )
                             }
 
                             override fun afterTextChanged(s: Editable?) {
@@ -206,7 +211,7 @@ class BottomNavigationFragment : Fragment() {
                         exportExcel.setOnClickListener {
                             if (checkPermission()) {
                                 progressBar.isVisible = true
-                                controlContainer.isGone = true
+                                settingsContainer.isGone = true
                                 viewModel.exportToExcel()
                             }
                         }
@@ -214,7 +219,7 @@ class BottomNavigationFragment : Fragment() {
                         exportDb.setOnClickListener {
                             if (checkPermission()) {
                                 progressBar.isVisible = true
-                                controlContainer.isGone = true
+                                settingsContainer.isGone = true
                                 viewModel.exportDb()
                             }
                         }

@@ -33,6 +33,11 @@ object TimeFormatter {
         return unixTimeToPatternString(formatter, milliseconds)
     }
 
+    fun unixTimeToShortDateString(milliseconds: Long?): String {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM")
+        return unixTimeToPatternString(formatter, milliseconds)
+    }
+
     fun unixTimeToDateShortYearString(milliseconds: Long?): String {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yy")
         return unixTimeToPatternString(formatter, milliseconds)
@@ -180,8 +185,24 @@ object TimeFormatter {
     }
 
     fun getWeekNumberFromDate(startDateInMillis: Long, currentDateInMillis: Long): Int {
-        val diffInMillis = currentDateInMillis - startDateInMillis
+        val startCalendar = Calendar.getInstance().apply {
+            timeInMillis = startDateInMillis
+            firstDayOfWeek = Calendar.MONDAY
+            set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        }
+
+        val currentCalendar = Calendar.getInstance().apply {
+            timeInMillis = currentDateInMillis
+            firstDayOfWeek = Calendar.MONDAY
+            set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        }
+
+        startCalendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+        currentCalendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+
+        val diffInMillis = currentCalendar.timeInMillis - startCalendar.timeInMillis
         val diffInDays = (diffInMillis / (1000 * 60 * 60 * 24)).toInt()
-        return (diffInDays / 7) + 1
+
+        return diffInDays / 7 + 1
     }
 }

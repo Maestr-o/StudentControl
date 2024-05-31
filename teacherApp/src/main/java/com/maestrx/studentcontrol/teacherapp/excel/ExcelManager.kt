@@ -24,6 +24,7 @@ import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.student.StudentRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -36,9 +37,6 @@ import kotlinx.coroutines.withContext
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -49,6 +47,7 @@ class ExcelManager @Inject constructor(
     private val studentRepository: StudentRepository,
     private val groupRepository: GroupRepository,
     private val lessonRepository: LessonRepository,
+    private val dateManager: DatePreferenceManager,
 ) {
 
     private var importWorkbook = XSSFWorkbook()
@@ -144,13 +143,16 @@ class ExcelManager @Inject constructor(
                         val lesson =
                             Lesson.fromResponseToData(lessonResponse as LessonResponse)
                         createCell(y++).apply {
-                            setCellStyle(styles.headerDate)
-                            setCellValue(
-                                LocalDateTime.ofInstant(
-                                    Instant.ofEpochMilli(lesson.timeStart),
-                                    ZoneId.systemDefault()
+                            val str = "${
+                                TimeFormatter.getWeekNumberFromDate(
+                                    dateManager.getDate(),
+                                    lesson.timeStart
                                 )
-                            )
+                            } ${context.getString(R.string.week)}\n${
+                                TimeFormatter.unixTimeToShortDateString(lesson.timeStart)
+                            }"
+                            setCellStyle(styles.headerText)
+                            setCellValue(str)
                         }
                     }
                     createCell(y++).apply {
