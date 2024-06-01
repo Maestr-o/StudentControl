@@ -235,6 +235,7 @@ class StudentsFragment : Fragment() {
                                 this.tableNameContainer.isGone = true
                                 this.column.isGone = true
                                 this.startX.isGone = true
+                                this.importHint.isGone = true
                             }
                             importDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.isGone = true
                             importDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isGone = true

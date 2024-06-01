@@ -34,6 +34,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
@@ -331,14 +332,21 @@ class ExcelManager @Inject constructor(
             val columnNum = columnToIndex(column)
             var index = startX - 1
             var emptyCellFlag = false
+
             while (!emptyCellFlag) {
                 try {
-                    val fullName = sheet.getRow(index).getCell(columnNum).stringCellValue
+                    val fullName = getFullName(sheet, index, columnNum)
+                    if (fullName == null) {
+                        emptyCellFlag = true
+                        throw Exception()
+                    }
+
                     index += 1
                     val names = fullName.split(" ")
 
-                    val lastName = names[0].ifBlank {
-                        emptyCellFlag = true
+                    val lastName = if (names.isNotEmpty()) {
+                        names[0]
+                    } else {
                         throw IllegalArgumentException("Empty string")
                     }
                     val firstName = if (names.size > 1) {
@@ -358,9 +366,6 @@ class ExcelManager @Inject constructor(
                         firstName = firstName,
                         midName = midName,
                     )
-                } catch (e: NullPointerException) {
-                    Log.d(Constants.DEBUG_TAG, e.message.toString())
-                    emptyCellFlag = true
                 } catch (e: Exception) {
                     Log.d(Constants.DEBUG_TAG, e.message.toString())
                 }
@@ -369,6 +374,13 @@ class ExcelManager @Inject constructor(
         inputStream.close()
         return@withContext students
     }
+
+    private fun getFullName(sheet: XSSFSheet, index: Int, columnNum: Int): String? =
+        try {
+            sheet.getRow(index).getCell(columnNum).stringCellValue
+        } catch (e: Exception) {
+            null
+        }
 
     suspend fun getExcelTableNames(fileUri: Uri): List<String> = withContext(Dispatchers.Default) {
         val names = mutableListOf<String>()
