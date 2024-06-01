@@ -12,22 +12,26 @@ import com.maestrx.studentcontrol.teacherapp.repository.lesson.LessonRepository
 import com.maestrx.studentcontrol.teacherapp.repository.mark.MarkRepository
 import com.maestrx.studentcontrol.teacherapp.repository.subject.SubjectRepository
 import com.maestrx.studentcontrol.teacherapp.util.Constants
+import com.maestrx.studentcontrol.teacherapp.util.DatePreferenceManager
 import com.maestrx.studentcontrol.teacherapp.util.Event
 import com.maestrx.studentcontrol.teacherapp.util.TimeFormatter
 import com.maestrx.studentcontrol.teacherapp.viewmodel.di.ReportViewModelFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltViewModel(assistedFactory = ReportViewModelFactory::class)
 class ReportViewModel @AssistedInject constructor(
     private val subjectRepository: SubjectRepository,
     private val lessonRepository: LessonRepository,
     private val markRepository: MarkRepository,
+    private val dateManager: DatePreferenceManager,
     @Assisted private val student: Student,
 ) : ViewModel() {
 
@@ -51,38 +55,44 @@ class ReportViewModel @AssistedInject constructor(
     }
 
     fun formReport(subject: Subject) {
-        viewModelScope.launch {
-            val lessons = lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
+        viewModelScope.launch(Dispatchers.IO) {
+            val semesterStart = dateManager.getDate()
+            val lessons = lessonRepository.getBySubjectIdAndGroupIdAndStartEndTime(
                 subject.id,
                 student.group.id,
+                semesterStart,
                 TimeFormatter.getCurrentTimeAddRecess()
             ).map {
                 Lesson.fromResponseToData(it)
             }
 
-            val marks = markRepository.getByStudentIdAndSubjectId(
+            val marks = markRepository.getByStudentIdAndSubjectIdAndStartTime(
                 student.id,
-                subject.id
+                subject.id,
+                semesterStart,
             ).map {
                 Mark.toData(it)
             }
-            val markedLessonIds = marks.map {
-                it.lessonId
-            }
 
-            val reportLessons: MutableList<ReportLesson> = mutableListOf()
-            lessons.forEach { lesson ->
-                reportLessons += ReportLesson(lesson, markedLessonIds.contains(lesson.id))
-            }
+            withContext(Dispatchers.Default) {
+                val markedLessonIds = marks.map {
+                    it.lessonId
+                }
 
-            val percentage = if (lessons.isNotEmpty()) {
-                marks.count().toFloat() / lessons.count() * 100
-            } else {
-                100f
-            }
+                val reportLessons: MutableList<ReportLesson> = mutableListOf()
+                lessons.forEach { lesson ->
+                    reportLessons += ReportLesson(lesson, markedLessonIds.contains(lesson.id))
+                }
 
-            _reportState.update {
-                ReportUiState(subject, student, reportLessons, marks, percentage)
+                val percentage = if (lessons.isNotEmpty()) {
+                    marks.count().toFloat() / lessons.count() * 100
+                } else {
+                    100f
+                }
+
+                _reportState.update {
+                    ReportUiState(subject, student, reportLessons, marks, percentage)
+                }
             }
         }
     }

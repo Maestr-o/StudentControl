@@ -8,16 +8,18 @@ interface LessonRepository {
     suspend fun getForPeriod(startTime: Long, endTime: Long): List<LessonResponse>
     suspend fun save(data: LessonEntity): Long
     suspend fun deleteById(id: Long)
-    suspend fun getBySubjectIdAndGroupIdAndStartTime(
+    suspend fun getBySubjectIdAndGroupIdAndStartEndTime(
         subjectId: Long,
         groupId: Long,
-        timeStart: Long
+        timeStart: Long,
+        timeEnd: Long,
     ): List<LessonResponse>
 
-    suspend fun getCountBySubjectIdAndGroupIdAndStartTime(
+    suspend fun getCountBySubjectIdAndGroupIdAndStartEndTime(
         subjectId: Long,
         groupId: Long,
-        timeStart: Long
+        timeStart: Long,
+        timeEnd: Long,
     ): Int
 
     fun getCount(): Flow<Long>

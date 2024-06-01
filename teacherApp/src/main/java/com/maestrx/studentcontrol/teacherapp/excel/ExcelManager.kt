@@ -77,12 +77,14 @@ class ExcelManager @Inject constructor(
     private suspend fun createWorkbook(subject: Subject, groups: List<GroupEntity>) {
         val workbook = XSSFWorkbook()
         val styles = ExcelStyles(workbook)
+        val semesterStart = dateManager.getDate()
 
         var count = 0
         groups.forEach { groupEntity ->
-            if (lessonRepository.getCountBySubjectIdAndGroupIdAndStartTime(
+            if (lessonRepository.getCountBySubjectIdAndGroupIdAndStartEndTime(
                     subject.id,
                     groupEntity.id,
+                    semesterStart,
                     TimeFormatter.getCurrentTimeAddRecess()
                 ) >= 1
                 && createSheet(workbook, styles, subject, Group.toData(groupEntity))
@@ -102,10 +104,13 @@ class ExcelManager @Inject constructor(
         subject: Subject,
         group: Group
     ): Boolean = withContext(Dispatchers.Default) {
+        val semesterStart = dateManager.getDate()
+
         val lessonsDeferred = async(Dispatchers.IO) {
-            lessonRepository.getBySubjectIdAndGroupIdAndStartTime(
+            lessonRepository.getBySubjectIdAndGroupIdAndStartEndTime(
                 subject.id,
                 group.id,
+                semesterStart,
                 TimeFormatter.getCurrentTimeAddRecess()
             )
         }
@@ -113,7 +118,7 @@ class ExcelManager @Inject constructor(
             studentRepository.getByGroupId(group.id).first()
         }
         val marksDeferred = async(Dispatchers.IO) {
-            markRepository.getBySubjectIdAndGroupId(subject.id, group.id)
+            markRepository.getBySubjectIdAndGroupIdAndStartTime(subject.id, group.id, semesterStart)
         }
         val (lessons, students, marks) = awaitAll(
             lessonsDeferred, studentsDeferred, marksDeferred
@@ -317,7 +322,6 @@ class ExcelManager @Inject constructor(
         groupId: Long,
         column: String,
         startX: Int,
-        endX: Int
     ): List<StudentEntity>? = withContext(Dispatchers.IO) {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
         val sheet = importWorkbook.getSheet(sheetName)
@@ -325,14 +329,16 @@ class ExcelManager @Inject constructor(
 
         withContext(Dispatchers.Default) {
             val columnNum = columnToIndex(column)
-            for (i in startX - 1 until endX) {
+            var index = startX - 1
+            var emptyCellFlag = false
+            while (!emptyCellFlag) {
                 try {
-                    val fullName = sheet.getRow(i).getCell(columnNum).stringCellValue
+                    val fullName = sheet.getRow(index).getCell(columnNum).stringCellValue
+                    index += 1
                     val names = fullName.split(" ")
 
-                    val lastName = if (names.isNotEmpty()) {
-                        names[0]
-                    } else {
+                    val lastName = names[0].ifBlank {
+                        emptyCellFlag = true
                         throw IllegalArgumentException("Empty string")
                     }
                     val firstName = if (names.size > 1) {
@@ -352,6 +358,9 @@ class ExcelManager @Inject constructor(
                         firstName = firstName,
                         midName = midName,
                     )
+                } catch (e: NullPointerException) {
+                    Log.d(Constants.DEBUG_TAG, e.message.toString())
+                    emptyCellFlag = true
                 } catch (e: Exception) {
                     Log.d(Constants.DEBUG_TAG, e.message.toString())
                 }

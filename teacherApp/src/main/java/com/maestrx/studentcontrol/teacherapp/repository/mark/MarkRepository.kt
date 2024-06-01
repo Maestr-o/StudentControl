@@ -8,9 +8,19 @@ interface MarkRepository {
     suspend fun getByLessonIdAndGroupId(lessonId: Long, groupId: Long): List<MarkEntity>
     suspend fun save(data: MarkEntity)
     suspend fun saveList(list: List<MarkEntity>)
-    suspend fun getBySubjectIdAndGroupId(subjectId: Long, groupId: Long): List<MarkEntity>
+    suspend fun getBySubjectIdAndGroupIdAndStartTime(
+        subjectId: Long,
+        groupId: Long,
+        timeStart: Long
+    ): List<MarkEntity>
+
     suspend fun getCountByLessonIdAndGroupId(lessonId: Long, groupId: Long): Int
     suspend fun getCount(): Int
-    suspend fun getByStudentIdAndSubjectId(studentId: Long, subjectId: Long): List<MarkEntity>
+    suspend fun getByStudentIdAndSubjectIdAndStartTime(
+        studentId: Long,
+        subjectId: Long,
+        startTime: Long,
+    ): List<MarkEntity>
+
     suspend fun delete(mark: MarkEntity)
 }

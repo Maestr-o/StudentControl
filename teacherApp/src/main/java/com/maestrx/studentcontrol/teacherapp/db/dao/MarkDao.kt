@@ -44,9 +44,14 @@ interface MarkDao {
             AND Mark.lesson_id == Lesson.id AND Lesson.subject_id == Subject.id
             AND Lesson.id == LessonGroupCross.lesson_id AND `Group`.id == LessonGroupCross.group_id
             AND Student.group_id == `Group`.id AND Student.id == Mark.student_id
+            AND Lesson.time_start >= :timeStart
         """
     )
-    suspend fun getBySubjectIdAndGroupId(subjectId: Long, groupId: Long): List<MarkEntity>
+    suspend fun getBySubjectIdAndGroupId(
+        subjectId: Long,
+        groupId: Long,
+        timeStart: Long
+    ): List<MarkEntity>
 
     @Query(
         """
@@ -66,10 +71,14 @@ interface MarkDao {
         FROM Mark, Student, Lesson, Subject
         WHERE Mark.student_id == Student.id AND Student.id == :studentId
             AND Mark.lesson_id == Lesson.id AND Lesson.subject_id == Subject.id
-            AND Subject.id == :subjectId
-    """
+            AND Subject.id == :subjectId AND Lesson.time_start >= :startTime
+        """
     )
-    suspend fun getByStudentIdAndSubjectId(studentId: Long, subjectId: Long): List<MarkEntity>
+    suspend fun getByStudentIdAndSubjectId(
+        studentId: Long,
+        subjectId: Long,
+        startTime: Long
+    ): List<MarkEntity>
 
     @Delete
     suspend fun delete(mark: MarkEntity)

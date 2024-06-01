@@ -6,5 +6,4 @@ data class StudentsImportUiState(
     val selectedTable: String = "",
     val column: String = "",
     val startX: String = "",
-    val endX: String = "",
 )

@@ -17,11 +17,12 @@ class LocalMarkRepository @Inject constructor(
     override suspend fun save(data: MarkEntity) =
         markDao.save(data)
 
-    override suspend fun getBySubjectIdAndGroupId(
+    override suspend fun getBySubjectIdAndGroupIdAndStartTime(
         subjectId: Long,
-        groupId: Long
+        groupId: Long,
+        timeStart: Long,
     ): List<MarkEntity> =
-        markDao.getBySubjectIdAndGroupId(subjectId, groupId)
+        markDao.getBySubjectIdAndGroupId(subjectId, groupId, timeStart)
 
     override suspend fun getCountByLessonIdAndGroupId(lessonId: Long, groupId: Long): Int =
         markDao.getCountByLessonIdAndGroupId(lessonId, groupId)
@@ -32,11 +33,12 @@ class LocalMarkRepository @Inject constructor(
     override suspend fun saveList(list: List<MarkEntity>) =
         markDao.saveList(list)
 
-    override suspend fun getByStudentIdAndSubjectId(
+    override suspend fun getByStudentIdAndSubjectIdAndStartTime(
         studentId: Long,
-        subjectId: Long
+        subjectId: Long,
+        startTime: Long,
     ): List<MarkEntity> =
-        markDao.getByStudentIdAndSubjectId(studentId, subjectId)
+        markDao.getByStudentIdAndSubjectId(studentId, subjectId, startTime)
 
     override suspend fun delete(mark: MarkEntity) =
         markDao.delete(mark)

@@ -228,11 +228,6 @@ class StudentsFragment : Fragment() {
                             if (importState.column.isBlank()) {
                                 throw IllegalArgumentException(getString(R.string.column_error))
                             }
-                            if (importState.startX.toInt() < 1 || importState.endX.toInt() < 1
-                                || importState.startX > importState.endX
-                            ) {
-                                throw IllegalArgumentException(getString(R.string.row_numbers_error))
-                            }
 
                             importBinding?.apply {
                                 progressBar.isVisible = true
@@ -240,7 +235,6 @@ class StudentsFragment : Fragment() {
                                 this.tableNameContainer.isGone = true
                                 this.column.isGone = true
                                 this.startX.isGone = true
-                                this.endX.isGone = true
                             }
                             importDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.isGone = true
                             importDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isGone = true
@@ -284,7 +278,6 @@ class StudentsFragment : Fragment() {
                     if (viewModel.isConfigChanged.value) {
                         column.setText(state.column)
                         startX.setText(state.startX)
-                        endX.setText(state.endX)
                         viewModel.setConfigChange(false)
                     }
                 }
@@ -335,7 +328,6 @@ class StudentsFragment : Fragment() {
                 selectedTable = tableNames.selectedItem as String? ?: "",
                 column = column.text.toString().trim(),
                 startX = startX.text.toString().trim(),
-                endX = endX.text.toString().trim(),
             )
         }
         return null

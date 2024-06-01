@@ -79,7 +79,7 @@ class BottomNavigationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentBottomNavigationBinding.inflate(inflater)
+        val binding = FragmentBottomNavigationBinding.inflate(inflater, container, false)
 
         val subjectsViewModel by viewModels<SubjectsViewModel>()
         val groupsViewModel by viewModels<GroupsViewModel>()
@@ -87,6 +87,17 @@ class BottomNavigationFragment : Fragment() {
         val navController =
             requireNotNull(childFragmentManager.findFragmentById(R.id.container)).findNavController()
         binding.bottomNavigation.setupWithNavController(navController)
+
+        if (!dateManager.doesPreferencesExist()) {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.set_semester_start)
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                    toolbarViewModel.dataControlClicked(true)
+                    dialog.dismiss()
+                }
+                .show()
+        }
 
         val newLessonListener = View.OnClickListener {
             (requireNotNull(

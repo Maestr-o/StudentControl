@@ -96,7 +96,9 @@ class ControlFragment : Fragment() {
         studentsAdapter = MarkedStudentsAdapter(mutableListOf())
         binding.attended.adapter = studentsAdapter
 
-        groupsAdapter.submitList(lesson.groups)
+        groupsAdapter.submitList(lesson.groups.sortedBy { group ->
+            group.name
+        })
         binding.apply {
             subject.text = lesson.subject.name
             datetime.text = getString(

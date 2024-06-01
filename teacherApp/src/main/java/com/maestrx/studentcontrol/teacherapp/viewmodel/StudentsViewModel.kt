@@ -108,7 +108,6 @@ class StudentsViewModel @AssistedInject constructor(
                     selectedTable = selectedTable,
                     column = column,
                     startX = startX,
-                    endX = endX,
                 )
             }
         }
@@ -125,7 +124,6 @@ class StudentsViewModel @AssistedInject constructor(
                             groupId,
                             column,
                             startX.toInt(),
-                            endX.toInt(),
                         )
                     }
                 )

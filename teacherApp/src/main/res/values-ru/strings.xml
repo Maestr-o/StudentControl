@@ -40,7 +40,7 @@
     <string name="add_lesson">Добавить занятие</string>
     <string name="enter_auditory">Пожалуйста, введите аудиторию</string>
     <string name="enter_group">Пожалуйста, выберите хотя бы одну группу</string>
-    <string name="date_hint">Дата проведения занятия</string>
+    <string name="date_hint">Дата проведения</string>
     <string name="time_start_hint">Начало</string>
     <string name="default_start_time">12:00</string>
     <string name="zero_groups_error">Добавьте хотя бы одну группу!</string>
@@ -89,7 +89,6 @@
     <string name="no_unmarked_students">Неотмеченных студентов нет!</string>
     <string name="import_students">Импортировать студентов из Excel-файла</string>
     <string name="start_row">Номер первой строки</string>
-    <string name="end_row">Номер последней строки</string>
     <string name="choose_file">Выбрать файл</string>
     <string name="check_input_data">Пожалуйста, проверьте правильность введенных данных</string>
     <string name="import_ok">Импорт данных успешно завершен</string>
@@ -115,7 +114,7 @@
     <string name="import_same">Ошибка импорта: такие студенты уже существуют</string>
     <string name="column_hint">Колонка (например: \"B\")</string>
     <string name="settings">Настройки</string>
-    <string name="date_first_week">Начало первой недели</string>
     <string name="week">нед</string>
     <string name="start_semester">Начало семестра</string>
+    <string name="set_semester_start">Установите дату начала семестра</string>
 </resources>

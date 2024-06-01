@@ -95,14 +95,6 @@
             android:hint="@string/start_row"
             android:inputType="number" />
 
-        <EditText
-            android:id="@+id/endX"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:hint="@string/end_row"
-            android:inputType="number" />
-
     </LinearLayout>
 
 </ScrollView>
