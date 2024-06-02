@@ -136,6 +136,7 @@ class ExcelManager @Inject constructor(
 
                 var x = 0
                 createRow(x++).apply {
+                    height = -1
                     var y = 0
                     createCell(y++).apply {
                         setCellStyle(styles.headerText)

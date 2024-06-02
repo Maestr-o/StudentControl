@@ -118,4 +118,5 @@
     <string name="start_semester">Начало семестра</string>
     <string name="set_semester_start">Установите дату начала семестра</string>
     <string name="import_students_hint">Ячейки должны содержать фамилию, имя и отчество (необязательно), разделенные пробелами. Импорт заканчивается пустой ячейкой в колонке.</string>
+    <string name="export_hint">Экспорт данных происходит в папку Download/Control</string>
 </resources>

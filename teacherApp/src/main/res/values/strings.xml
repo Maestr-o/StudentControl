@@ -121,4 +121,5 @@
     <string name="start_semester">Start of the semester</string>
     <string name="set_semester_start">Set the start date of the semester</string>
     <string name="import_students_hint">Cells must contain a last name, first name, and middle name (optional), separated by spaces. The import ends with an empty cell in the column.</string>
+    <string name="export_hint">Data is exporting to the Download/Control folder</string>
 </resources>

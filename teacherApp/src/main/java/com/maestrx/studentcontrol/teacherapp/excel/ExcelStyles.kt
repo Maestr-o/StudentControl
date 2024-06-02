@@ -66,6 +66,7 @@ class ExcelStyles(workbook: XSSFWorkbook) {
 
     val headerText: CellStyle =
         workbook.createCellStyle().apply {
+            wrapText = true
             setAlignment(HorizontalAlignment.CENTER)
             verticalAlignment = VerticalAlignment.CENTER
             setFont(boldFont)

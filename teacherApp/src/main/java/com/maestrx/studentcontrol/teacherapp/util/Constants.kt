@@ -12,7 +12,7 @@ object Constants {
 
     const val EXCEL_FORMAT = ".xlsx"
     const val EXCEL_N_COLUMN_SIZE = 1200
-    const val EXCEL_NAME_COLUMN_SIZE = 9000
+    const val EXCEL_NAME_COLUMN_SIZE = 10000
 
     const val TIMEOUT = 30_000
     const val TIME_CHECK_DELAY = 1_000L
