@@ -110,7 +110,6 @@
     <string name="student">Student</string>
     <string name="list_of_lessons">Lessons</string>
     <string name="mark_short">Mark</string>
-    <string name="topic">Topic</string>
     <string name="zero_lessons_error">Create at least one lesson!</string>
     <string name="ok_saving_marks">Marks saved</string>
     <string name="table_hint">Table:</string>

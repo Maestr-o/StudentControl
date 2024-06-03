@@ -41,7 +41,7 @@ class ControlViewModel @Inject constructor(
     val wifiResults: List<ScanResult> = _wifiResults
     private lateinit var wifiManager: WifiManager
     private lateinit var handler: Handler
-    private val scanInterval: Long = 15000
+    private val scanInterval: Long = 12000
 
     var selectedNetwork = mutableStateOf<ScanResult?>(null)
     var connectedNetwork = mutableStateOf<String?>(null)

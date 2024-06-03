@@ -107,7 +107,6 @@
     <string name="student">Студент</string>
     <string name="list_of_lessons">Занятия</string>
     <string name="mark_short">Отметка</string>
-    <string name="topic">Тема</string>
     <string name="zero_lessons_error">Добавьте хотя бы одно занятие!</string>
     <string name="ok_saving_marks">Отметки сохранены</string>
     <string name="table_hint">Таблица:</string>

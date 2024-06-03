@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -183,8 +184,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(locationReceiver)
-        unregisterReceiver(wifiReceiver)
+        try {
+            unregisterReceiver(locationReceiver)
+            unregisterReceiver(wifiReceiver)
+        } catch (e: Exception) {
+            Log.d(Constants.DEBUG_TAG, "Error unregister receiver: $e")
+        }
     }
 
     @Composable
